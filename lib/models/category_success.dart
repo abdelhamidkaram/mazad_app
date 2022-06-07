@@ -1,0 +1,3 @@
+class CategorySuccessModel {
+  //TODO: CATEGORY
+}
