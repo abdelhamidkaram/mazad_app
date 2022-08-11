@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         if(result != ConnectivityResult.none){
           setState(() {
             isConnect = true;
-            AppCubit.get(context).getProfileDetails();
+            AppCubit.get(context).getProfileDetails(context );
           });
         }else {
           isConnect = false;
@@ -53,8 +53,9 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
 
     return BlocConsumer<HomeCubit, HomeStates>(
-      listener: (context, state) => [HomeCubit() , AppCubit()..getProfileDetails()],
+      listener: (context, state) => HomeCubit()..getProducts(context),
       builder: (context, state){
+        var cubit = HomeCubit.get(context);
         List<bool> cartViewsAndElevation = [true, true, true, true, false];
         List<String> titles = [
           "الرئيسية",
@@ -63,97 +64,12 @@ class _MainScreenState extends State<MainScreen> {
           " المفضلة ",
           " حسابي "
         ];
-        List<ProductForViewModel> products = [
-          ProductForViewModel(
-              false,
-              "assets/pro2.png",
-              "view",
-              "منزل متكامل مع حديقة ",
-              "123456875",
-              "9565",
-              "2022-05-29",
-              "3000",
-              "8500",
-              "120",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              false,
-              "assets/pro1.png",
-              "view",
-              "جهاز لاب توب ابل ",
-              "123456875",
-              "9565",
-              "2022-05-25",
-              "5000",
-              "10200",
-              "74",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              false,
-              "assets/pro2.png",
-              "view",
-              "عقار يطل علي البحر ",
-              "123456875",
-              "9565",
-              "2022-05-24",
-              "800",
-              "1500",
-              "37",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              true,
-              "assets/pro2.png",
-              "view",
-              "سيارة هونداي ",
-              "123456875",
-              "9565",
-              "2022-06-13",
-              "900",
-              "3900",
-              "95",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              false,
-              "assets/pro1.png",
-              "view",
-              "ساعة روليكس  ",
-              "123456875",
-              "9565",
-              "2022-05-22",
-              "9845",
-              "63215",
-              "85",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              true,
-              "assets/pro2.png",
-              "view",
-              "مجوهرات أثرية ",
-              "123456875",
-              "9565",
-              "2022-05-21",
-              "232",
-              "520",
-              "23",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              true,
-              "assets/pro1.png",
-              "view",
-              "عنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويل ",
-              "123456875",
-              "9565",
-              "2022-05-22",
-              "800",
-              "1500",
-              "20",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-        ];
         var homeCubit = HomeCubit.get(context);
         List<Widget> screens = [
-          HomeScreen(
+          state is GetProductsLoading ?
+              const Center(child: CircularProgressIndicator(),)
+              :HomeScreen(
             homeCubit: homeCubit,
-            products: products,
           ),
           const MyAuctions(),
           const AddAuctionScreen(),
@@ -184,8 +100,7 @@ class _MainScreenState extends State<MainScreen> {
                      controller: pageController,
                      onPageChanged: (value) {
                        if(value == 4){
-                         AppCubit.get(context).getProfileDetails();
-                        // HomeCubit.get(context).emit(InitHomeState());
+                         AppCubit.get(context).getProfileDetails(context);
                        }
                        if (value < 5) {
                          homeCubit.currentIndex = value;

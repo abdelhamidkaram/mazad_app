@@ -28,7 +28,7 @@ class _ProductImageBoxState extends State<ProductImageBox> {
         child: Stack(
           children: [
             Center(
-              child: Image.asset(widget.productModel.thumbnail ),
+              child: Image.network(widget.productModel.thumbnail ),
             ),
             Row(
               children:  [

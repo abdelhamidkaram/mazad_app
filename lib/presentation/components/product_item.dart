@@ -1,9 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/timer.dart';
-import 'package:soom/presentation/screens/login/bloc/states.dart';
 import 'package:soom/presentation/screens/product/product_screen.dart';
 import 'package:soom/presentation/screens/product/widget/product_price_box.dart';
 import 'package:soom/style/text_style.dart';
@@ -67,7 +65,7 @@ class _ProductItemState extends State<ProductItem> {
                         child: Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: Center(
-                            child: Image.asset(
+                            child: Image.network(
                               widget.productModel.thumbnail,
                             ),
                           ),
@@ -92,7 +90,7 @@ class _ProductItemState extends State<ProductItem> {
                                 decoration: BoxDecoration(
                                     color: ColorManger.lightGrey.withOpacity(0.85),
                                     borderRadius: BorderRadius.circular(4)),
-                                child: TimerDownDate(time: widget.productModel.time),
+                                child: TimerDownDate(time: widget.productModel.time!),
                               ),
                             ],
                           ),
@@ -106,7 +104,7 @@ class _ProductItemState extends State<ProductItem> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4.0),
                         child: Text(
-                          widget.productModel.title,
+                          widget.productModel.title!,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: AppTextStyles.titleProductBlue,

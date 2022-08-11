@@ -1,11 +1,12 @@
 class ApiBase {
-  static const String  baseUrl = "https://sell-order.com/api/" ;
+  static const String  baseUrl = "https://sell-order.com/" ;
 }
 
 class ApiEndPoint {
-  static const String authentication = "TokenAuth/Authenticate" ;
-  static const String register = "services/app/Account/Register" ;
-  static const String getProfileDetails = "services/app/Profile/GetCurrentUserProfileForEdit" ;
-  static const String getUserImage = "services/app/Profile/GetProfilePicture" ;
-  static const String updateProfile = "services/app/Profile/UpdateCurrentUserProfile" ;
+  static const String authentication = "api/TokenAuth/Authenticate" ;
+  static const String register = "api/services/app/Account/Register" ;
+  static const String getProfileDetails = "api/services/app/Profile/GetCurrentUserProfileForEdit" ;
+  static const String getUserImage = "api/services/app/Profile/GetProfilePicture" ;
+  static const String updateProfile = "api/services/app/Profile/UpdateCurrentUserProfile" ;
+  static const String getAllProducts = "api/services/app/Products/GetAll" ;
 }

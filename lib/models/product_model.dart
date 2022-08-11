@@ -4,8 +4,8 @@ class ProductForViewModel{
   final String lasPrice ;
   final String auctionCounter ; //TODO: GET FORM SERVER
   final ProductModel productModel ;
+  final String thumbnail = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"  ;
    List<String>? photos ;
-   String? thumbnail ;
    int? categoryId ;
    String? title ;
    String? tasalsol ;
@@ -24,7 +24,6 @@ ProductForViewModel(
     ){
   title = productModel.product?.name ?? "غير معروف ";
   photos = productModel.product?.photo ?? ["https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"];
-  thumbnail = productModel.product?.photo![0] ?? "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png";
   tasalsol = productModel.product?.id.toString() ?? 0.toString() ;
   pand = productModel.product?.id.toString() ?? 0.toString() ;
   time = productModel.product?.endDate ?? DateTime.now().toString();

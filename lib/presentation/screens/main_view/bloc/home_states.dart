@@ -19,4 +19,8 @@ class DeleteAllFilterCategories extends HomeStates {}
 class GetFilterResultLoading extends HomeStates {}
 class GetFilterResultSuccess extends HomeStates {}
 
+class GetProductsLoading extends HomeStates {}
+class GetProductsSuccess extends HomeStates {}
+class GetProductsError extends HomeStates {}
+
 

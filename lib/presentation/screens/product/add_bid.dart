@@ -71,11 +71,11 @@ class _AddBidState extends State<AddBid> {
                  children: [
                    SizedBox(
                      height: 200,
-                     child: Image.asset(widget.productModel.thumbnail),
+                     child: Image.network(widget.productModel.thumbnail),
                    ),
                    const SizedBox(height: 25,),
                    Text(
-                     widget.productModel.title ,
+                     widget.productModel.title! ,
                      style: AppTextStyles.titleBlue_24,
                      maxLines: 3,
                      overflow: TextOverflow.ellipsis,),

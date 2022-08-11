@@ -1,12 +1,15 @@
+
 import 'dart:async';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/data/cache/prefs.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_states.dart';
+import 'package:soom/presentation/components/toast.dart';
+import 'package:soom/presentation/screens/login/bloc/cubit.dart';
+import 'package:soom/presentation/screens/login/login.dart';
 import 'package:soom/repository/repository.dart';
 
 
@@ -38,11 +41,14 @@ bool isNewInstall = true ;
   final  Repository _repository = Repository() ;
   //get profile details
   ProfileEditSuccess profileEditSuccess = ProfileEditSuccess();
-  getProfileDetails()async {
-    emit(GetProfileDetailsLoading());
+  getProfileDetails(context )async {
+    emit(GetProfileDetailsLoading(  ));
     (await _repository.getProfileDetails()).fold(
             (error){
-              print(error.message);
+              AppToasts.toastError("يرجي اعادة تسجيل الدخول ", context);
+              Timer(const Duration(seconds: 1), (){
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen() ,));
+              });
           emit(GetProfileDetailsError());
         },
             (profileSuccess){

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
@@ -30,7 +29,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
       create: (context) => EditCubit(),
       child: BlocConsumer<EditCubit, EditStates>(
           listener: (context, state) =>
-              [EditCubit(), AppCubit()..getProfileDetails()],
+              [EditCubit(), AppCubit()..getProfileDetails(context)],
           builder: (context, state) {
             var profile = AppCubit.get(context).profileEditSuccess;
             var formKey = GlobalKey<FormState>();

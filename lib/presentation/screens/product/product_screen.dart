@@ -83,7 +83,7 @@ class _ProductScreenState extends State<ProductScreen> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width - 50,
                         child: Text(
-                          widget.productModel.title,
+                          widget.productModel.title!,
                           style: AppTextStyles.titleBlue_24,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -109,7 +109,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         style: AppTextStyles.smallGrey_12,
                       ),
                       Text(
-                        widget.productModel.pand,
+                        widget.productModel.pand!,
                         style: AppTextStyles.smallGreyBold_12,
                       ),
                     ],
@@ -187,7 +187,7 @@ class _ProductScreenState extends State<ProductScreen> {
           height: 25,
         ),
         Text(
-          widget.productModel.details,
+          widget.productModel.details!,
           style: AppTextStyles.mediumGrey,
         ),
       ],
@@ -293,8 +293,8 @@ class _ProductScreenState extends State<ProductScreen> {
   }
 
   String _appbarTitle() {
-    return widget.productModel.title.length > 30
-        ? "${widget.productModel.title.substring(0, 30)} ..."
-        : widget.productModel.title;
+    return widget.productModel.title!.length > 30
+        ? "${widget.productModel.title!.substring(0, 30)} ..."
+        : widget.productModel.title!;
   }
 }

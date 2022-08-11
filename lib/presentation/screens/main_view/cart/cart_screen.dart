@@ -28,165 +28,108 @@ class _CartScreenState extends State<CartScreen> {
         List<ProductForViewModel> products = [
           ProductForViewModel(
               false,
-              "assets/pro2.png",
-              "view",
-              "منزل متكامل مع حديقة ",
-              "123456875",
-              "9565",
-              "2022-05-29",
-              "3000",
-              "8500",
-              "120",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              false,
-              "assets/pro1.png",
-              "view",
-              "جهاز لاب توب ابل ",
-              "123456875",
-              "9565",
-              "2022-05-25",
-              "5000",
-              "10200",
-              "74",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              false,
-              "assets/pro2.png",
-              "view",
-              "عقار يطل علي البحر ",
-              "123456875",
-              "9565",
-              "2022-05-24",
-              "800",
-              "1500",
-              "37",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              true,
-              "assets/pro2.png",
-              "view",
-              "سيارة هونداي ",
-              "123456875",
-              "9565",
-              "2022-06-13",
-              "900",
-              "3900",
-              "95",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              false,
-              "assets/pro1.png",
-              "view",
-              "ساعة روليكس  ",
-              "123456875",
-              "9565",
-              "2022-05-22",
-              "9845",
-              "63215",
-              "85",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              true,
-              "assets/pro2.png",
-              "view",
-              "مجوهرات أثرية ",
-              "123456875",
-              "9565",
-              "2022-05-21",
-              "232",
-              "520",
-              "23",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductForViewModel(
-              true,
-              "assets/pro1.png",
-              "view",
-              "عنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويل ",
-              "123456875",
-              "9565",
-              "2022-05-22",
-              "800",
-              "1500",
-              "20",
-              "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
+              "200",
+              ProductModel(
+                  product: Product(
+                      status: 0,
+                      targetPrice: 300,
+                      minPrice: 200,
+                      name: "تجربة ",
+                      endDate: "2022-05-29",
+                      categoryId: 1,
+                      descrption:
+                          "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما.",
+                      id: 100)),
+              "1000",
+              "12",
+          ),
         ];
         return Directionality(
           textDirection: TextDirection.rtl,
           child: Scaffold(
-            bottomNavigationBar: products.isEmpty? null : AppButtons.appButtonBlue(() {
-              // TODO : GET PAYMENT
-            }, "دفع", true),
+            bottomNavigationBar: products.isEmpty
+                ? null
+                : AppButtons.appButtonBlue(() {
+                    // TODO : GET PAYMENT
+                  }, "دفع", true),
             backgroundColor: ColorManger.white,
             appBar: AppBars.appBarGeneral(context, cubit, "السلة ",
                 cartView: false),
-            body: products.isEmpty ? Center(child: SvgPicture.asset("assets/nocartitem.svg"),) :  ListView(
-              physics: const BouncingScrollPhysics(),
-              children: List.generate(
-                  products.length,
-                  (index) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 12),
-                        child: Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border:
-                                    Border.all(color: ColorManger.lightGrey),
-                              ),
-                              child: Row(
+            body: products.isEmpty
+                ? Center(
+                    child: SvgPicture.asset("assets/nocartitem.svg"),
+                  )
+                : ListView(
+                    physics: const BouncingScrollPhysics(),
+                    children: List.generate(
+                        products.length,
+                        (index) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0, vertical: 12),
+                              child: Column(
                                 children: [
                                   Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 5,
-                                      ),
-                                      width: 105,
-                                      height: 105,
-                                      decoration: const BoxDecoration(
-                                        border: Border(
-                                            left: BorderSide(
-                                                color: ColorManger.lightGrey)),
-                                      ),
-                                      child: Image.asset(products[index].thumbnail)),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            products[index].title,
-                                            style: AppTextStyles
-                                                .mediumBlackBold_17,
-                                            maxLines: 3,
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          PriceAndCurrencyGreen(
-                                              productModel: products[index]),
-                                        ],
-                                      ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          color: ColorManger.lightGrey),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 50,
-                                    child: IconButton(
-                                      onPressed: () {
-                                        //TODO: REMOVE ITEM CART IN SERVER
-                                      },
-                                      icon: SvgPicture.asset("assets/x.svg" ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 5,
+                                            ),
+                                            width: 105,
+                                            height: 105,
+                                            decoration: const BoxDecoration(
+                                              border: Border(
+                                                  left: BorderSide(
+                                                      color: ColorManger
+                                                          .lightGrey)),
+                                            ),
+                                            child: Image.network(
+                                                products[index].thumbnail.toString())),
+                                        Expanded(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  products[index].title!,
+                                                  style: AppTextStyles
+                                                      .mediumBlackBold_17,
+                                                  maxLines: 3,
+                                                ),
+                                                const SizedBox(
+                                                  height: 10,
+                                                ),
+                                                PriceAndCurrencyGreen(
+                                                    productModel:
+                                                        products[index]),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 50,
+                                          child: IconButton(
+                                            onPressed: () {
+                                              //TODO: REMOVE ITEM CART IN SERVER
+                                            },
+                                            icon: SvgPicture.asset(
+                                                "assets/x.svg"),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
+                                  )
                                 ],
                               ),
-                            )
-                          ],
-                        ),
-                      )),
-            ),
+                            )),
+                  ),
           ),
         );
       },

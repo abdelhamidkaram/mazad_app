@@ -130,7 +130,7 @@ class EditCubit extends Cubit<EditStates> {
       //TODO:ADD CITY
     }).then((value) {
       if (value.statusCode == 200) {
-        AppCubit.get(context).getProfileDetails();
+        AppCubit.get(context).getProfileDetails(context );
         Navigator.pop(context);
       }
     });

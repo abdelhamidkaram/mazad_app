@@ -1,9 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
-import 'package:soom/main.dart';
 import 'package:soom/models/login_success.dart';
+import 'package:soom/models/product_model.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/models/ragister_success.dart';
 import 'package:soom/repository/error_model.dart';
@@ -63,9 +64,6 @@ class Repository {
 // ------------ get profile Details   --------------//
 
 Future<Either<ErrorModel , ProfileEditSuccess>> getProfileDetails() async {
-    print("\n \n \n \n \n \n ================================================");
-    print(token);
-    print("\n \n \n \n \n \n ================================================");
   Response _response ;
   try{
     _response =  await  DioFactory().getData( ApiEndPoint.getProfileDetails, {});
@@ -81,8 +79,33 @@ Future<Either<ErrorModel , ProfileEditSuccess>> getProfileDetails() async {
 }
 
 
+// ------------ get profile Details   --------------//
 
+Future<Either<ErrorModel , List<ProductModel>>> getProducts({int? maxResult }) async {
+    Response _response ;
+   try{
+    if(maxResult != null ){
+      _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+        "MaxResultCount": maxResult ,
+      });
+    }else {
+      _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
 
+      });
+    }
+   }catch(error){
+     return Left(ErrorModel(message: ( kDebugMode ? error.toString()+ "\n"  : "" ) + "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: error.hashCode)) ;
+   }
+    if(_response.statusCode!  >=  200 && _response.statusCode! <= 299  ){
+      List _products = _response.data["result"]["items"] ;
+      return Right(
+         _products.map((product) => ProductModel.fromJson(product)).toList()
+      );
+    }else{
+      return Left(ErrorModel(message:  "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: _response.hashCode)) ;
+    }
+
+}
 
 
 

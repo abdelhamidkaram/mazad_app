@@ -1,14 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
+import 'package:soom/repository/repository.dart';
 import 'package:soom/style/text_style.dart';
 
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(InitHomeState());
 
   static HomeCubit get(context) => BlocProvider.of(context);
+  final Repository _repository = Repository();
   int cardNumber = 5;
   int slideCount = 0;
   int currentIndex = 0;
@@ -16,6 +20,7 @@ class HomeCubit extends Cubit<HomeStates> {
   changeBottomNavBar() {
     emit(ChangeBottomNBIndex());
   }
+
 
   // ------------------ exit method --------------//
   Future<bool> onWillPop(
@@ -36,7 +41,7 @@ class HomeCubit extends Cubit<HomeStates> {
               ),
               actions: <Widget>[
                 TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
+                  onPressed: () => SystemNavigator.pop(),
                   child: const Text('نعم', style: AppTextStyles.mediumBlack),
                 ),
                 TextButton(
@@ -53,6 +58,28 @@ class HomeCubit extends Cubit<HomeStates> {
         false;
   }
 
+  // ------------------ get Products  --------------//
+
+  List<ProductForViewModel> products = [];
+  Future getProducts (context)async {
+    emit(GetProductsLoading());
+    (
+    await _repository.getProducts()
+    ).fold((errorModel){
+      emit(GetProductsError());
+       if (kDebugMode) {
+         print( errorModel.message);
+       }
+      if(errorModel.statusCode == 401 ){
+        AppToasts.toastError("يرجي اعادة تسجيل الدخول " , context);
+       }
+    }, (productsList) {
+
+      //TODO: GET THE favORiTe  and last price
+      products = productsList.map((product)=> ProductForViewModel(false, "2000", product, "200", "12") ).toList();
+      emit(GetProductsSuccess());
+    });
+  }
 
   // ------------------ filter method --------------//
 
@@ -108,42 +135,7 @@ class HomeCubit extends Cubit<HomeStates> {
     emit(GetFilterResultLoading());
     //TODO: GET FILTER RESULT IN SERVER
     List<ProductForViewModel> resultList = [
-      ProductForViewModel(
-          false,
-          "assets/pro1.png",
-          "view",
-          "ساعة روليكس  ",
-          "123456875",
-          "9565",
-          "2022-05-22",
-          "9845",
-          "63215",
-          "85",
-          "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductForViewModel(
-          true,
-          "assets/pro2.png",
-          "view",
-          "مجوهرات أثرية ",
-          "123456875",
-          "9565",
-          "2022-05-21",
-          "232",
-          "520",
-          "23",
-          "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductForViewModel(
-          true,
-          "assets/pro1.png",
-          "view",
-          "عنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويل ",
-          "123456875",
-          "9565",
-          "2022-05-22",
-          "800",
-          "1500",
-          "20",
-          "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
+
     ];
     if(resultList.isNotEmpty){
       _filterResult = resultList ;
@@ -163,42 +155,7 @@ class HomeCubit extends Cubit<HomeStates> {
     //TODO: GET SEARCH RESULT IN SERVER
     List<ProductForViewModel> resultList = [
       //TODO: COVERT TO RESULT
-      ProductForViewModel(
-          false,
-          "assets/pro1.png",
-          "view",
-          "ساعة روليكس  ",
-          "123456875",
-          "9565",
-          "2022-05-22",
-          "9845",
-          "63215",
-          "85",
-          "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductForViewModel(
-          true,
-          "assets/pro2.png",
-          "view",
-          "مجوهرات أثرية ",
-          "123456875",
-          "9565",
-          "2022-05-21",
-          "232",
-          "520",
-          "23",
-          "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductForViewModel(
-          true,
-          "assets/pro1.png",
-          "view",
-          "عنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويلعنوان طويل ",
-          "123456875",
-          "9565",
-          "2022-05-22",
-          "800",
-          "1500",
-          "20",
-          "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
+
     ];
     if(resultList.isNotEmpty){
       _searchResult = resultList ;

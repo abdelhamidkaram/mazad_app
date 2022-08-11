@@ -36,7 +36,7 @@ class _ProductPriceBoxState extends State<ProductPriceBox> {
                   padding:const EdgeInsets.symmetric(horizontal: 8),
                   height: 30,
                   color: ColorManger.primaryLight_10,
-                  child: TimerDownDate(time: widget.productModel.time,),
+                  child: TimerDownDate(time: widget.productModel.time!,),
                 ),
               ],
             ),
@@ -121,7 +121,7 @@ class _PriceAndCurrencyRedState extends State<PriceAndCurrencyRed> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         const Text("KW", style: AppTextStyles.currencyRed,),
-        Text(widget.productModel.initialPrice.substring(0 , widget.productModel.initialPrice.length >=6 ?  6 : widget.productModel.initialPrice.length), style: AppTextStyles.titleRed,),
+        Text(widget.productModel.initialPrice.toString().substring(0 , widget.productModel.initialPrice.toString().length >=6 ?  6 : widget.productModel.initialPrice.toString().length), style: AppTextStyles.titleRed,),
       ],
     );
   }
