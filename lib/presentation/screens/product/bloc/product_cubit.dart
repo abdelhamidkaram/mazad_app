@@ -12,13 +12,13 @@ class BidCubit extends Cubit<BidStates> {
   bool isAddBid = false;
   int bidCounter = 100;
 
-  TextEditingController getController(ProductModel productModel) {
+  TextEditingController getController(ProductForViewModel productModel) {
     controller.text = !isAddBid ? productModel.lasPrice : controller.text;
     emit(GetBidController());
     return controller;
   }
 
-  addBid(ProductModel productModel, context) {
+  addBid(ProductForViewModel productModel, context) {
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||
@@ -36,7 +36,7 @@ class BidCubit extends Cubit<BidStates> {
     emit(AddBid());
   }
 
-  removeBid(ProductModel productModel , context ) {
+  removeBid(ProductForViewModel productModel , context ) {
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||

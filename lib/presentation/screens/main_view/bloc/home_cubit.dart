@@ -103,12 +103,12 @@ class HomeCubit extends Cubit<HomeStates> {
  }
 
 // ------------------  filter Result --------------//
-  List<ProductModel> _filterResult =[];
-  List<ProductModel> getFilterResult (){
+  List<ProductForViewModel> _filterResult =[];
+  List<ProductForViewModel> getFilterResult (){
     emit(GetFilterResultLoading());
     //TODO: GET FILTER RESULT IN SERVER
-    List<ProductModel> resultList = [
-      ProductModel(
+    List<ProductForViewModel> resultList = [
+      ProductForViewModel(
           false,
           "assets/pro1.png",
           "view",
@@ -120,7 +120,7 @@ class HomeCubit extends Cubit<HomeStates> {
           "63215",
           "85",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           true,
           "assets/pro2.png",
           "view",
@@ -132,7 +132,7 @@ class HomeCubit extends Cubit<HomeStates> {
           "520",
           "23",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           true,
           "assets/pro1.png",
           "view",
@@ -155,15 +155,15 @@ class HomeCubit extends Cubit<HomeStates> {
 
 // ------------------  search Result --------------//
 
-  List<ProductModel> _searchResult =[];
-  List<ProductModel> getSearchResult (value){
+  List<ProductForViewModel> _searchResult =[];
+  List<ProductForViewModel> getSearchResult (value){
     _searchResult =[];
     print(value);
     emit(GetFilterResultLoading());
     //TODO: GET SEARCH RESULT IN SERVER
-    List<ProductModel> resultList = [
+    List<ProductForViewModel> resultList = [
       //TODO: COVERT TO RESULT
-      ProductModel(
+      ProductForViewModel(
           false,
           "assets/pro1.png",
           "view",
@@ -175,7 +175,7 @@ class HomeCubit extends Cubit<HomeStates> {
           "63215",
           "85",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           true,
           "assets/pro2.png",
           "view",
@@ -187,7 +187,7 @@ class HomeCubit extends Cubit<HomeStates> {
           "520",
           "23",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           true,
           "assets/pro1.png",
           "view",

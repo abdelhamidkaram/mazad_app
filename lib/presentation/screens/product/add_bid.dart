@@ -13,7 +13,7 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class AddBid extends StatefulWidget {
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
   const AddBid({Key? key, required this.productModel}) : super(key: key);
 
   @override
@@ -71,7 +71,7 @@ class _AddBidState extends State<AddBid> {
                  children: [
                    SizedBox(
                      height: 200,
-                     child: Image.asset(widget.productModel.img),
+                     child: Image.asset(widget.productModel.thumbnail),
                    ),
                    const SizedBox(height: 25,),
                    Text(

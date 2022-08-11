@@ -10,7 +10,7 @@ import '../../../components/product_item.dart';
 
 class HomeScreen extends StatefulWidget {
  final   HomeCubit homeCubit ;
- final List<ProductModel> products ;
+ final List<ProductForViewModel> products ;
   const HomeScreen({Key? key, required this.homeCubit, required this.products}) : super(key: key);
   @override
   State<HomeScreen> createState() => _HomeScreenState();

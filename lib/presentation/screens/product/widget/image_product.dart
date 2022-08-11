@@ -5,7 +5,7 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class ProductImageBox extends StatefulWidget {
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
 
   const ProductImageBox({Key? key, required this.productModel})
       : super(key: key);
@@ -28,7 +28,7 @@ class _ProductImageBoxState extends State<ProductImageBox> {
         child: Stack(
           children: [
             Center(
-              child: Image.asset(widget.productModel.img ),
+              child: Image.asset(widget.productModel.thumbnail ),
             ),
             Row(
               children:  [

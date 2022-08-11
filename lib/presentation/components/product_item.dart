@@ -14,7 +14,7 @@ class ProductItem extends StatefulWidget {
   final bool? isTabsScreen;
   final bool? isMyAuction;
   final bool? isFavoriteScreen;
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
 
   const ProductItem(
       {Key? key,
@@ -68,7 +68,7 @@ class _ProductItemState extends State<ProductItem> {
                           padding: const EdgeInsets.all(2.0),
                           child: Center(
                             child: Image.asset(
-                              widget.productModel.img,
+                              widget.productModel.thumbnail,
                             ),
                           ),
                         ),
@@ -135,7 +135,7 @@ class _ProductItemState extends State<ProductItem> {
 }
 
 class LastBidsPrice extends StatefulWidget {
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
 
   const LastBidsPrice({Key? key, required this.productModel}) : super(key: key);
 
@@ -169,7 +169,7 @@ class _LastBidsPriceState extends State<LastBidsPrice> {
 }
 
 class LastBidsTabs extends StatefulWidget {
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
 
   const LastBidsTabs({Key? key, required this.productModel}) : super(key: key);
 
@@ -224,7 +224,7 @@ class _LastBidsTabsState extends State<LastBidsTabs> {
 
 
 class LastBidsTabsAndPrice extends StatefulWidget {
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
 
   const LastBidsTabsAndPrice({Key? key, required this.productModel}) : super(key: key);
 

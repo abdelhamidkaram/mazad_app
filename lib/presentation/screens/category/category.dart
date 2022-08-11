@@ -31,7 +31,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                   scrollDirection: Axis.vertical,
-                  itemBuilder:(context, index) =>  ProductItem(isFullWidth: true, productModel: ProductModel( true , "assets/pro2.png", "200", "titletitletitletitle", "1265452", "695", "2022-05-28", "100", "100", "25", "details"),),
+                  itemBuilder:(context, index) =>  ProductItem(isFullWidth: true, productModel: ProductForViewModel( true , "assets/pro2.png", "200", "titletitletitletitle", "1265452", "695", "2022-05-28", "100", "100", "25", "details"),),
                   separatorBuilder:(context, index) => const SizedBox(height: 20,),
                   itemCount: 10),
             ),

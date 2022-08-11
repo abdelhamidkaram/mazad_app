@@ -7,7 +7,7 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class SearchResultScreen extends StatefulWidget {
-  final  List<ProductModel> products ;
+  final  List<ProductForViewModel> products ;
   const SearchResultScreen({Key? key, required this.products}) : super(key: key);
   @override
   State<SearchResultScreen> createState() => _SearchResultScreenState();

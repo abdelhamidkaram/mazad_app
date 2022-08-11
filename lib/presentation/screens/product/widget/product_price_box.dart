@@ -5,7 +5,7 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class ProductPriceBox extends StatefulWidget {
-  final ProductModel productModel ;
+  final ProductForViewModel productModel ;
   const ProductPriceBox({Key? key, required this.productModel}) : super(key: key);
 
   @override
@@ -85,7 +85,7 @@ class _ProductPriceBoxState extends State<ProductPriceBox> {
 
 
 class PriceAndCurrencyGreen extends StatefulWidget {
-  final ProductModel  productModel ;
+  final ProductForViewModel  productModel ;
   const PriceAndCurrencyGreen({Key? key, required this.productModel}) : super(key: key);
 
   @override
@@ -107,7 +107,7 @@ class _PriceAndCurrencyGreenState extends State<PriceAndCurrencyGreen> {
 
 
 class PriceAndCurrencyRed extends StatefulWidget {
-  final ProductModel  productModel ;
+  final ProductForViewModel  productModel ;
   const PriceAndCurrencyRed({Key? key, required this.productModel}) : super(key: key);
 
   @override
@@ -121,7 +121,7 @@ class _PriceAndCurrencyRedState extends State<PriceAndCurrencyRed> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         const Text("KW", style: AppTextStyles.currencyRed,),
-        Text(widget.productModel.price.substring(0 , widget.productModel.price.length >=6 ?  6 : widget.productModel.price.length), style: AppTextStyles.titleRed,),
+        Text(widget.productModel.initialPrice.substring(0 , widget.productModel.initialPrice.length >=6 ?  6 : widget.productModel.initialPrice.length), style: AppTextStyles.titleRed,),
       ],
     );
   }

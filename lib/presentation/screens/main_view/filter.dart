@@ -7,7 +7,7 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class FilterResultScreen extends StatefulWidget {
- final  List<ProductModel> products ;
+ final  List<ProductForViewModel> products ;
   const FilterResultScreen({Key? key, required this.products}) : super(key: key);
   @override
   State<FilterResultScreen> createState() => _FilterResultScreenState();

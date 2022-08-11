@@ -13,7 +13,7 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class ProductScreen extends StatefulWidget {
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
   final bool isMyAuction;
 
   const ProductScreen(

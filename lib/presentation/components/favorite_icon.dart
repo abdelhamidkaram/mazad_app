@@ -3,7 +3,7 @@ import 'package:soom/models/product_model.dart';
 import 'package:soom/style/color_manger.dart';
 
 class FavoriteIcon extends StatefulWidget {
-  final ProductModel productModel;
+  final ProductForViewModel productModel;
   const FavoriteIcon(this.productModel, {Key? key}) : super(key: key);
   @override
   State<FavoriteIcon> createState() => _FavoriteIconState();

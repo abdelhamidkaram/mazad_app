@@ -3,7 +3,7 @@ import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/product_item.dart';
 
 class MyAuctionsTab extends StatefulWidget {
-  final  List<ProductModel> myAuctions;
+  final  List<ProductForViewModel> myAuctions;
   const MyAuctionsTab({Key? key , required this.myAuctions} ) : super(key: key);
   @override
   State<MyAuctionsTab> createState() => _MyAuctionsTabState();

@@ -13,8 +13,8 @@ class FavoriteScreen extends StatefulWidget {
 class _FavoriteScreenState extends State<FavoriteScreen> {
   @override
   Widget build(BuildContext context) {
-    List<ProductModel> items = [
-      ProductModel(
+    List<ProductForViewModel> items = [
+      ProductForViewModel(
           false,
           "assets/pro2.png",
           "view",
@@ -26,7 +26,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           "8500",
           "120",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           false,
           "assets/pro1.png",
           "view",
@@ -38,7 +38,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           "10200",
           "74",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           false,
           "assets/pro2.png",
           "view",
@@ -50,7 +50,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           "1500",
           "37",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           true,
           "assets/pro2.png",
           "view",
@@ -62,7 +62,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           "3900",
           "95",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           false,
           "assets/pro1.png",
           "view",
@@ -74,7 +74,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           "63215",
           "85",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           true,
           "assets/pro2.png",
           "view",
@@ -86,7 +86,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           "520",
           "23",
           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-      ProductModel(
+      ProductForViewModel(
           true,
           "assets/pro1.png",
           "view",

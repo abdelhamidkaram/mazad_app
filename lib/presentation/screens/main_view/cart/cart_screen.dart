@@ -25,8 +25,8 @@ class _CartScreenState extends State<CartScreen> {
       builder: (context, state) {
         HomeCubit cubit = HomeCubit.get(context);
         //TODO: GET CART PRODUCTS
-        List<ProductModel> products = [
-          ProductModel(
+        List<ProductForViewModel> products = [
+          ProductForViewModel(
               false,
               "assets/pro2.png",
               "view",
@@ -38,7 +38,7 @@ class _CartScreenState extends State<CartScreen> {
               "8500",
               "120",
               "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductModel(
+          ProductForViewModel(
               false,
               "assets/pro1.png",
               "view",
@@ -50,7 +50,7 @@ class _CartScreenState extends State<CartScreen> {
               "10200",
               "74",
               "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductModel(
+          ProductForViewModel(
               false,
               "assets/pro2.png",
               "view",
@@ -62,7 +62,7 @@ class _CartScreenState extends State<CartScreen> {
               "1500",
               "37",
               "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductModel(
+          ProductForViewModel(
               true,
               "assets/pro2.png",
               "view",
@@ -74,7 +74,7 @@ class _CartScreenState extends State<CartScreen> {
               "3900",
               "95",
               "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductModel(
+          ProductForViewModel(
               false,
               "assets/pro1.png",
               "view",
@@ -86,7 +86,7 @@ class _CartScreenState extends State<CartScreen> {
               "63215",
               "85",
               "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductModel(
+          ProductForViewModel(
               true,
               "assets/pro2.png",
               "view",
@@ -98,7 +98,7 @@ class _CartScreenState extends State<CartScreen> {
               "520",
               "23",
               "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما."),
-          ProductModel(
+          ProductForViewModel(
               true,
               "assets/pro1.png",
               "view",
@@ -148,7 +148,7 @@ class _CartScreenState extends State<CartScreen> {
                                             left: BorderSide(
                                                 color: ColorManger.lightGrey)),
                                       ),
-                                      child: Image.asset(products[index].img)),
+                                      child: Image.asset(products[index].thumbnail)),
                                   Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),

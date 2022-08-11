@@ -103,7 +103,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                       ),
                       TextFormField(
                         controller: cubit.priceController,
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(decimal: false , signed: false),
                         decoration: const InputDecoration(
                           hintText: " 5000 kw ",
                           border: OutlineInputBorder(),
