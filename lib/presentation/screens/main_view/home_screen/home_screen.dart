@@ -20,6 +20,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
+  void initState()  {
+
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
           onRefresh: () => widget.homeCubit.getProducts(context),
@@ -36,7 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     //TODO: CATEGORY  LIST
                     CategoriesListView(
-                        categoryModel: CategoryModel(2, "assets/r.png", "title"),
                         homeCubit: widget.homeCubit),
                     SlideImage(homeCubit: widget.homeCubit),
                     TitleCategory(title: "آخر المزادات ", onPressed: () {}),

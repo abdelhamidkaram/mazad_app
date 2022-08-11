@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
+import 'package:soom/presentation/screens/category/category_model.dart';
+import 'package:soom/presentation/screens/login/login.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/repository/repository.dart';
 import 'package:soom/style/text_style.dart';
@@ -59,7 +63,6 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
   // ------------------ get Products  --------------//
-
   List<ProductForViewModel> products = [];
   Future getProducts (context)async {
     emit(GetProductsLoading());
@@ -80,6 +83,33 @@ class HomeCubit extends Cubit<HomeStates> {
       emit(GetProductsSuccess());
     });
   }
+
+
+  // ------------------ get Products  --------------//
+
+  List<CategoryModel> categories = [];
+  Future getCategories (context)async {
+    emit(GetCategoriesLoading());
+    (
+        await _repository.getCategories()
+    ).fold((errorModel){
+      emit(GetCategoriesError());
+      AppToasts.toastError("لايمكن جلب المعلومات حاليا (التصنيفات).. حاول لاحقا !", context);
+      if (kDebugMode) {
+        print( errorModel.message);
+      }
+      if(errorModel.statusCode == 401 ){
+        AppToasts.toastError("يرجي اعادة تسجيل الدخول " , context);
+      }
+      Timer(const Duration(seconds: 3),() {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
+      });
+    }, (categoriesList) {
+      categories = categoriesList;
+      emit(GetCategoriesSuccess());
+    });
+  }
+
 
   // ------------------ filter method --------------//
 

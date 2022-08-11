@@ -53,9 +53,13 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
 
     return BlocConsumer<HomeCubit, HomeStates>(
-      listener: (context, state) => HomeCubit()..getProducts(context),
+      listener: (context, state) => HomeCubit(),
       builder: (context, state){
         var cubit = HomeCubit.get(context);
+        if(cubit.categories.isEmpty || cubit.products.isEmpty ){
+          cubit.getProducts(context).then((value) => null);
+          cubit.getCategories(context).then((value) => null);
+        }
         List<bool> cartViewsAndElevation = [true, true, true, true, false];
         List<String> titles = [
           "الرئيسية",
@@ -66,9 +70,7 @@ class _MainScreenState extends State<MainScreen> {
         ];
         var homeCubit = HomeCubit.get(context);
         List<Widget> screens = [
-          state is GetProductsLoading ?
-              const Center(child: CircularProgressIndicator(),)
-              :HomeScreen(
+          HomeScreen(
             homeCubit: homeCubit,
           ),
           const MyAuctions(),

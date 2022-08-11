@@ -21,7 +21,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: ColorManger.white,
-        appBar: AppBars.appBarGeneral(context , HomeCubit.get(context), widget.category.title ),
+        appBar: AppBars.appBarGeneral(context , HomeCubit.get(context), widget.category.title! ),
         body:  SingleChildScrollView(
           physics: const  BouncingScrollPhysics(),
           child: Padding(

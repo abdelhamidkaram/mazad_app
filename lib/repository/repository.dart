@@ -7,6 +7,7 @@ import 'package:soom/models/login_success.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/models/ragister_success.dart';
+import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/repository/error_model.dart';
 import 'package:soom/repository/request_models.dart';
 
@@ -79,7 +80,7 @@ Future<Either<ErrorModel , ProfileEditSuccess>> getProfileDetails() async {
 }
 
 
-// ------------ get profile Details   --------------//
+// ------------ get products Details   --------------//
 
 Future<Either<ErrorModel , List<ProductModel>>> getProducts({int? maxResult }) async {
     Response _response ;
@@ -100,6 +101,35 @@ Future<Either<ErrorModel , List<ProductModel>>> getProducts({int? maxResult }) a
       List _products = _response.data["result"]["items"] ;
       return Right(
          _products.map((product) => ProductModel.fromJson(product)).toList()
+      );
+    }else{
+      return Left(ErrorModel(message:  "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: _response.hashCode)) ;
+    }
+
+}
+
+
+// ------------ get products categories   --------------//
+
+Future<Either<ErrorModel , List<CategoryModel>>> getCategories({int? maxResult }) async {
+    Response _response ;
+   try{
+    if(maxResult != null ){
+      _response = await DioFactory().getData(ApiEndPoint.getAllCategories , {
+        "MaxResultCount": maxResult ,
+      });
+    }else {
+      _response = await DioFactory().getData(ApiEndPoint.getAllCategories , {
+
+      });
+    }
+   }catch(error){
+     return Left(ErrorModel(message: ( kDebugMode ? error.toString()+ "\n"  : "" ) + "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: error.hashCode)) ;
+   }
+    if(_response.statusCode!  >=  200 && _response.statusCode! <= 299  ){
+      List _categories = _response.data["result"]["items"] ;
+      return Right(
+          _categories.map((category) =>  CategoryModel.fromJson(category["category"])).toList()
       );
     }else{
       return Left(ErrorModel(message:  "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: _response.hashCode)) ;

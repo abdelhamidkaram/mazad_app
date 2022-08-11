@@ -4,9 +4,8 @@ import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/widget/home_widgets/category_item_build.dart';
 
 class CategoriesListView extends StatelessWidget {
-  final CategoryModel categoryModel ;
   final HomeCubit homeCubit ;
-  const CategoriesListView({Key? key,required this.categoryModel, required this.homeCubit}) : super(key: key);
+  const CategoriesListView({Key? key, required this.homeCubit}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -14,11 +13,12 @@ class CategoriesListView extends StatelessWidget {
       child: ListView.separated(
           physics: const BouncingScrollPhysics(),
           scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => CategoryItemBuild(isFilter: false, categoryModel: categoryModel, homeCubit:homeCubit,),
+          itemBuilder: (context, index) => CategoryItemBuild(isFilter: false, categoryModel: homeCubit.categories[index], homeCubit:homeCubit,),
           separatorBuilder: (context, index) => const SizedBox(
                 width: 20,
               ),
-          itemCount: 10),
+          itemCount: homeCubit.categories.length,
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:soom/presentation/screens/category/category.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
@@ -51,7 +52,12 @@ class _CategoryItemBuildState extends State<CategoryItemBuild> {
                   padding: const EdgeInsets.all(2.0),
                   child: Center(
                     child:
-                    Image.asset("assets/r.png"),
+                    widget.categoryModel!.img!.substring(widget.categoryModel!.img.toString().length - 3 ) == "svg"
+                        ?
+                    SvgPicture.network(widget.categoryModel!.img! , color: ColorManger.primary,)
+                        :
+                    Image.network(widget.categoryModel!.img!)
+                    ,
                   ),
                 ),
               ),
@@ -60,7 +66,7 @@ class _CategoryItemBuildState extends State<CategoryItemBuild> {
               height: 8,
             ),
             Text(
-              " ساعات عقارات",
+              widget.categoryModel!.title!,
               style: widget.isSelected ? AppTextStyles.mediumBlue  : AppTextStyles.smallBlack,
               overflow: TextOverflow.ellipsis,
             ),

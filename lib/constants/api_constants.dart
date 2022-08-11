@@ -9,4 +9,5 @@ class ApiEndPoint {
   static const String getUserImage = "api/services/app/Profile/GetProfilePicture" ;
   static const String updateProfile = "api/services/app/Profile/UpdateCurrentUserProfile" ;
   static const String getAllProducts = "api/services/app/Products/GetAll" ;
+  static const String getAllCategories = "api/services/app/Categories/GetAll" ;
 }

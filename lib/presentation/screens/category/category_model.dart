@@ -1,8 +1,12 @@
 
 class CategoryModel {
-  final int index;
-  final String img ;
-  final String title ;
-  CategoryModel(  this.index ,  this.img ,  this.title);
-
+   int? index;
+   String? img ;
+   String? title ;
+  CategoryModel(this.index, this.img, this.title);
+CategoryModel.fromJson(Map<String , dynamic> json){
+  index = json["id"];
+  img = json["iconUrl"] ;
+  title = json["name"];
+}
 }

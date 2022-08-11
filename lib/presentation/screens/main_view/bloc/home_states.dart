@@ -24,3 +24,8 @@ class GetProductsSuccess extends HomeStates {}
 class GetProductsError extends HomeStates {}
 
 
+class GetCategoriesLoading extends HomeStates {}
+class GetCategoriesSuccess extends HomeStates {}
+class GetCategoriesError extends HomeStates {}
+
+
