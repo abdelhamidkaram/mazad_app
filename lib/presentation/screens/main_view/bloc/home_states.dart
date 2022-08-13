@@ -29,3 +29,8 @@ class GetCategoriesSuccess extends HomeStates {}
 class GetCategoriesError extends HomeStates {}
 
 
+class GetSearchLoading extends HomeStates {}
+class GetSearchSuccess extends HomeStates {}
+class GetSearchError extends HomeStates {}
+
+

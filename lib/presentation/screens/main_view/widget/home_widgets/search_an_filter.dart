@@ -34,9 +34,9 @@ class _SearchAndFilterState extends State<SearchAndFilter> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => SearchResultScreen(
-                      products: widget.homeCubit.getSearchResult(value),
+                      searchKeyword: value, ),
                     ),
-                  ),
+
                 );
               }
             },

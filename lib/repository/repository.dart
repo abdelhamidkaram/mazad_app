@@ -60,7 +60,10 @@ class Repository {
   }
 
     // ------------ reset password   --------------//
+
 //TODO:RESET PASSWORD
+
+
 
 // ------------ get profile Details   --------------//
 
@@ -80,18 +83,19 @@ Future<Either<ErrorModel , ProfileEditSuccess>> getProfileDetails() async {
 }
 
 
-// ------------ get products Details   --------------//
+// ------------ get all products details   --------------//
 
 Future<Either<ErrorModel , List<ProductModel>>> getProducts({int? maxResult }) async {
     Response _response ;
    try{
     if(maxResult != null ){
-      _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
-        "MaxResultCount": maxResult ,
-      });
+
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+            "MaxResultCount": maxResult ,
+          });
+
     }else {
       _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
-
       });
     }
    }catch(error){
@@ -108,10 +112,88 @@ Future<Either<ErrorModel , List<ProductModel>>> getProducts({int? maxResult }) a
 
 }
 
+// ------------ get products Details based on category name    --------------//
 
-// ------------ get products categories   --------------//
+  Future<Either<ErrorModel , List<ProductModel>>> getProductsBaseOnCategoryName({int? maxResult , String? categoryName }) async {
+    Response _response ;
+    try{
+      if(maxResult != null ){
+        if(categoryName !=null){
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+            "MaxResultCount": maxResult ,
+            "CategoryNameFilter":categoryName,
+          });
+        }else{
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+            "MaxResultCount": maxResult ,
+          });
+        }
+      }else {
+        if(categoryName !=null){
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+            "CategoryNameFilter":categoryName,
+          });}else{
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+          });
+        }
+      }
+    }catch(error){
+      return Left(ErrorModel(message: ( kDebugMode ? error.toString()+ "\n"  : "" ) + "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: error.hashCode)) ;
+    }
+    if(_response.statusCode!  >=  200 && _response.statusCode! <= 299  ){
+      List _products = _response.data["result"]["items"] ;
+      return Right(
+          _products.map((product) => ProductModel.fromJson(product)).toList()
+      );
+    }else{
+      return Left(ErrorModel(message:  "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: _response.hashCode)) ;
+    }
 
-Future<Either<ErrorModel , List<CategoryModel>>> getCategories({int? maxResult }) async {
+  }
+
+// ------------ get products Details based on search filter   --------------//
+
+  Future<Either<ErrorModel , List<ProductModel>>> getProductsBaseOnSearchFilter({int? maxResult , String? searchKeywords }) async {
+    Response _response ;
+    try{
+      if(maxResult != null ){
+        if(searchKeywords !=null){
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+            "MaxResultCount": maxResult ,
+            "Filter":searchKeywords,
+          });
+        }else{
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+            "MaxResultCount": maxResult ,
+          });
+        }
+      }else {
+        if(searchKeywords !=null){
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+            "Filter":searchKeywords,
+          });}else{
+          _response = await DioFactory().getData(ApiEndPoint.getAllProducts , {
+          });
+        }
+      }
+    }catch(error){
+      return Left(ErrorModel(message: ( kDebugMode ? error.toString()+ "\n"  : "" ) + "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: error.hashCode)) ;
+    }
+    if(_response.statusCode!  >=  200 && _response.statusCode! <= 299  ){
+      List _products = _response.data["result"]["items"] ;
+      return Right(
+          _products.map((product) => ProductModel.fromJson(product)).toList()
+      );
+    }else{
+      return Left(ErrorModel(message:  "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: _response.hashCode)) ;
+    }
+
+  }
+
+
+// ------------ get  categories    --------------//
+
+Future<Either<ErrorModel , List<CategoryModel>>> getCategories({int? maxResult}) async {
     Response _response ;
    try{
     if(maxResult != null ){
@@ -119,9 +201,7 @@ Future<Either<ErrorModel , List<CategoryModel>>> getCategories({int? maxResult }
         "MaxResultCount": maxResult ,
       });
     }else {
-      _response = await DioFactory().getData(ApiEndPoint.getAllCategories , {
-
-      });
+      _response = await DioFactory().getData(ApiEndPoint.getAllCategories , {});
     }
    }catch(error){
      return Left(ErrorModel(message: ( kDebugMode ? error.toString()+ "\n"  : "" ) + "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ", statusCode: error.hashCode)) ;

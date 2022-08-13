@@ -27,12 +27,11 @@ class HomeCubit extends Cubit<HomeStates> {
 
 
   // ------------------ exit method --------------//
-  Future<bool> onWillPop(
-    context,
-  ) async {
+  Future<bool> onWillPop(context,) async {
     return (await showDialog(
-          context: context,
-          builder: (context) => Directionality(
+      context: context,
+      builder: (context) =>
+          Directionality(
             textDirection: TextDirection.rtl,
             child: AlertDialog(
               title: const Text(
@@ -58,51 +57,55 @@ class HomeCubit extends Cubit<HomeStates> {
               ],
             ),
           ),
-        )) ??
+    )) ??
         false;
   }
 
   // ------------------ get Products  --------------//
   List<ProductForViewModel> products = [];
-  Future getProducts (context)async {
+
+  Future getProducts(context) async {
     emit(GetProductsLoading());
     (
-    await _repository.getProducts()
-    ).fold((errorModel){
+        await _repository.getProducts()
+    ).fold((errorModel) {
       emit(GetProductsError());
-       if (kDebugMode) {
-         print( errorModel.message);
-       }
-      if(errorModel.statusCode == 401 ){
-        AppToasts.toastError("يرجي اعادة تسجيل الدخول " , context);
-       }
+      if (kDebugMode) {
+        print(errorModel.message);
+      }
+      if (errorModel.statusCode == 401) {
+        AppToasts.toastError("يرجي اعادة تسجيل الدخول ", context);
+      }
     }, (productsList) {
-
       //TODO: GET THE favORiTe  and last price
-      products = productsList.map((product)=> ProductForViewModel(false, "2000", product, "200", "12") ).toList();
+      products = productsList.map((product) =>
+          ProductForViewModel(false, "2000", product, "200", "12")).toList();
       emit(GetProductsSuccess());
     });
   }
 
 
-  // ------------------ get Products  --------------//
+  // ------------------ get category  --------------//
 
   List<CategoryModel> categories = [];
-  Future getCategories (context)async {
+
+  Future getCategories(context) async {
     emit(GetCategoriesLoading());
     (
         await _repository.getCategories()
-    ).fold((errorModel){
+    ).fold((errorModel) {
       emit(GetCategoriesError());
-      AppToasts.toastError("لايمكن جلب المعلومات حاليا (التصنيفات).. حاول لاحقا !", context);
+      AppToasts.toastError(
+          "لايمكن جلب المعلومات حاليا (التصنيفات).. حاول لاحقا !", context);
       if (kDebugMode) {
-        print( errorModel.message);
+        print(errorModel.message);
       }
-      if(errorModel.statusCode == 401 ){
-        AppToasts.toastError("يرجي اعادة تسجيل الدخول " , context);
+      if (errorModel.statusCode == 401) {
+        AppToasts.toastError("يرجي اعادة تسجيل الدخول ", context);
       }
-      Timer(const Duration(seconds: 3),() {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
+      Timer(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const LoginScreen(),));
       });
     }, (categoriesList) {
       categories = categoriesList;
@@ -130,24 +133,28 @@ class HomeCubit extends Cubit<HomeStates> {
   bool isLess = false;
   bool isNew = false;
   bool isOld = false;
-  changeFilter(){
+
+  changeFilter() {
     emit(ChangeFilter());
   }
 
   List<int> filterCategories = [];
-   addToFilterCategories(int categoryIndex){
-       filterCategories.add(categoryIndex);
-   }
-   deleteFromFilterCategories(int categoryIndex){
-     filterCategories.remove(categoryIndex);
-     emit(DeleteFromFilterCategories());
-   }
-   deleteAllFilterCategories(int categoryIndex){
-     filterCategories = [];
-     emit(DeleteAllFilterCategories());
-   }
 
-  deleteFilter(){
+  addToFilterCategories(int categoryIndex) {
+    filterCategories.add(categoryIndex);
+  }
+
+  deleteFromFilterCategories(int categoryIndex) {
+    filterCategories.remove(categoryIndex);
+    emit(DeleteFromFilterCategories());
+  }
+
+  deleteAllFilterCategories(int categoryIndex) {
+    filterCategories = [];
+    emit(DeleteAllFilterCategories());
+  }
+
+  deleteFilter() {
     isMost = true;
     isLess = false;
     isNew = false;
@@ -155,47 +162,49 @@ class HomeCubit extends Cubit<HomeStates> {
     filterCategories = [];
     maxRangeFilter = 6000;
     minRangeFilter = 3000;
-    changeRangeValue(RangeValues(minRangeFilter.toDouble(), maxRangeFilter.toDouble()));
+    changeRangeValue(
+        RangeValues(minRangeFilter.toDouble(), maxRangeFilter.toDouble()));
     emit(DeleteFilterState());
- }
+  }
 
 // ------------------  filter Result --------------//
-  List<ProductForViewModel> _filterResult =[];
-  List<ProductForViewModel> getFilterResult (){
+  List<ProductForViewModel> _filterResult = [];
+
+  List<ProductForViewModel> getFilterResult() {
     emit(GetFilterResultLoading());
     //TODO: GET FILTER RESULT IN SERVER
     List<ProductForViewModel> resultList = [
-
     ];
-    if(resultList.isNotEmpty){
-      _filterResult = resultList ;
+    if (resultList.isNotEmpty) {
+      _filterResult = resultList;
       emit(GetFilterResultSuccess());
     }
-    return _filterResult ;
+    return _filterResult;
   }
 
 
 // ------------------  search Result --------------//
 
-  List<ProductForViewModel> _searchResult =[];
-  List<ProductForViewModel> getSearchResult (value){
-    _searchResult =[];
-    print(value);
-    emit(GetFilterResultLoading());
-    //TODO: GET SEARCH RESULT IN SERVER
-    List<ProductForViewModel> resultList = [
-      //TODO: COVERT TO RESULT
+  List<ProductForViewModel> searchResult = [];
 
-    ];
-    if(resultList.isNotEmpty){
-      _searchResult = resultList ;
-      emit(GetFilterResultSuccess());
-    }
-    return _searchResult ;
+  Future<List<ProductForViewModel>> getSearchResult(String searchKeyword , context) async {
+    emit(GetSearchLoading());
+    searchResult = [];
+    (
+        await _repository.getProductsBaseOnSearchFilter(
+        searchKeywords: searchKeyword)
+    ).fold((error){
+      emit(GetSearchError());
+
+      AppToasts.toastError(error.message, context);
+    }, (productsList){
+      //TODO: FAVORITE AND LAST PRICE
+     searchResult =  productsList.map((productDetailsModel)=> ProductForViewModel(false, "20", productDetailsModel, "300", "12")).toList();
+     emit(GetSearchSuccess());
+     return searchResult;
+    });
+    return searchResult;
   }
-
-
-
 
 
 }

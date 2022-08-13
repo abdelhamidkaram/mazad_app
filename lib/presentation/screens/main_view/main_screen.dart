@@ -57,8 +57,10 @@ class _MainScreenState extends State<MainScreen> {
       builder: (context, state){
         var cubit = HomeCubit.get(context);
         if(cubit.categories.isEmpty || cubit.products.isEmpty ){
-          cubit.getProducts(context).then((value) => null);
-          cubit.getCategories(context).then((value) => null);
+          cubit.getProducts(context).then((value){
+            cubit.getCategories(context).then((value) => null);
+          });
+
         }
         List<bool> cartViewsAndElevation = [true, true, true, true, false];
         List<String> titles = [
