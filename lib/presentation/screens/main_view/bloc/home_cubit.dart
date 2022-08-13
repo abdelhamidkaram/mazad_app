@@ -7,8 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
+import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/login/login.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
+import 'package:soom/presentation/screens/main_view/home_screen/categoreis_block_model.dart';
 import 'package:soom/repository/repository.dart';
 import 'package:soom/style/text_style.dart';
 
@@ -67,7 +69,7 @@ class HomeCubit extends Cubit<HomeStates> {
   Future getProducts(context) async {
     emit(GetProductsLoading());
     (
-        await _repository.getProducts()
+        await _repository.getProducts(maxResult: 100)
     ).fold((errorModel) {
       emit(GetProductsError());
       if (kDebugMode) {
@@ -79,7 +81,9 @@ class HomeCubit extends Cubit<HomeStates> {
     }, (productsList) {
       //TODO: GET THE favORiTe  and last price
       products = productsList.map((product) =>
-          ProductForViewModel(false, "2000", product, "200", "12")).toList();
+          ProductForViewModel(false, "2000", product, "200", "12")).toList().reversed.toList();
+      products.reversed;
+      _getCategoryBlocks();
       emit(GetProductsSuccess());
     });
   }
@@ -94,24 +98,42 @@ class HomeCubit extends Cubit<HomeStates> {
     (
         await _repository.getCategories()
     ).fold((errorModel) {
-      emit(GetCategoriesError());
-      AppToasts.toastError(
-          "لايمكن جلب المعلومات حاليا (التصنيفات).. حاول لاحقا !", context);
       if (kDebugMode) {
         print(errorModel.message);
       }
       if (errorModel.statusCode == 401) {
+        LoginCubit.get(context).logOut(context);
         AppToasts.toastError("يرجي اعادة تسجيل الدخول ", context);
       }
+      var index = 0 ;
       Timer(const Duration(seconds: 3), () {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const LoginScreen(),));
+        index = 1 ;
+        if(index == 0){
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const LoginScreen(),));
+        }
       });
+      emit(GetCategoriesError());
     }, (categoriesList) {
       categories = categoriesList;
       emit(GetCategoriesSuccess());
     });
   }
+
+  // ------------------ get categoryBlock  --------------//
+
+   List<CategoryBlockModel> categoriesBlocks = [];
+   _getCategoryBlocks(){
+     for(var cat in categories ){
+       List<ProductForViewModel> productsList = [];
+       for(var product in products ){
+       if(cat.title == product.productModel.categoryName){
+         productsList.add(product);
+       }
+     }
+       categoriesBlocks.add(CategoryBlockModel(cat.title!, productsList , cat ));
+   }
+ }
 
 
   // ------------------ filter method --------------//
@@ -138,18 +160,18 @@ class HomeCubit extends Cubit<HomeStates> {
     emit(ChangeFilter());
   }
 
-  List<int> filterCategories = [];
+  List<CategoryModel> filterCategories = [];
 
-  addToFilterCategories(int categoryIndex) {
-    filterCategories.add(categoryIndex);
+  addToFilterCategories(CategoryModel categoryModel) {
+    filterCategories.add(categoryModel);
   }
 
-  deleteFromFilterCategories(int categoryIndex) {
-    filterCategories.remove(categoryIndex);
+  deleteFromFilterCategories(CategoryModel categoryModel) {
+    filterCategories.remove(categoryModel);
     emit(DeleteFromFilterCategories());
   }
 
-  deleteAllFilterCategories(int categoryIndex) {
+  deleteAllFilterCategories(CategoryModel categoryModel) {
     filterCategories = [];
     emit(DeleteAllFilterCategories());
   }
@@ -168,18 +190,38 @@ class HomeCubit extends Cubit<HomeStates> {
   }
 
 // ------------------  filter Result --------------//
-  List<ProductForViewModel> _filterResult = [];
+  List<ProductForViewModel> filterResult = [];
 
-  List<ProductForViewModel> getFilterResult() {
+  Future<List<ProductForViewModel>> getFilterResult(context) async {
     emit(GetFilterResultLoading());
-    //TODO: GET FILTER RESULT IN SERVER
-    List<ProductForViewModel> resultList = [
-    ];
-    if (resultList.isNotEmpty) {
-      _filterResult = resultList;
+
+     (
+       await  _repository.getProductsBaseOnFilter(
+          maxResult: 200 ,
+          categoryModel: filterCategories.isNotEmpty ? filterCategories[0] : categories[0] , //TODO: FILTER LIST NOT STRING
+          isMost: isMost,
+          isLess: isLess,
+          isNew: isNew,
+          isOld: isOld,
+          minRang: minRangeFilter.toDouble(),
+          maxRang: maxRangeFilter.toDouble() ,
+        )
+    ).fold(
+   (error){
+      AppToasts.toastError(error.message, context);
+      filterResult = [] ;
+     },
+   (productsList) {
+     //TODO : FAV AND LAST PRICE
+     filterResult =  productsList.map((e) => ProductForViewModel(false , "20", e, "300" , "12")).toList();
+
+     });
+
       emit(GetFilterResultSuccess());
-    }
-    return _filterResult;
+
+      print("------------------\n");
+      print(filterResult);
+    return filterResult;
   }
 
 
@@ -187,12 +229,14 @@ class HomeCubit extends Cubit<HomeStates> {
 
   List<ProductForViewModel> searchResult = [];
 
-  Future<List<ProductForViewModel>> getSearchResult(String searchKeyword , context) async {
+  Future<List<ProductForViewModel>> getSearchResult( String searchKeyword , context) async {
     emit(GetSearchLoading());
     searchResult = [];
     (
         await _repository.getProductsBaseOnSearchFilter(
-        searchKeywords: searchKeyword)
+        searchKeywords: searchKeyword,
+        maxResult: 100
+        )
     ).fold((error){
       emit(GetSearchError());
 

@@ -26,8 +26,8 @@ class _CategoryItemBuildState extends State<CategoryItemBuild> {
        widget.isFilter ?  setState(() {
          widget.isSelected = !widget.isSelected;
          widget.isSelected
-             ? widget.homeCubit.addToFilterCategories(widget.categoryModel?.index ?? 00)
-             :  widget.homeCubit.deleteFromFilterCategories(widget.categoryModel?.index ?? 00 );
+             ? widget.homeCubit.addToFilterCategories(widget.categoryModel!)
+             :  widget.homeCubit.deleteFromFilterCategories(widget.categoryModel! );
        }) :  Navigator.push(
            context,
            MaterialPageRoute(

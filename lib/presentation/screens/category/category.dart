@@ -39,24 +39,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
               body: RefreshIndicator(
                 onRefresh: () => cubit.getProductWithCategoryName(
                     widget.category.title!, context),
-                child: SingleChildScrollView(
-                  physics: const BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SizedBox(
-                      child: ListView.separated(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        scrollDirection: Axis.vertical,
-                        itemBuilder: (context, index) => ProductItem(
-                          isFullWidth: true,
-                          productModel: cubit.products[index],
-                        ),
-                        separatorBuilder: (context, index) => const SizedBox(
-                          height: 20,
-                        ),
-                        itemCount: cubit.products.length,
-                      ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SizedBox(
+                    child: (state is GetCategoryProductsLoading)
+                        ?
+                        const Center(child: CircularProgressIndicator(),)
+                    :
+                    Center(child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: bodyWidget(state, cubit)) ,
                     ),
                   ),
                 ),
@@ -66,5 +58,29 @@ class _CategoryScreenState extends State<CategoryScreen> {
         },
       ),
     );
+    
   }
+  Widget? bodyWidget(CategoriesStates state , CategoriesCubit cubit){
+    if(state is GetCategoryProductsSuccess ){
+      if(cubit.products.isNotEmpty){
+        return ListView.separated(
+          physics: const NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          scrollDirection: Axis.vertical,
+          itemBuilder: (context, index) => ProductItem(
+            isFullWidth: true,
+            productModel: cubit.products[index],
+          ),
+          separatorBuilder: (context, index) => const SizedBox(
+            height: 20,
+          ),
+          itemCount: cubit.products.length,
+        ) ;
+      }else{
+        return const Center(child: Text("لايوجد منتجات لهذا التصنيف بعد ! "),);
+      }
+    }else{
+     return null ; 
+    }
+}
 }

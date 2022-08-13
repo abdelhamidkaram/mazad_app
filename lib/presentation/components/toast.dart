@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
+import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/presentation/screens/main_view/filter.dart';
@@ -181,10 +182,11 @@ class AppToasts {
                                   runSpacing: 10,
                                   verticalDirection: VerticalDirection.down,
                                   children: List.generate(
-                                      6,
+                                      homeCubit.categories.length,
                                       (index) => CategoryItemBuild(
                                             isFilter: true,
                                             homeCubit: homeCubit,
+                                            categoryModel: homeCubit.categories[index],
                                           )),
                                 )
                               ],
@@ -235,7 +237,7 @@ class AppToasts {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => FilterResultScreen(
-                                  products: homeCubit.getFilterResult(),
+                                  homeCubit: homeCubit ,
                                 ),
                               ),
                             );

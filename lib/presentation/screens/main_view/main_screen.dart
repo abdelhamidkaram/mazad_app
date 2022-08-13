@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/add_auction_screen.dart';
@@ -56,11 +55,14 @@ class _MainScreenState extends State<MainScreen> {
       listener: (context, state) => HomeCubit(),
       builder: (context, state){
         var cubit = HomeCubit.get(context);
-        if(cubit.categories.isEmpty || cubit.products.isEmpty ){
-          cubit.getProducts(context).then((value){
-            cubit.getCategories(context).then((value) => null);
-          });
+        if(cubit.categories.isEmpty ){
+          cubit.getCategories(context).then((value){
+            if(cubit.products.isEmpty ){
+              cubit.getProducts(context).then((value){
 
+              });
+            }
+          });
         }
         List<bool> cartViewsAndElevation = [true, true, true, true, false];
         List<String> titles = [
@@ -74,6 +76,7 @@ class _MainScreenState extends State<MainScreen> {
         List<Widget> screens = [
           HomeScreen(
             homeCubit: homeCubit,
+            state: state ,
           ),
           const MyAuctions(),
           const AddAuctionScreen(),

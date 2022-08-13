@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) =>
         AppCubit()
           ..newInstallCache()
-          ..getProfileDetails(context)),
+        ),
         BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(create: (context) => HomeCubit()),
         BlocProvider(create: (context) => BidCubit()),

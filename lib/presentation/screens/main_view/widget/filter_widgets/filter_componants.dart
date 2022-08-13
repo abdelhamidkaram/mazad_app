@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';

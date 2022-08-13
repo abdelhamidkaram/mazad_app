@@ -4,11 +4,13 @@ import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
+import 'package:soom/presentation/screens/category/category_model.dart';
+import 'package:soom/presentation/screens/main_view/add_auction/add_auction_progress.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_cubit.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_states.dart';
+import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
-
 
 class AddAuctionScreen extends StatefulWidget {
   const AddAuctionScreen({Key? key}) : super(key: key);
@@ -27,16 +29,23 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
         listener: (context, state) => AddAuctionCubit(),
         builder: (context, state) {
           var cubit = AddAuctionCubit.get(context);
-          _replaceController(){
+          List<CategoryModel> cats = HomeCubit.get(context).categories;
+
+          _replaceController() {
             setState(() {
-                cubit.priceController.text = cubit.priceController.text.replaceAll(",", "");
-                cubit.priceController.text = cubit.priceController.text.replaceAll(".", "");
-                cubit.priceController.text = cubit.priceController.text.replaceAll(" ", "");
-                cubit.priceController.text = cubit.priceController.text.replaceAll("-", "");
+              cubit.initialPriceController.text =
+                  cubit.initialPriceController.text.replaceAll(",", "");
+              cubit.initialPriceController.text =
+                  cubit.initialPriceController.text.replaceAll(".", "");
+              cubit.initialPriceController.text =
+                  cubit.initialPriceController.text.replaceAll(" ", "");
+              cubit.initialPriceController.text =
+                  cubit.initialPriceController.text.replaceAll("-", "");
             });
           }
+
           return SingleChildScrollView(
-            physics:const BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -45,7 +54,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                   key: addProductKey,
                   child: Column(
                     children: [
-                     AddProductImages(cubit: cubit),
+                      AddProductImages(cubit: cubit),
                       const SizedBox(
                         height: 24,
                       ),
@@ -70,10 +79,61 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                             return null;
                           }
                         },
-                        decoration: const InputDecoration(
-                          hintText: "اسم المنتج هنا ",
-                          border: OutlineInputBorder(),
+                        decoration:  InputDecoration(
+                          hintText: cubit.catController.text.isEmpty? "اسم المنتج هنا   " : cubit.catController.text,
+                          border: const OutlineInputBorder(),
                           hintStyle: AppTextStyles.smallGrey,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      GestureDetector(
+                        onTap:  () {
+                          showDialog(
+                            context: context,
+                            builder: (context){
+                              return Dialog(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(30.0),
+                                  child: SizedBox(
+                                    height: 300,
+                                    child: Center(
+                                      child: ListView.separated(
+                                        itemCount: cats.length,
+                                        itemBuilder:(context, index) => InkWell(
+                                          onTap: (){
+                                            cubit.catController.text = cats[index].title.toString();
+                                            cubit.categorySelected = cats[index] ;
+                                            Navigator.pop(context);
+                                          },
+                                          child: Text(cats[index].title.toString() , style: AppTextStyles.mediumBlack,),
+                                        ),
+                                        separatorBuilder: (BuildContext context, int index) {
+                                          return const Divider();
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: TextFormField(
+                          validator: (value){
+                            if(value!.isEmpty){
+                              return "اختر التصنيف ";
+                            }
+                            return null ;
+                          },
+                          controller: cubit.catController,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            enabled: false,
+                            hintText: "اختر التصنيف ",
+                            prefixIcon: Icon(Icons.apps , color: ColorManger.primary,)
+                          ),
                         ),
                       ),
                       const SizedBox(
@@ -102,14 +162,81 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                         height: 16,
                       ),
                       TextFormField(
-                        controller: cubit.priceController,
-                        keyboardType: TextInputType.numberWithOptions(decimal: false , signed: false),
+                        controller: cubit.initialPriceController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: false, signed: false),
                         decoration: const InputDecoration(
                           hintText: " 5000 kw ",
                           border: OutlineInputBorder(),
                           hintStyle: AppTextStyles.smallGrey,
                         ),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "يرجي ادخال السعر";
+                          }
+                          return null;
+                        },
                       ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        children: const [
+                          Text(
+                            "أقل سعر ",
+                            style: AppTextStyles.titleSmallBlack,
+                          ),
+                          Spacer()
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      TextFormField(
+                          controller: cubit.minPriceController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: false, signed: false),
+                          decoration: const InputDecoration(
+                            hintText: " 5000 kw ",
+                            border: OutlineInputBorder(),
+                            hintStyle: AppTextStyles.smallGrey,
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "يرجي ادخال السعر";
+                            }
+                            return null;
+                          }),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        children: const [
+                          Text(
+                            "السعر المستهدف ",
+                            style: AppTextStyles.titleSmallBlack,
+                          ),
+                          Spacer()
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      TextFormField(
+                          controller: cubit.targetPriceController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                              decimal: false, signed: false),
+                          decoration: const InputDecoration(
+                            hintText: " 5000 kw ",
+                            border: OutlineInputBorder(),
+                            hintStyle: AppTextStyles.smallGrey,
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "يرجي ادخال السعر";
+                            }
+                            return null;
+                          }),
                       const SizedBox(
                         height: 16,
                       ),
@@ -117,22 +244,43 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                         dateController: cubit.dateController,
                         timeController: cubit.timeController,
                         isCheckTime: cubit.isCheckTime,
+                        keyForm: addProductKey,
                       ),
                       const SizedBox(
                         height: 16,
                       ),
-                      TextFormFieldDetailsWidget(detailsController: cubit.detailsController),
+                      TextFormFieldDetailsWidget(
+                          detailsController: cubit.detailsController),
                       const SizedBox(
                         height: 16,
                       ),
                       AppButtons.appButtonBlue(() {
-                         if(addProductKey.currentState!.validate()){
-                           _replaceController();
-                         }
-                       if(cubit.customValidate(context)){
-                         //TODO: ADD NEW PRODUCT TO SERVER
-                       }
+                        if (addProductKey.currentState!.validate()) {
+                          _replaceController();
+                          cubit
+                              .uploadProductDetails(state, context)
+                              .then((value) {
+                            if (state is UploadDetailsSuccess) {
+                              cubit.dateController.clear();
+                              cubit.nameController.clear();
+                              cubit.targetPriceController.clear();
+                              cubit.initialPriceController.clear();
+                              cubit.minPriceController.clear();
+                              cubit.detailsController.clear();
+                              cubit.catController.clear();
+                            }
+
+
+                          });
+                          if (cubit.customValidate(context)) {
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                              const AddAuctionProgress(),
+                            ));
+                          }
+                        }
                       }, "إضافة المنتج ", true),
+
                     ],
                   ),
                 ),
@@ -234,7 +382,6 @@ class _SwitchBetweenTowCheckBoxWidgetState
   }
 }
 
-
 //-------------------------------------------------2
 
 class TimeTextFiledWidget extends StatefulWidget {
@@ -244,12 +391,15 @@ class TimeTextFiledWidget extends StatefulWidget {
 
   final bool isCheckTime;
 
-  const TimeTextFiledWidget(
-      {Key? key,
-      required this.dateController,
-      required this.timeController,
-      required this.isCheckTime})
-      : super(key: key);
+  final GlobalKey keyForm;
+
+  const TimeTextFiledWidget({
+    Key? key,
+    required this.dateController,
+    required this.timeController,
+    required this.isCheckTime,
+    required this.keyForm,
+  }) : super(key: key);
 
   @override
   State<TimeTextFiledWidget> createState() => _TimeTextFiledWidgetState();
@@ -263,7 +413,7 @@ class _TimeTextFiledWidgetState extends State<TimeTextFiledWidget> {
         Row(
           children: const [
             Text(
-              "الوقت",
+              "تاريخ الانتهاء",
               style: AppTextStyles.titleSmallBlack,
             ),
             Spacer()
@@ -272,100 +422,59 @@ class _TimeTextFiledWidgetState extends State<TimeTextFiledWidget> {
         const SizedBox(
           height: 16,
         ),
-        Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.utc(
-                      DateTime.now().year, DateTime.now().month + 1, 30),
-                ).then((value) {
-                  widget.dateController.text =
-                      value.toString().substring(0, 10);
-                });
-              },
-              child: SizedBox(
-                width: 155,
-                child: TextFormField(
-                  decoration: const InputDecoration(
-                    hintText: "اختر التاريخ ",
-                    disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey)),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: ColorManger.lightGrey)),
-                    prefixIcon: Icon(
-                      Icons.calendar_month_sharp,
-                      color: ColorManger.primary,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (widget.isCheckTime) {
-                      if (value!.isEmpty) {
-                        return " ادخل الوقت ";
-                      }
-                    } else {
-                      return "";
-                    }
-                    return "";
-                  },
-                  enabled: false,
-                  controller: widget.dateController,
-                  keyboardType: TextInputType.datetime,
+        GestureDetector(
+          onTap: () {
+            showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.utc(
+                  DateTime.now().year, DateTime.now().month + 10, 30),
+            ).then((value) {
+              if (value == null && widget.dateController.text.isEmpty) {
+                widget.dateController.text = DateTime.now()
+                    .add(const Duration(days: 5))
+                    .toString()
+                    .substring(0, 10);
+              }
+              widget.dateController.text = value.toString().substring(0, 10);
+            });
+          },
+          child: SizedBox(
+            width: double.infinity,
+            child: TextFormField(
+              decoration: const InputDecoration(
+                hintText: "اختر التاريخ ",
+                disabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.grey)),
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: ColorManger.lightGrey)),
+                prefixIcon: Icon(
+                  Icons.calendar_month_sharp,
+                  color: ColorManger.primary,
                 ),
               ),
-            ),
-            const SizedBox(width: 10),
-            GestureDetector(
-              onTap: () {
-                showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                ).then((value) {
-                  widget.timeController.text = value!.format(context);
-                });
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return " ادخل تاريخ الانتهاء";
+                } else {
+                  return "";
+                }
               },
-              child: SizedBox(
-                width: 145,
-                child: TextFormField(
-                  enabled: false,
-                  decoration: const InputDecoration(
-                    hintText: "اختر الوقت",
-                    disabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey)),
-                    border: OutlineInputBorder(
-                        borderSide: BorderSide(color: ColorManger.lightGrey)),
-                    prefixIcon: Icon(
-                      Icons.watch_later_outlined,
-                      color: ColorManger.primary,
-                    ),
-                  ),
-                  validator: (value) {
-                    if (widget.isCheckTime) {
-                      if (value!.isEmpty) {
-                        return " ادخل الوقت";
-                      }
-                    } else {
-                      return "";
-                    }
-                    return "";
-                  },
-                  controller: widget.timeController,
-                  keyboardType: TextInputType.datetime,
-                ),
-              ),
+              autofocus: false,
+              enabled: false,
+              controller: widget.dateController,
+              keyboardType: TextInputType.datetime,
             ),
-          ],
+          ),
         ),
+        const SizedBox(width: 10),
       ],
     );
   }
 }
 
 //-------------------------------------------------3
-
 
 class SmallImgProductItem extends StatefulWidget {
   final int index;
@@ -388,6 +497,7 @@ class _SmallImgProductItemState extends State<SmallImgProductItem> {
         setState(() {
           AddAuctionCubit.get(context).pickerCamera(
             widget.index,
+            context
           );
         });
       },
@@ -412,46 +522,51 @@ class _SmallImgProductItemState extends State<SmallImgProductItem> {
 //--------------------------------------------------4
 class TextFormFieldDetailsWidget extends StatefulWidget {
   final TextEditingController detailsController;
-  const TextFormFieldDetailsWidget({Key? key, required this.detailsController}) : super(key: key);
+
+  const TextFormFieldDetailsWidget({Key? key, required this.detailsController})
+      : super(key: key);
 
   @override
-  State<TextFormFieldDetailsWidget> createState() => _TextFormFieldDetailsWidgetState();
+  State<TextFormFieldDetailsWidget> createState() =>
+      _TextFormFieldDetailsWidgetState();
 }
 
-class _TextFormFieldDetailsWidgetState extends State<TextFormFieldDetailsWidget> {
+class _TextFormFieldDetailsWidgetState
+    extends State<TextFormFieldDetailsWidget> {
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Row(
-        children: const [
-          Text(
-            "التفاصيل ",
-            style: AppTextStyles.titleSmallBlack,
-          ),
-          Spacer()
-        ],
-      ),
-      const SizedBox(
-        height: 16,
-      ),
-      TextFormField(
-        controller: widget.detailsController,
-        maxLines: 10,
-        validator: (value) {
-          if (value!.isEmpty) {
-            return "ادخل تفاصيل لمنتج  ";
-          } else {
-            return null;
-          }
-        },
-        decoration: const InputDecoration(
-          hintText: "يمكنك كتابة التفاصيل هنا ",
-          border: OutlineInputBorder(),
-          hintStyle: AppTextStyles.smallGrey,
+    return Column(
+      children: [
+        Row(
+          children: const [
+            Text(
+              "التفاصيل ",
+              style: AppTextStyles.titleSmallBlack,
+            ),
+            Spacer()
+          ],
         ),
-      ),
-
-    ],);
+        const SizedBox(
+          height: 16,
+        ),
+        TextFormField(
+          controller: widget.detailsController,
+          maxLines: 10,
+          validator: (value) {
+            if (value!.isEmpty) {
+              return "ادخل تفاصيل لمنتج  ";
+            } else {
+              return null;
+            }
+          },
+          decoration: const InputDecoration(
+            hintText: "يمكنك كتابة التفاصيل هنا ",
+            border: OutlineInputBorder(),
+            hintStyle: AppTextStyles.smallGrey,
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -459,6 +574,7 @@ class _TextFormFieldDetailsWidgetState extends State<TextFormFieldDetailsWidget>
 
 class AddProductImages extends StatefulWidget {
   final AddAuctionCubit cubit;
+
   const AddProductImages({Key? key, required this.cubit}) : super(key: key);
 
   @override
@@ -472,7 +588,7 @@ class _AddProductImagesState extends State<AddProductImages> {
       children: [
         GestureDetector(
           onTap: () {
-            AddAuctionCubit.get(context).pickerCamera(0);
+            AddAuctionCubit.get(context).pickerCamera(0 , context );
           },
           child: Container(
             width: double.infinity,
@@ -480,11 +596,11 @@ class _AddProductImagesState extends State<AddProductImages> {
             decoration: DottedDecoration(shape: Shape.box),
             child: widget.cubit.img[0].isEmpty
                 ? Center(
-              child: SvgPicture.asset("assets/addimgbig.svg"),
-            )
+                    child: SvgPicture.asset("assets/addimgbig.svg"),
+                  )
                 : Image.memory(
-              base64Decode(widget.cubit.img[0]),
-            ),
+                    base64Decode(widget.cubit.img[0]),
+                  ),
           ),
         ),
         const SizedBox(
@@ -514,4 +630,3 @@ class _AddProductImagesState extends State<AddProductImages> {
     );
   }
 }
-

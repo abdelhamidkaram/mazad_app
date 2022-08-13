@@ -10,4 +10,5 @@ class ApiEndPoint {
   static const String updateProfile = "api/services/app/Profile/UpdateCurrentUserProfile" ;
   static const String getAllProducts = "api/services/app/Products/GetAll" ;
   static const String getAllCategories = "api/services/app/Categories/GetAll" ;
+  static const String uploadProducts = "api/services/app/Products/CreateOrEdit" ;
 }

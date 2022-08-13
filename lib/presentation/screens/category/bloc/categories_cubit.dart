@@ -23,4 +23,23 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
        emit(GetCategoryProductsSuccess());
       });
     }
+
+      Future<List<ProductForViewModel>> getProductsListWithCategoryName(String categoryName , context )  async {
+        List<ProductForViewModel>  _products = [] ;
+      (
+      await _repository.getProductsBaseOnCategoryName(categoryName: categoryName)
+      ).fold((error){
+        AppToasts.toastError("خطأ في جلب المعلومات حتول لا حقا !", context);
+        emit(GetCategoryProductsError());
+        return _products ;
+      }, (productsList) {
+        //TODO: GET THE favORiTe  and last price
+        List<ProductForViewModel>  _products = productsList.map((product)=> ProductForViewModel(false, "2000", product, "200", "12") ).toList();
+        emit(GetCategoryProductsSuccess());
+        return _products ;
+      });
+        return _products ;
+    }
+
+
 }

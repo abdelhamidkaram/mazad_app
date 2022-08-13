@@ -227,6 +227,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                             password: passwordController.text);
                                         if (formKey.currentState!.validate()) {
                                           loginCubit.login(loginRequest , context);
+                                          HomeCubit.get(context).getCategories(context).then((value){
+                                            HomeCubit.get(context).getProducts(context);
+                                          });
                                           setState(() {
                                             HomeCubit.get(context).currentIndex = 0 ;
                                           });
