@@ -12,7 +12,6 @@ import 'package:soom/presentation/screens/profile/widgets/item.dart';
 import 'package:soom/presentation/screens/profile/widgets/logout_widget.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 class ProfileHome extends StatefulWidget {
@@ -28,6 +27,7 @@ class _ProfileHomeState extends State<ProfileHome> {
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) => AppCubit(),
       builder: (context, state) {
+        AppCubit.get(context).getProfileDetails(context);
         List<ProfileItemModel> items = [
           ProfileItemModel(
               "المحفظة", "assets/wallet.svg", const WalletScreen()),

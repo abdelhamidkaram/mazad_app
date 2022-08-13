@@ -187,12 +187,14 @@ class HomeCubit extends Cubit<HomeStates> {
 
   List<ProductForViewModel> searchResult = [];
 
-  Future<List<ProductForViewModel>> getSearchResult(String searchKeyword , context) async {
+  Future<List<ProductForViewModel>> getSearchResult( String searchKeyword , context) async {
     emit(GetSearchLoading());
     searchResult = [];
     (
         await _repository.getProductsBaseOnSearchFilter(
-        searchKeywords: searchKeyword)
+        searchKeywords: searchKeyword,
+        maxResult: 100
+        )
     ).fold((error){
       emit(GetSearchError());
 

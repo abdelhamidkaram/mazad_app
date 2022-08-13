@@ -56,11 +56,12 @@ class _MainScreenState extends State<MainScreen> {
       listener: (context, state) => HomeCubit(),
       builder: (context, state){
         var cubit = HomeCubit.get(context);
-        if(cubit.categories.isEmpty || cubit.products.isEmpty ){
+        if(cubit.products.isEmpty ){
           cubit.getProducts(context).then((value){
-            cubit.getCategories(context).then((value) => null);
           });
-
+        }
+        if(cubit.categories.isEmpty){
+          cubit.getCategories(context).then((value) => null);
         }
         List<bool> cartViewsAndElevation = [true, true, true, true, false];
         List<String> titles = [
