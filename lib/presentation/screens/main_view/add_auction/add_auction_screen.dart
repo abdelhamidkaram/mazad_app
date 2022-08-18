@@ -269,8 +269,6 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               cubit.detailsController.clear();
                               cubit.catController.clear();
                             }
-
-
                           });
                           if (cubit.customValidate(context)) {
                             Navigator.of(context).push(MaterialPageRoute(

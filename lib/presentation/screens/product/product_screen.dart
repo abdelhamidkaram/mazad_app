@@ -6,7 +6,7 @@ import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/product/add_bid.dart';
-import 'package:soom/presentation/screens/product/bloc/product_cubit.dart';
+import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/product/widget/image_product.dart';
 import 'package:soom/presentation/screens/product/widget/product_price_box.dart';
 import 'package:soom/style/color_manger.dart';

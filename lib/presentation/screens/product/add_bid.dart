@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:soom/constants/app_string.dart';
+import 'package:soom/models/auction_model.dart';
 import 'package:soom/models/product_model.dart';
+import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
-import 'package:soom/presentation/screens/product/bloc/product_cubit.dart';
-import 'package:soom/presentation/screens/product/bloc/product_states.dart';
+import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
+import 'package:soom/presentation/screens/product/bloc/add_bid_states.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
@@ -42,18 +44,19 @@ class _AddBidState extends State<AddBid> {
               controller.text = controller.text.replaceAll(",", "");
               controller.text = controller.text.replaceAll(".", "");
               controller.text = controller.text.replaceAll(" ", "");
-
             }
           });
        }
-     _checkRangeBid(value , {bool isShowSuccess = false}){
+     _checkRangeBidOrCheckAndSendDataToServer(value ,{AuctionForViewModel?  auctionForViewModel}   ){
        if(value.isNotEmpty){
+         _replaceController();
          if((int.parse(value) <= int.parse(widget.productModel.lasPrice))){
            controller.text = widget.productModel.lasPrice ;
            AppToasts.toastError("لقد ادخلت سعرا أقل من أو يساوي آخر مزايدة يجب ان تزايد بمبلغ أكبر من  : ${widget.productModel.lasPrice}", context);
          }else{
-          isShowSuccess ? AppToasts.toastError(" add success ", context) : null ;
-           // TODO: send To server
+          if(auctionForViewModel !=null ){
+            bidCubit.sendBidToServer(auctionForViewModel, context).then((value){});
+          }
          }
        }
      }
@@ -90,7 +93,7 @@ class _AddBidState extends State<AddBid> {
                              return " ادخل قيمة المزايدة " ;
                            }else{
                              _replaceController();
-                             _checkRangeBid(value);
+                             _checkRangeBidOrCheckAndSendDataToServer(value);
                            }
                            return null ;
                          },
@@ -99,12 +102,12 @@ class _AddBidState extends State<AddBid> {
                          },
                          onFieldSubmitted: (value){
                            _replaceController();
-                           _checkRangeBid(value);
+                           _checkRangeBidOrCheckAndSendDataToServer(value);
                          },
                          controller: controller,
                          textAlign: TextAlign.center,
                          style: AppTextStyles.titleGreen_30,
-                         keyboardType:  TextInputType.number,
+                         keyboardType:  const TextInputType.numberWithOptions(),
                          decoration: const InputDecoration(
                            hintStyle: AppTextStyles.titleGreen_30,
                            border: InputBorder.none,
@@ -167,15 +170,18 @@ class _AddBidState extends State<AddBid> {
                      ],),
                    const SizedBox(height: 40,),
                    AppButtons.toastButtonBlue(() {
-                      if(!bidPriceKey.currentState!.validate()){
-                        _replaceController();
-                        if(controller.text.isNotEmpty){
-                          _checkRangeBid(controller.text.isNotEmpty , isShowSuccess: true);
-                        }else{
-                          AppToasts.toastError("ادخل قيمة المزايدة ", context);
-                          controller.text = widget.productModel.lasPrice;
-                        }
-                      }
+                     _replaceController();
+                     if(controller.text.isNotEmpty){
+                       AuctionForViewModel auctionForViewModel = AuctionForViewModel(
+                         price:int.parse( controller.text),
+                         productModel: widget.productModel.productModel,
+                         userModel: UserModel(userId: 3 ) , //TODO : USER MODEL
+                       );
+                       _checkRangeBidOrCheckAndSendDataToServer(controller.text, auctionForViewModel: auctionForViewModel);
+                     }else{
+                       AppToasts.toastError("ادخل قيمة المزايدة ", context);
+                       controller.text = widget.productModel.lasPrice;
+                     }
                    }, "اضافة مزايدة ", true ,
                        icon: SvgPicture.asset("assets/auction.svg" , color: ColorManger.white,)),
                  ],

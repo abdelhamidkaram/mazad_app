@@ -1,11 +1,11 @@
 class ProfileEditSuccess {
-  Result? result;
+  UserModel? result;
 
    ProfileEditSuccess({this.result});
 
   ProfileEditSuccess.fromJson(Map<String, dynamic> json) {
     result =
-    json['result'] != null ? Result.fromJson(json['result']) : null;
+    json['result'] != null ? UserModel.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -17,7 +17,7 @@ class ProfileEditSuccess {
   }
 }
 
-class Result {
+class UserModel {
   String? name;
   String? surname;
   String? userName;
@@ -27,8 +27,9 @@ class Result {
   String? timezone;
   String? qrCodeSetupImageUrl;
   bool? isGoogleAuthenticatorEnabled;
+  int? userId  = 3 ; //TODO: get user id from server
 
-  Result(
+  UserModel(
       {this.name,
         this.surname,
         this.userName,
@@ -37,9 +38,12 @@ class Result {
         this.isPhoneNumberConfirmed,
         this.timezone,
         this.qrCodeSetupImageUrl,
-        this.isGoogleAuthenticatorEnabled});
+        this.isGoogleAuthenticatorEnabled,
+        this.userId
+      });
 
-  Result.fromJson(Map<String, dynamic> json) {
+
+  UserModel.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     surname = json['surname'];
     userName = json['userName'];

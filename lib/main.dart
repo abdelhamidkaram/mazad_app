@@ -11,7 +11,7 @@ import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/app_bloc/bloc_observer.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/login/bloc/cubit.dart';
-import 'package:soom/presentation/screens/product/bloc/product_cubit.dart';
+import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/splash/splash.dart';
 import 'package:soom/style/theme_style.dart';
 var  token = "";
