@@ -12,4 +12,9 @@ class ApiEndPoint {
   static const String getAllCategories = "api/services/app/Categories/GetAll" ;
   static const String uploadProducts = "api/services/app/Products/CreateOrEdit" ;
   static const String addBid = "api/services/app/ProductAuactions/CreateOrEdit" ;
+  static const String myBid = "api/services/app/ProductAuactions/GetAll" ;
+  static const String myFavorite = "api/services/app/ProductFavorites/GetAll";
+  static const String addToFavorite = "api/services/app/ProductFavorites/CreateOrEdit";
+  static const String deleteFavorite = "api/services/app/ProductFavorites/Delete";
+
 }

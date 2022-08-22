@@ -85,7 +85,7 @@ bool isObscureText2 = true;
 
   // ---------- Login ----------------|
 
-  login(LoginRequest loginRequest , context )async {
+  Future login(LoginRequest loginRequest , context )async {
   emit(LoginLoading());
   AppToasts.toastLoading(context);
   (
@@ -102,14 +102,17 @@ bool isObscureText2 = true;
       print(loginSuccess.result!.accessToken);
     }
     token = loginSuccess.result!.accessToken.toString();
+    emit(LoginSuccess(loginSuccess));
     SharedPreferences.getInstance().then((prefs){
       prefs.setString(PrefsKey.token , loginSuccess.result?.accessToken ?? "").then((value){});
+      emit(LoginSuccess(loginSuccess));
     });
     SharedPreferences.getInstance().then((prefs){
       prefs.setBool(PrefsKey.isLogin , true);
     });
     emit(DialogShow());
     Timer(const Duration(seconds: 1), (){
+      token = loginSuccess.result!.accessToken.toString();
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen(),));
       emit(LoginSuccess(loginSuccess));
     });

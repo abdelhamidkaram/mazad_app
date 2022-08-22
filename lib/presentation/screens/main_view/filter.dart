@@ -51,7 +51,7 @@ class _FilterResultScreenState extends State<FilterResultScreen> {
                       padding: const EdgeInsets.all(8.0),
                       child: ProductItem(
                         isFullWidth: true,
-                        productModel: HomeCubit.get(context).filterResult[index],
+                        productForViewModel: HomeCubit.get(context).filterResult[index],
                       ),
                     ),
                 ),

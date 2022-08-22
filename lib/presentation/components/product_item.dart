@@ -1,7 +1,16 @@
 import 'package:animations/animations.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:soom/constants/api_constants.dart';
+import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/product_model.dart';
+import 'package:soom/presentation/components/favorite_icon_widget.dart';
 import 'package:soom/presentation/components/timer.dart';
+import 'package:soom/presentation/components/toast.dart';
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
 import 'package:soom/presentation/screens/product/product_screen.dart';
 import 'package:soom/presentation/screens/product/widget/product_price_box.dart';
 import 'package:soom/style/text_style.dart';
@@ -12,16 +21,16 @@ class ProductItem extends StatefulWidget {
   final bool? isTabsScreen;
   final bool? isMyAuction;
   final bool? isFavoriteScreen;
-  final ProductForViewModel productModel;
+  final ProductForViewModel productForViewModel;
 
-  const ProductItem(
-      {Key? key,
-      this.isTabsScreen = false,
-      this.isMyAuction = false,
-      this.isFavoriteScreen = false,
-      required this.isFullWidth,
-      required this.productModel})
-      : super(key: key);
+  const ProductItem({
+    Key? key,
+    this.isTabsScreen = false,
+    this.isMyAuction = false,
+    this.isFavoriteScreen = false,
+    required this.isFullWidth,
+    required this.productForViewModel,
+  }) : super(key: key);
 
   @override
   State<ProductItem> createState() => _ProductItemState();
@@ -32,103 +41,147 @@ class _ProductItemState extends State<ProductItem> {
   Widget build(BuildContext context) {
     Widget goToPriceBox() {
       if (widget.isTabsScreen != null && widget.isTabsScreen == true) {
-        return LastBidsTabs(productModel: widget.productModel);
+        return LastBidsTabs(productModel: widget.productForViewModel);
       } else if (widget.isMyAuction != null && widget.isMyAuction == true) {
-        return LastBidsTabsAndPrice(productModel: widget.productModel);
+        return LastBidsTabsAndPrice(productModel: widget.productForViewModel);
       } else {
-        return LastBidsPrice(productModel: widget.productModel);
+        return LastBidsPrice(productModel: widget.productForViewModel);
       }
     }
+    var year = int.parse(widget.productForViewModel.productModel.product!.endDate!.substring(0 , 4 ));
+    var month = int.parse(widget.productForViewModel.productModel.product!.endDate!.substring(5 , 7 ));
+    var day = int.parse(widget.productForViewModel.productModel.product!.endDate!.substring(8 , 10 ));
+    Duration difference = DateTime.now().difference(DateTime.utc(year , month ,day));
 
     return OpenContainer(
         transitionDuration: const Duration(milliseconds: 800),
         openBuilder: (context, action) => ProductScreen(
-              productModel: widget.productModel,
-              isMyAuction: widget.isMyAuction ?? false ,
+              productModel: widget.productForViewModel,
+              isMyAuction: widget.isMyAuction ?? false,
             ),
-        closedBuilder: (context, action) => Container(
-              width: !widget.isFullWidth ? 221 : 500,
-              height: 280,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: ColorManger.lightGrey,
+        closedBuilder: (context, action) => Directionality(
+          textDirection: TextDirection.rtl,
+          child: (difference.inDays > 0 ) ?  Banner(
+            color: ColorManger.red,
+            message: "منتهي",
+            textStyle: AppTextStyles.smallWhite,
+            location: BannerLocation.bottomStart,
+            child: _buildContainer(goToPriceBox),
+          ):  _buildContainer(goToPriceBox) ,
+        ));
+  }
+
+  Container _buildContainer(Widget Function() goToPriceBox) {
+    return Container(
+                width: !widget.isFullWidth ? 221 : 500,
+                height: 280,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: ColorManger.lightGrey,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  Stack(
-                    children: [
-                      SizedBox(
-                        width: double.infinity,
-                        height: 150,
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Center(
-                            child: Image.network(
-                              widget.productModel.thumbnail,
+                child: Column(
+                  children: [
+                    Stack(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          height: 150,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Center(
+                              child: Image.network(
+                                widget.productForViewModel.thumbnail,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 4,
-                          right: 5,
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 4,
+                            right: 5,
+                          ),
+                          child: Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: Row(
+                              children: [
+                                FavoriteIconWidget(
+                                    productForViewModel:
+                                        widget.productForViewModel,
+                                  onPressedForAdd: (){
+                                      FavoriteCubit.get(context).addTOFavorite(widget.productForViewModel, context).then((value){
+                                        setState(() {
+                                         widget.productForViewModel.isFavorite = true ;
+                                        });
+                                      }).catchError((err){
+                                        if (kDebugMode) {
+                                          print(err.toString());
+                                        }
+                                      });
+                                  },
+                                  onPressedForDelete: (){
+                                    FavoriteCubit.get(context).deleteFavorite( widget.productForViewModel, context).then((value){
+                                      setState(() {
+                                        widget.productForViewModel.isFavorite = false ;
+                                      });
+                                    }).catchError((err){
+                                     if (kDebugMode) {
+                                       print(err.toString());
+                                     }
+                                    });
+                                  },
+
+                                ),
+                                const Spacer(),
+                                Container(
+                                  height: 30,
+                                  width: 150,
+                                  decoration: BoxDecoration(
+                                      color:
+                                          ColorManger.lightGrey.withOpacity(0.85),
+                                      borderRadius: BorderRadius.circular(4)),
+                                  child: TimerDownDate(
+                                      time: widget.productForViewModel.time!),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                        child: Directionality(
-                          textDirection: TextDirection.ltr,
-                          child: Row(
-                            children: [
-                             widget.isFavoriteScreen! ? IconButton(onPressed: (){
-                                //TODO: DELETE FAVORITE
-                              }, icon:const Icon(Icons.favorite , color: ColorManger.red,)) : const SizedBox(),
-                              const Spacer(),
-                              Container(
-                                height: 30,
-                                width: 150,
-                                decoration: BoxDecoration(
-                                    color: ColorManger.lightGrey.withOpacity(0.85),
-                                    borderRadius: BorderRadius.circular(4)),
-                                child: TimerDownDate(time: widget.productModel.time!),
-                              ),
-                            ],
+                      ],
+                    ),
+                    const Divider(),
+                    Expanded(
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          child: Text(
+                            widget.productForViewModel.title!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTextStyles.titleProductBlue,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const Divider(),
-                  Expanded(
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                        child: Text(
-                          widget.productModel.title!,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: AppTextStyles.titleProductBlue,
-                        ),
-                      ),
                     ),
-                  ),
-                  Container(
-                    width: (widget.isTabsScreen != null &&
-                            widget.isTabsScreen == true || (widget.isMyAuction != null &&
-                        widget.isMyAuction == true ))
-                        ? double.infinity
-                        : 180,
-                    height: 35,
-                    margin: const EdgeInsets.all(10),
-                    color: ColorManger.green_10,
-                    child: goToPriceBox(),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  )
-                ],
-              ),
-            ));
+                    Container(
+                      width: (widget.isTabsScreen != null &&
+                                  widget.isTabsScreen == true ||
+                              (widget.isMyAuction != null &&
+                                  widget.isMyAuction == true))
+                          ? double.infinity
+                          : 180,
+                      height: 35,
+                      margin: const EdgeInsets.all(10),
+                      color: ColorManger.green_10,
+                      child: goToPriceBox(),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    )
+                  ],
+                ),
+              );
   }
 }
 
@@ -218,13 +271,11 @@ class _LastBidsTabsState extends State<LastBidsTabs> {
   }
 }
 
-
-
-
 class LastBidsTabsAndPrice extends StatefulWidget {
   final ProductForViewModel productModel;
 
-  const LastBidsTabsAndPrice({Key? key, required this.productModel}) : super(key: key);
+  const LastBidsTabsAndPrice({Key? key, required this.productModel})
+      : super(key: key);
 
   @override
   State<LastBidsTabsAndPrice> createState() => _LastBidsTabsAndPriceState();
@@ -275,4 +326,3 @@ class _LastBidsTabsAndPriceState extends State<LastBidsTabsAndPrice> {
     );
   }
 }
-

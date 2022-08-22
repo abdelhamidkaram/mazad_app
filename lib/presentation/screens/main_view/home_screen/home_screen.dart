@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
+import 'package:soom/presentation/components/favorite_icon_widget.dart';
 import 'package:soom/presentation/screens/category/bloc/categories_cubit.dart';
 import 'package:soom/presentation/screens/category/category.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
@@ -91,7 +92,7 @@ class _HomeProductsViewState extends State<HomeProductsView> {
               physics: const BouncingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) => ProductItem(
-                productModel: widget.homeCubit.products[index],
+                productForViewModel: widget.homeCubit.products[index],
                 isFullWidth: false,
               ),
               separatorBuilder: (context, index) => const SizedBox(
@@ -126,7 +127,7 @@ class _HomeProductsViewState extends State<HomeProductsView> {
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) => ProductItem(
-              productModel: widget.homeCubit.products[index],
+              productForViewModel: widget.homeCubit.products[index],
               isFullWidth: false,
             ),
             separatorBuilder: (context, index) => const SizedBox(
@@ -183,7 +184,7 @@ class _CategoryBlockState extends State<CategoryBlock> {
             physics: const BouncingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) => ProductItem(
-              productModel: products[index],
+              productForViewModel: products[index],
               isFullWidth: false,
             ),
             separatorBuilder: (context, index) => const SizedBox(

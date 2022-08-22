@@ -51,7 +51,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                         padding: const EdgeInsets.all(8.0),
                         child: ProductItem(
                           isFullWidth: true,
-                          productModel: HomeCubit.get(context).searchResult[index],
+                          productForViewModel: HomeCubit.get(context).searchResult[index],
                         ),
                       ),
                   ),

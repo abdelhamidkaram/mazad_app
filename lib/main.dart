@@ -11,6 +11,8 @@ import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/app_bloc/bloc_observer.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/login/bloc/cubit.dart';
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
+import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/splash/splash.dart';
 import 'package:soom/style/theme_style.dart';
@@ -18,10 +20,10 @@ var  token = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-
-
   await SharedPreferences.getInstance().then((value) async {
-    token = value.getString(PrefsKey.token) ?? "";
+    if( value.getBool(PrefsKey.isLogin) ?? true  ){
+      token = value.getString(PrefsKey.token) ?? "";
+    }
     });
   BlocOverrides.runZoned(
         () {
@@ -43,6 +45,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(create: (context) => HomeCubit()),
         BlocProvider(create: (context) => BidCubit()),
+        BlocProvider(create: (context) => FavoriteCubit()),
+        BlocProvider(create: (context) => MyAuctionsCubit()..getMyBid("testmob3", context)),
       ],
       child: BlocConsumer<AppCubit, AppStates>(
         listener: (context, state) => AppCubit(),

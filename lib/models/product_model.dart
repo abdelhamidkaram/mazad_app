@@ -1,5 +1,7 @@
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
+
 class ProductForViewModel{
-  final bool isFavorite ;
+   bool isFavorite = false ;
   final String view ;
   final String lasPrice ;
   final String auctionCounter ; //TODO: GET FORM SERVER
@@ -16,7 +18,6 @@ class ProductForViewModel{
    double? targetPrice ;
    String? details ;
 ProductForViewModel(
-    this.isFavorite ,
     this.view,
     this.productModel,
     this.lasPrice,

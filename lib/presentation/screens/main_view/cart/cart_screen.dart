@@ -27,7 +27,6 @@ class _CartScreenState extends State<CartScreen> {
         //TODO: GET CART PRODUCTS
         List<ProductForViewModel> products = [
           ProductForViewModel(
-              false,
               "200",
               ProductModel(
                   product: Product(

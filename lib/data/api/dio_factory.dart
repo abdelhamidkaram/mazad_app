@@ -14,7 +14,7 @@ class DioFactory {
   DioFactory(){
     dio.interceptors.add(PrettyDioLogger());
   }
-  getData(String endpoint, Map<String, dynamic> query) async {
+  Future<Response> getData(String endpoint, Map<String, dynamic> query) async {
     return await dio.get(
       endpoint,
       queryParameters: query,
@@ -32,4 +32,12 @@ class DioFactory {
       String endpoint, Map<String, dynamic> query) async {
     return await dio.put(endpoint, data: query);
   }
+
+
+  Future<Response> deleteData(
+      String endpoint, Map<String, dynamic> query) async {
+    return await dio.delete(endpoint, queryParameters: query);
+  }
+
+
 }

@@ -15,7 +15,7 @@ class _MyAuctionsTabState extends State<MyAuctionsTab> {
     return Padding(
       padding: const EdgeInsets.all(20.0),
       child: ListView.separated(
-        itemBuilder:(context, index) =>  ProductItem(isMyAuction: true ,isFullWidth: true, productModel: widget.myAuctions[index]),
+        itemBuilder:(context, index) =>  ProductItem(isMyAuction: true ,isFullWidth: true, productForViewModel: widget.myAuctions[index]),
         separatorBuilder:(context , index )=> const  SizedBox(height: 25,),
         itemCount: widget.myAuctions.length ,
       ),

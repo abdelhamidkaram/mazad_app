@@ -54,16 +54,6 @@ class _MainScreenState extends State<MainScreen> {
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) => HomeCubit(),
       builder: (context, state){
-        var cubit = HomeCubit.get(context);
-        if(cubit.categories.isEmpty ){
-          cubit.getCategories(context).then((value){
-            if(cubit.products.isEmpty ){
-              cubit.getProducts(context).then((value){
-
-              });
-            }
-          });
-        }
         List<bool> cartViewsAndElevation = [true, true, true, true, false];
         List<String> titles = [
           "الرئيسية",

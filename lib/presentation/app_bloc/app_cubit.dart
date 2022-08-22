@@ -8,7 +8,6 @@ import 'package:soom/data/cache/prefs.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/components/toast.dart';
-import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/login/login.dart';
 import 'package:soom/repository/repository.dart';
 

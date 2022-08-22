@@ -18,8 +18,8 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
         AppToasts.toastError("خطأ في جلب المعلومات حتول لا حقا !", context);
         emit(GetCategoryProductsError());
       }, (productsList) {
-        //TODO: GET THE favORiTe  and last price
-        products = productsList.map((product)=> ProductForViewModel(false, "2000", product, "200", "12") ).toList();
+        //TODO: GET THE Last Price and last price
+        products = productsList.map((product)=> ProductForViewModel( "2000", product, "200", "12") ).toList();
        emit(GetCategoryProductsSuccess());
       });
     }
@@ -33,8 +33,8 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
         emit(GetCategoryProductsError());
         return _products ;
       }, (productsList) {
-        //TODO: GET THE favORiTe  and last price
-        List<ProductForViewModel>  _products = productsList.map((product)=> ProductForViewModel(false, "2000", product, "200", "12") ).toList();
+        //TODO: GET THE Last price  and last price
+        List<ProductForViewModel>  _products = productsList.map((product)=> ProductForViewModel("2000", product, "200", "12") ).toList();
         emit(GetCategoryProductsSuccess());
         return _products ;
       });

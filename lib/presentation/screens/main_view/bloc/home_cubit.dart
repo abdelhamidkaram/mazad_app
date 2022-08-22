@@ -10,6 +10,7 @@ import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/login/login.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/home_screen/categoreis_block_model.dart';
 import 'package:soom/repository/repository.dart';
 import 'package:soom/style/text_style.dart';
@@ -68,6 +69,7 @@ class HomeCubit extends Cubit<HomeStates> {
 
   Future getProducts(context) async {
     emit(GetProductsLoading());
+    await FavoriteCubit.get(context).getFavorite(context).then((value) => null);
     (
         await _repository.getProducts(maxResult: 100)
     ).fold((errorModel) {
@@ -75,14 +77,18 @@ class HomeCubit extends Cubit<HomeStates> {
       if (kDebugMode) {
         print(errorModel.message);
       }
-      if (errorModel.statusCode == 401) {
-        AppToasts.toastError("يرجي اعادة تسجيل الدخول ", context);
+
+    }, (productsResponse) {
+      //TODO: GET THE last price  and last price
+      List<ProductForViewModel > productsList = productsResponse.map((product)=> ProductForViewModel("2000", product, "200", "12")).toList().reversed.toList();
+      for(var i = 0 ; i < productsList.length ; i++ ){
+        for(var fav in FavoriteCubit.get(context).favoritesItemsResponse ){
+          if(fav["productName"] == productsList[i].title){
+            productsList[i].isFavorite = true ;
+          }
+        }
       }
-    }, (productsList) {
-      //TODO: GET THE favORiTe  and last price
-      products = productsList.map((product) =>
-          ProductForViewModel(false, "2000", product, "200", "12")).toList().reversed.toList();
-      products.reversed;
+      products = productsList ;
       _getCategoryBlocks();
       emit(GetProductsSuccess());
     });
@@ -212,8 +218,8 @@ class HomeCubit extends Cubit<HomeStates> {
       filterResult = [] ;
      },
    (productsList) {
-     //TODO : FAV AND LAST PRICE
-     filterResult =  productsList.map((e) => ProductForViewModel(false , "20", e, "300" , "12")).toList();
+     //TODO :  LAST PRICE
+     filterResult =  productsList.map((e) => ProductForViewModel( "20", e, "300" , "12")).toList();
 
      });
 
@@ -243,7 +249,7 @@ class HomeCubit extends Cubit<HomeStates> {
       AppToasts.toastError(error.message, context);
     }, (productsList){
       //TODO: FAVORITE AND LAST PRICE
-     searchResult =  productsList.map((productDetailsModel)=> ProductForViewModel(false, "20", productDetailsModel, "300", "12")).toList();
+     searchResult =  productsList.map((productDetailsModel)=> ProductForViewModel("20", productDetailsModel, "300", "12")).toList();
      emit(GetSearchSuccess());
      return searchResult;
     });

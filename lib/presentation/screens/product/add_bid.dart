@@ -40,7 +40,8 @@ class _AddBidState extends State<AddBid> {
      List<int> bidCounter = [10 , 20 , 30 , 40 , 50 , 70 , 80 , 100 , 150 , 200 ,250 ,  300 , 350 , 400 , 450 , 500 , 600 , 700 , 800 , 900 , 1000 ];
      _replaceController(){
           setState(() {
-            if(controller.text.contains(",") || controller.text.contains(".") || controller.text.contains(" ") ){
+            if(controller.text.contains(",") || controller.text.contains(".") || controller.text.contains(" ") )
+            {
               controller.text = controller.text.replaceAll(",", "");
               controller.text = controller.text.replaceAll(".", "");
               controller.text = controller.text.replaceAll(" ", "");

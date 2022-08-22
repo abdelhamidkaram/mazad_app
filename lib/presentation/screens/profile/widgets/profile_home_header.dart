@@ -43,7 +43,7 @@ class _ProfileHomeHeaderState extends State<ProfileHomeHeader> {
           child: Row(
             children: [
               //TODO: IMAGE PROFILE FORM SERVER
-              const ProfileImage(imageUrl: "https://www.kau.edu.sa/Files/0016617/Galleries/6608/51617_P1016195%20copy.jpg"),
+              const ProfileImage(imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png"),
               const SizedBox(width: 5,),
               Expanded(
                 child: Column(

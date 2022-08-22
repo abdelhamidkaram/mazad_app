@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/product_item.dart';
-import 'package:soom/presentation/screens/main_view/favorite_screen/no_favorite_screen.dart';
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
+
 
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
@@ -11,51 +12,52 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
+  bool isFinish = false ;
+  List<ProductForViewModel>  items = FavoriteCubit().favoritesItems ;
+  @override
+  void initState() {
+    if(FavoriteCubit.get(context).isFirstBuild){
+      items = [];
+      FavoriteCubit.get(context).getFavoriteForView(context).then((value){
+        setState(() {
+          isFinish = true ;
+          FavoriteCubit.get(context).isFirstBuild = false ; 
+          items =  value ;
+        });
+      });
+    }else{
+      isFinish = true ;
+      setState(() {
+        items = FavoriteCubit.get(context).favoritesItems ;
+      });
+    }
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
-    List<ProductForViewModel> items = [
-      ProductForViewModel(
-        false,
-        "200",
-        ProductModel(
-            product: Product(
-                status: 0,
-                targetPrice: 300,
-                minPrice: 200,
-                name: "تجربة ",
-                endDate: "2022-05-29",
-                categoryId: 1,
-                descrption:
-                "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما.",
-                id: 100)),
-        "1000",
-        "12",
-      ),
-      ProductForViewModel(
-        false,
-        "200",
-        ProductModel(
-            product: Product(
-                status: 0,
-                targetPrice: 300,
-                minPrice: 200,
-                name: "تجربة ",
-                endDate: "2022-05-29",
-                categoryId: 1,
-                descrption:
-                "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما.",
-                id: 100)),
-        "1000",
-        "12",
-      ),
-    ];
-    return items.isNotEmpty ? ListView.separated(
-      separatorBuilder: (context, index) => const  SizedBox(height: 2,),
-      itemCount: items.length,
-      itemBuilder: (context , index) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0 , vertical: 13),
-        child: ProductItem(isFullWidth: true, productModel: items[index] , isFavoriteScreen: true, ),
-      ),
-    ): const NoFavoriteScreen() ;
+         return isFinish ? RefreshIndicator(
+           onRefresh: () => FavoriteCubit.get(context).getFavoriteForView(context).then((value){
+             setState(() {
+               items = value ;
+             });
+           }),
+           child: Padding(
+             padding: const EdgeInsets.all(16.0),
+             child: ListView.separated(
+               itemCount: items.length,
+              itemBuilder: (BuildContext context, int index) {
+                 return ProductItem(
+                   isFullWidth: true,
+                   productForViewModel: items[index] ,
+                   isFavoriteScreen: true,
+
+                 );
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                 return const SizedBox(height: 16,);
+              },
+        ),
+           ),
+         ) : const Center(child: CircularProgressIndicator(),);
   }
 }
