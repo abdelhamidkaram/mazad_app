@@ -71,7 +71,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
           itemBuilder: (context, index) => ProductItem(
             isFullWidth: true,
             productForViewModel: cubit.products[index],
-
           ),
           separatorBuilder: (context, index) => const SizedBox(
             height: 20,

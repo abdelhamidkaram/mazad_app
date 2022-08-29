@@ -93,7 +93,6 @@ bool isObscureText2 = true;
   ).fold((error){
     emit(LoginError(error));
     Navigator.pop(context);
-    AppToasts.toastError("حدث خطأ ما , تأكد من البيانات و أعد المحاولة لاحقا", context);
     emit(DialogShow());
   }, (loginSuccess){
     Navigator.pop(context);

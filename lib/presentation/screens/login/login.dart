@@ -78,18 +78,20 @@ class _LoginScreenState extends State<LoginScreen> {
               ? Directionality(
                   textDirection: TextDirection.rtl,
                   child: Scaffold(
+                    resizeToAvoidBottomInset: false ,
                     backgroundColor: Colors.white,
-                    body: Center(
-                      child: SingleChildScrollView(
+                    body: SafeArea(
+                      child: Center(
                         child: Padding(
                           padding: const EdgeInsets.all(24.0),
                           child: Form(
                             key: formKey,
                             child: Column(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 const DarkLogo(),
                                 const SizedBox(
-                                  height: 10,
+                                  height: 25,
                                 ),
                                 Row(
                                   children: const [
@@ -239,8 +241,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             loginCubit.login(loginRequest , context).then((value){
                                               setState(() {
                                                  SharedPreferences.getInstance().then((value){
-                                                   token = value.getString(PrefsKey.token)!; 
-                                                   
+                                                   token = value.getString(PrefsKey.token)!;
+
                                                 });
                                               });
                                               HomeCubit.get(context).getCategories(context).then((value){
@@ -281,6 +283,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         )),
                                   ],
                                 )
+
                               ],
                             ),
                           ),

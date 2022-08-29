@@ -6,7 +6,8 @@ import 'package:soom/style/text_style.dart';
 
 class ProductPriceBox extends StatefulWidget {
   final ProductForViewModel productModel ;
-  const ProductPriceBox({Key? key, required this.productModel}) : super(key: key);
+  final String lastPrice ;
+  const ProductPriceBox({Key? key, required this.productModel, required this.lastPrice}) : super(key: key);
 
   @override
   State<ProductPriceBox> createState() => _ProductPriceBoxState();
@@ -71,7 +72,7 @@ class _ProductPriceBoxState extends State<ProductPriceBox> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: Text("آخر مزايدة" , style: AppTextStyles.mediumBlack,),
                 ),
-                PriceAndCurrencyGreen(productModel: widget.productModel),
+                PriceAndCurrencyGreen(productModel: widget.productModel, lastPrice: widget.lastPrice,),
 
               ],
             ),
@@ -86,7 +87,9 @@ class _ProductPriceBoxState extends State<ProductPriceBox> {
 
 class PriceAndCurrencyGreen extends StatefulWidget {
   final ProductForViewModel  productModel ;
-  const PriceAndCurrencyGreen({Key? key, required this.productModel}) : super(key: key);
+  final String  lastPrice ;
+
+  const PriceAndCurrencyGreen({Key? key, required this.productModel, required this.lastPrice}) : super(key: key);
 
   @override
   State<PriceAndCurrencyGreen> createState() => _PriceAndCurrencyGreenState();
@@ -99,7 +102,7 @@ class _PriceAndCurrencyGreenState extends State<PriceAndCurrencyGreen> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         const Text("KW", style: AppTextStyles.currencyGreen,),
-        Text(widget.productModel.lasPrice, style: AppTextStyles.titleGreen,),
+        Text(widget.lastPrice, style: AppTextStyles.titleGreen,),
       ],
     );
   }
@@ -121,7 +124,7 @@ class _PriceAndCurrencyRedState extends State<PriceAndCurrencyRed> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         const Text("KW", style: AppTextStyles.currencyRed,),
-        Text(widget.productModel.initialPrice.toString().substring(0 , widget.productModel.initialPrice.toString().length >=6 ?  6 : widget.productModel.initialPrice.toString().length), style: AppTextStyles.titleRed,),
+        Text(widget.productModel.targetPrice.toString().substring(0 , widget.productModel.initialPrice.toString().length >=6 ?  6 : widget.productModel.initialPrice.toString().length), style: AppTextStyles.titleRed,),
       ],
     );
   }

@@ -39,7 +39,6 @@ class _CartScreenState extends State<CartScreen> {
                       descrption:
                           "هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق. إذا كنت تحتاج إلى عدد أكبر من الفقرات يتيح لك مولد النص العربى زيادة عدد الفقرات كما تريد، النص لن يبدو مقسما.",
                       id: 100)),
-              "1000",
               "12",
           ),
         ];
@@ -107,7 +106,9 @@ class _CartScreenState extends State<CartScreen> {
                                                 ),
                                                 PriceAndCurrencyGreen(
                                                     productModel:
-                                                        products[index]),
+                                                        products[index] ,
+                                                lastPrice: "",//TODO:
+                                                ),
                                               ],
                                             ),
                                           ),

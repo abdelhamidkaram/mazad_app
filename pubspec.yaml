@@ -28,7 +28,8 @@ dependencies:
   dotted_decoration: ^2.0.0
   connectivity_plus: ^2.3.2
   pretty_dio_logger: ^1.2.0-beta-1
-  favorite_button: ^0.0.4
+  signalr_pure: any
+  signalr_netcore:
 
 dev_dependencies:
   flutter_test:

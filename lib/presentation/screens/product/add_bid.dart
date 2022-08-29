@@ -27,13 +27,15 @@ class _AddBidState extends State<AddBid> {
   @override
   void initState() {
     super.initState();
-    BidCubit.get(context).getController(widget.productModel);
+    BidCubit.get(context).getController( context , widget.productModel);
   }
   @override
   Widget build(BuildContext context) {
+
  return  BlocConsumer<BidCubit , BidStates>(
    listener: (context, state) => BidCubit(),
    builder: (context , state ){
+      String lastPrice =   widget.productModel.initialPrice.toString() ; //TODO : CONVERT INIT PRICE TO LAST PRICE
      var bidCubit = BidCubit.get(context);
      var controller = bidCubit.controller;
      var bidPriceKey = GlobalKey<FormFieldState>();
@@ -51,9 +53,9 @@ class _AddBidState extends State<AddBid> {
      _checkRangeBidOrCheckAndSendDataToServer(value ,{AuctionForViewModel?  auctionForViewModel}   ){
        if(value.isNotEmpty){
          _replaceController();
-         if((int.parse(value) <= int.parse(widget.productModel.lasPrice))){
-           controller.text = widget.productModel.lasPrice ;
-           AppToasts.toastError("لقد ادخلت سعرا أقل من أو يساوي آخر مزايدة يجب ان تزايد بمبلغ أكبر من  : ${widget.productModel.lasPrice}", context);
+         if((int.parse(value) <= int.parse(lastPrice))){
+           controller.text = lastPrice ;
+           AppToasts.toastError("لقد ادخلت سعرا أقل من أو يساوي آخر مزايدة يجب ان تزايد بمبلغ أكبر من  : $lastPrice", context);
          }else{
           if(auctionForViewModel !=null ){
             bidCubit.sendBidToServer(auctionForViewModel, context).then((value){});
@@ -181,7 +183,7 @@ class _AddBidState extends State<AddBid> {
                        _checkRangeBidOrCheckAndSendDataToServer(controller.text, auctionForViewModel: auctionForViewModel);
                      }else{
                        AppToasts.toastError("ادخل قيمة المزايدة ", context);
-                       controller.text = widget.productModel.lasPrice;
+                       controller.text = lastPrice;
                      }
                    }, "اضافة مزايدة ", true ,
                        icon: SvgPicture.asset("assets/auction.svg" , color: ColorManger.white,)),

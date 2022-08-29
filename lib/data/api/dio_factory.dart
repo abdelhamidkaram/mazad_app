@@ -12,7 +12,8 @@ Dio dio = Dio(BaseOptions(baseUrl: ApiBase.baseUrl, headers: {
 }));
 class DioFactory {
   DioFactory(){
-    dio.interceptors.add(PrettyDioLogger());
+    //TODO: ADD LOGGER TO DIO
+    // dio.interceptors.add(PrettyDioLogger());
   }
   Future<Response> getData(String endpoint, Map<String, dynamic> query) async {
     return await dio.get(

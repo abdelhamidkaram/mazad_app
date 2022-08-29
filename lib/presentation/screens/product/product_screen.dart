@@ -15,9 +15,10 @@ import 'package:soom/style/text_style.dart';
 class ProductScreen extends StatefulWidget {
   final ProductForViewModel productModel;
   final bool isMyAuction;
+  final String lastPrice ;
 
   const ProductScreen(
-      {Key? key, required this.productModel, this.isMyAuction = false})
+      {Key? key, required this.productModel, this.isMyAuction = false, required this.lastPrice})
       : super(key: key);
 
   @override
@@ -54,7 +55,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 AddBid(productModel: widget.productModel),
                           ));
                       BidCubit.get(context).controller.text =
-                          widget.productModel.lasPrice;
+                          widget.productModel.lasPrice!;
                     },
                     "اضافة مزايدة ",
                     true,
@@ -117,7 +118,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   const SizedBox(
                     height: 25,
                   ),
-                  ProductPriceBox(productModel: widget.productModel),
+                  ProductPriceBox(productModel: widget.productModel , lastPrice:widget.lastPrice ),
                   const SizedBox(
                     height: 25,
                   ),

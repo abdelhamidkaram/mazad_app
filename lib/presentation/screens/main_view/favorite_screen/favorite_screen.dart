@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
 
 
 class FavoriteScreen extends StatefulWidget {
@@ -12,52 +14,53 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  bool isFinish = false ;
+
   List<ProductForViewModel>  items = FavoriteCubit().favoritesItems ;
   @override
   void initState() {
-    if(FavoriteCubit.get(context).isFirstBuild){
-      items = [];
-      FavoriteCubit.get(context).getFavoriteForView(context).then((value){
-        setState(() {
-          isFinish = true ;
-          FavoriteCubit.get(context).isFirstBuild = false ; 
-          items =  value ;
-        });
-      });
-    }else{
-      isFinish = true ;
-      setState(() {
-        items = FavoriteCubit.get(context).favoritesItems ;
-      });
-    }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
-         return isFinish ? RefreshIndicator(
-           onRefresh: () => FavoriteCubit.get(context).getFavoriteForView(context).then((value){
-             setState(() {
-               items = value ;
-             });
-           }),
-           child: Padding(
-             padding: const EdgeInsets.all(16.0),
-             child: ListView.separated(
-               itemCount: items.length,
-              itemBuilder: (BuildContext context, int index) {
-                 return ProductItem(
-                   isFullWidth: true,
-                   productForViewModel: items[index] ,
-                   isFavoriteScreen: true,
+    return  BlocBuilder<FavoriteCubit , FavoriteStates>(
+          builder: (context, state){
+            if(FavoriteCubit.get(context).favoritesItems.isEmpty && FavoriteCubit.get(context).isFirstBuild){
+              FavoriteCubit.get(context).getFavoriteForView(context);
+              FavoriteCubit.get(context).isFinish = true ;
+              FavoriteCubit.get(context).isFirstBuild = true ;
+            }
+            if(state is GetFavoriteForViewLoading && FavoriteCubit.get(context).favoritesItems.isEmpty ){
+              return const  Center(child:  CircularProgressIndicator(),);
+            }
+           return FavoriteCubit.get(context).isFinish
+               ? RefreshIndicator(
+             onRefresh: () => FavoriteCubit.get(context).getFavoriteForView(context).then((value){
+               setState(() {
 
-                 );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                 return const SizedBox(height: 16,);
-              },
-        ),
-           ),
-         ) : const Center(child: CircularProgressIndicator(),);
+               });
+             }),
+             child: Padding(
+               padding: const EdgeInsets.all(16.0),
+               child: ListView.separated(
+                 physics: const BouncingScrollPhysics(),
+                 itemCount: FavoriteCubit.get(context).favoritesItems.length,
+                 itemBuilder: (BuildContext context, int index) {
+                   return ProductItem(
+                     isFullWidth: true,
+                     productForViewModel: FavoriteCubit.get(context).favoritesItems[index] ,
+                     isFavoriteScreen: true,
+                   );
+                 },
+                 separatorBuilder: (BuildContext context, int index) {
+                   return const SizedBox(height: 16,);
+                 },
+               ),
+             ),
+           )
+               : const Center(child: CircularProgressIndicator(),);
+          },
+
+       );
   }
 }

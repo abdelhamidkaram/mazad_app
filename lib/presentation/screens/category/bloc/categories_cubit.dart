@@ -15,11 +15,10 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
       (
       await _repository.getProductsBaseOnCategoryName(categoryName: categoryName)
       ).fold((error){
-        AppToasts.toastError("خطأ في جلب المعلومات حتول لا حقا !", context);
         emit(GetCategoryProductsError());
       }, (productsList) {
         //TODO: GET THE Last Price and last price
-        products = productsList.map((product)=> ProductForViewModel( "2000", product, "200", "12") ).toList();
+        products = productsList.map((product)=> ProductForViewModel( "2000", product, "12",) ).toList();
        emit(GetCategoryProductsSuccess());
       });
     }
@@ -29,16 +28,16 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
       (
       await _repository.getProductsBaseOnCategoryName(categoryName: categoryName)
       ).fold((error){
-        AppToasts.toastError("خطأ في جلب المعلومات حتول لا حقا !", context);
+        AppToasts.toastError("خطأ في جلب المنتجات حاول لا حقا !", context);
         emit(GetCategoryProductsError());
-        return _products ;
+        return _products.reversed.toList()  ;
       }, (productsList) {
         //TODO: GET THE Last price  and last price
-        List<ProductForViewModel>  _products = productsList.map((product)=> ProductForViewModel("2000", product, "200", "12") ).toList();
+        List<ProductForViewModel>  _products = productsList.map((product)=> ProductForViewModel("2000", product, "12") ).toList();
         emit(GetCategoryProductsSuccess());
-        return _products ;
+        return _products.reversed.toList() ;
       });
-        return _products ;
+        return _products.reversed.toList() ;
     }
 
 

@@ -76,7 +76,7 @@ class _HomeProductsViewState extends State<HomeProductsView> {
      if(widget.state is GetProductsError ){
       return const Center(child: Text("حدث خطأ ما اثناء جلب المنتجات حاول لاحقا ! "),);
     }
-     if(widget.state is GetProductsLoading ){
+     if(widget.state is GetProductsLoading && widget.homeCubit.products.isEmpty ){
        return const Center(child: CircularProgressIndicator(),);
     }
     if(widget.state is GetProductsSuccess){
@@ -115,7 +115,8 @@ class _HomeProductsViewState extends State<HomeProductsView> {
         ],
       ) : const SizedBox();
     }
-    return widget.homeCubit.products.isNotEmpty ? Column(
+    return widget.homeCubit.products.isNotEmpty ?
+    Column(
       children: [
         TitleCategory(title: "آخر المزادات ", onPressed: () {
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => const AllProductsScreen(),));
@@ -148,7 +149,8 @@ class _HomeProductsViewState extends State<HomeProductsView> {
           }) : [const SizedBox()],
         ),
       ],
-    ) : const Text("لايوجد منتجات قابلة للمزايدة الان  حاول لاحقا !  ");
+    ) : const Text("");
+
   }
 }
 

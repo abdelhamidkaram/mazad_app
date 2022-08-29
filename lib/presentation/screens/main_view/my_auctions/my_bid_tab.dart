@@ -5,7 +5,6 @@ import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_states.dart';
-import 'package:soom/presentation/screens/main_view/my_auctions/my_auctions_screen.dart';
 
 class MyBids extends StatefulWidget {
   final List<ProductForViewModel> myBids;

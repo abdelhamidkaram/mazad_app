@@ -16,5 +16,13 @@ class ApiEndPoint {
   static const String myFavorite = "api/services/app/ProductFavorites/GetAll";
   static const String addToFavorite = "api/services/app/ProductFavorites/CreateOrEdit";
   static const String deleteFavorite = "api/services/app/ProductFavorites/Delete";
+  static const String getLastBid = "api/services/app/ProductAuactions/GetLast";
+  static const String getAllBid = "api/services/app/ProductAuactions";
+  static const String getNotification = "api/services/app/Notification/GetUserNotifications";
+  static const String setNotificationAsRead = "api/services/app/Notification/SetNotificationAsRead";
+  static const String getFQA = "api/services/app/FAQs/GetAll";
+  static const String createSupportCass = "api/services/app/SupportCases/CreateOrEdit";
+  static const String getAllSupportCass = "api/services/app/SupportCases/GetAll";
+  static const String getCommentForSupportCase = "api/services/app/SupoortCaseCommentses/GetAll";
 
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,6 +7,7 @@ import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/auction_model.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
+import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_states.dart';
 
 class BidCubit extends Cubit<BidStates> {
@@ -18,8 +18,9 @@ class BidCubit extends Cubit<BidStates> {
   bool isAddBid = false;
   int bidCounter = 100;
 
-  TextEditingController getController(ProductForViewModel productModel) {
-    controller.text = !isAddBid ? productModel.lasPrice : controller.text;
+  TextEditingController getController(  context ,   ProductForViewModel productModel) {
+    MyAuctionsCubit.get(context).myBidsForView.add(productModel);
+    controller.text = (!isAddBid ? productModel.lasPrice : controller.text) ?? 200.toString();
     emit(GetBidController());
     return controller;
   }
@@ -28,8 +29,8 @@ class BidCubit extends Cubit<BidStates> {
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||
-        price < int.parse(productForViewModel.lasPrice)) {
-      controller.text = int.parse(productForViewModel.lasPrice).toString();
+        price < int.parse(productForViewModel.lasPrice!)) {
+      controller.text = int.parse(productForViewModel.lasPrice!).toString();
       emit(AddBidError());
     } else {
       price = int.parse(controller.text) + bidCounter;
@@ -47,8 +48,8 @@ class BidCubit extends Cubit<BidStates> {
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||
-        price <= int.parse(productModel.lasPrice)) {
-      price = int.parse(productModel.lasPrice);
+        price <= int.parse(productModel.lasPrice!)) {
+      price = int.parse(productModel.lasPrice!);
       AppToasts.toastError(
           "لقد ادخلت سعرا اقل من اخر مزايدة يجب ان تزايد بمبلغ اكبر من : ${productModel.lasPrice}",
           context);

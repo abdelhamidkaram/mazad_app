@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:soom/constants/api_constants.dart';
+import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
@@ -19,6 +21,10 @@ class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(InitHomeState());
 
   static HomeCubit get(context) => BlocProvider.of(context);
+
+
+
+
   final Repository _repository = Repository();
   int cardNumber = 5;
   int slideCount = 0;
@@ -64,14 +70,15 @@ class HomeCubit extends Cubit<HomeStates> {
         false;
   }
 
-  // ------------------ get Products  --------------//
+
+  // TODO :  ADD LAST PRICE TO PRODUCT MODEL
   List<ProductForViewModel> products = [];
 
   Future getProducts(context) async {
     emit(GetProductsLoading());
     await FavoriteCubit.get(context).getFavorite(context).then((value) => null);
     (
-        await _repository.getProducts(maxResult: 100)
+        await _repository.getProducts(maxResult: 1000)
     ).fold((errorModel) {
       emit(GetProductsError());
       if (kDebugMode) {
@@ -80,13 +87,14 @@ class HomeCubit extends Cubit<HomeStates> {
 
     }, (productsResponse) {
       //TODO: GET THE last price  and last price
-      List<ProductForViewModel > productsList = productsResponse.map((product)=> ProductForViewModel("2000", product, "200", "12")).toList().reversed.toList();
+      List<ProductForViewModel > productsList = productsResponse.map((product)=> ProductForViewModel("2000", product, "200")).toList().reversed.toList();
       for(var i = 0 ; i < productsList.length ; i++ ){
         for(var fav in FavoriteCubit.get(context).favoritesItemsResponse ){
           if(fav["productName"] == productsList[i].title){
             productsList[i].isFavorite = true ;
           }
         }
+
       }
       products = productsList ;
       _getCategoryBlocks();
@@ -94,6 +102,21 @@ class HomeCubit extends Cubit<HomeStates> {
     });
   }
 
+//-------------------- get last Price ------------||
+  Future<String> getLastPrice(int id) async {
+    DioFactory dioFactory = DioFactory() ;
+    dioFactory.getData(ApiEndPoint.getLastBid, {
+      "id":id
+    }).then((value){
+      emit(GetLastPriceSuccess());
+      return value.data["result"]["price"].toString();
+    }).catchError((erro){
+     if (kDebugMode) {
+       print(erro.toString());
+     }
+    });
+    return "000" ;
+  }
 
   // ------------------ get category  --------------//
 
@@ -218,9 +241,8 @@ class HomeCubit extends Cubit<HomeStates> {
       filterResult = [] ;
      },
    (productsList) {
-     //TODO :  LAST PRICE
-     filterResult =  productsList.map((e) => ProductForViewModel( "20", e, "300" , "12")).toList();
-
+     //TODO :  LAST Auction Counter
+     filterResult =  productsList.map((e) => ProductForViewModel( "20", e, "12")).toList();
      });
 
       emit(GetFilterResultSuccess());
@@ -249,7 +271,7 @@ class HomeCubit extends Cubit<HomeStates> {
       AppToasts.toastError(error.message, context);
     }, (productsList){
       //TODO: FAVORITE AND LAST PRICE
-     searchResult =  productsList.map((productDetailsModel)=> ProductForViewModel("20", productDetailsModel, "300", "12")).toList();
+     searchResult =  productsList.map((productDetailsModel)=> ProductForViewModel("20", productDetailsModel, "12")).toList();
      emit(GetSearchSuccess());
      return searchResult;
     });

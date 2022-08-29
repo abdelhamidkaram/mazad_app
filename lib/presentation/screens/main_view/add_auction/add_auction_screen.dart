@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:soom/constants/api_constants.dart';
+import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
+import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/add_auction_progress.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_cubit.dart';
@@ -257,25 +260,46 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                       AppButtons.appButtonBlue(() {
                         if (addProductKey.currentState!.validate()) {
                           _replaceController();
-                          cubit
-                              .uploadProductDetails(state, context)
-                              .then((value) {
-                            if (state is UploadDetailsSuccess) {
-                              cubit.dateController.clear();
-                              cubit.nameController.clear();
-                              cubit.targetPriceController.clear();
-                              cubit.initialPriceController.clear();
-                              cubit.minPriceController.clear();
-                              cubit.detailsController.clear();
-                              cubit.catController.clear();
-                            }
+                          AppToasts.toastLoading(context);
+                          DioFactory().postData(ApiEndPoint.uploadProducts, {
+                              "name": cubit.nameController.text,
+                              "descrption": cubit.detailsController.text,
+                              "intitalPrice": int.parse(cubit.initialPriceController.text.toString()).toDouble(),
+                              "minPrice": int.parse(cubit.minPriceController.text.toString()).toDouble(),
+                              "endDate": cubit.dateController.text.substring(0, 10)+"T21:19:57.233Z",
+                              "status": 0,
+                              "targetPrice": int.parse(cubit.targetPriceController.text.toString()).toDouble(),
+                              "categoryId": cubit.categorySelected.index,
+
+
+
+                          }).then((value){
+                            Navigator.pop(context);
+                            AppToasts.toastSuccess("تم رفع المنتج ", context);
+                          }).catchError((err){
+                            Navigator.pop(context);
+                            AppToasts.toastError("error", context);
                           });
-                          if (cubit.customValidate(context)) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                              const AddAuctionProgress(),
-                            ));
-                          }
+
+                          // cubit
+                          //     .uploadProductDetails(state, context)
+                          //     .then((value) {
+                          //   if (state is UploadDetailsSuccess) {
+                          //     cubit.dateController.clear();
+                          //     cubit.nameController.clear();
+                          //     cubit.targetPriceController.clear();
+                          //     cubit.initialPriceController.clear();
+                          //     cubit.minPriceController.clear();
+                          //     cubit.detailsController.clear();
+                          //     cubit.catController.clear();
+                          //   }
+                          // });
+                          // if (cubit.customValidate(context)) {
+                          //   Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) =>
+                          //     const AddAuctionProgress(),
+                          //   ));
+                          // }
                         }
                       }, "إضافة المنتج ", true),
 

@@ -10,6 +10,7 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
   FavoriteCubit() : super(InitialFavoriteState());
 
   static FavoriteCubit get(context)=>BlocProvider.of(context);
+  bool isFinish = false ;
   bool isFirstBuild = true ;
   List favoritesItemsResponse = [];
   List<ProductForViewModel> favoritesItems = [];
@@ -34,17 +35,20 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
       await  DioFactory().getData(ApiEndPoint.getAllProducts, {
         "NameFilter":data["productName"]
       }).then((value){
+
         Map<String , dynamic > dataProduct =  value.data["result"]["items"][0];
         //TODO: LAST PRICE
-        ProductForViewModel productForViewModel = ProductForViewModel( "20", ProductModel.fromJson(dataProduct), "200", "12");
+        ProductForViewModel productForViewModel = ProductForViewModel( "20", ProductModel.fromJson(dataProduct),  "12");
         productForViewModel.isFavorite = true ;
         _favoritesItems.add(productForViewModel);
 
+        favoritesItems = _favoritesItems.reversed.toList();
+        emit(GetFavoriteForViewSuccess());
+        return _favoritesItems ;
       }).catchError((error){
-        AppToasts.toastError("حدث خطأ ما حاول لاحقا ! ", context);
+        return favoritesItems ;
       });
     }
-    favoritesItems = _favoritesItems;
     emit(GetFavoriteForViewSuccess());
     return _favoritesItems ;
   }

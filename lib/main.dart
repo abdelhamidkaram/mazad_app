@@ -16,6 +16,7 @@ import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions
 import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/splash/splash.dart';
 import 'package:soom/style/theme_style.dart';
+import 'package:soom/test1.dart';
 var  token = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => HomeCubit()),
         BlocProvider(create: (context) => BidCubit()),
         BlocProvider(create: (context) => FavoriteCubit()),
-        BlocProvider(create: (context) => MyAuctionsCubit()..getMyBid("testmob3", context)),
+        BlocProvider(create: (context) => MyAuctionsCubit()),
       ],
       child: BlocConsumer<AppCubit, AppStates>(
         listener: (context, state) => AppCubit(),
@@ -65,10 +66,11 @@ class MyApp extends StatelessWidget {
             theme: ThemeData(
               tabBarTheme: AppThemeStyles.tabBarTheme,
             ),
-            home:  FutureBuilder(
-              future: _checkInternet() ,
-              builder:(context , snap)=> const SplashScreen(),
-            ),
+          // home: const TestScreen(),
+           home:  FutureBuilder(
+             future: _checkInternet() ,
+             builder:(context , snap)=> const SplashScreen(),
+           ),
           );
         },
       ),

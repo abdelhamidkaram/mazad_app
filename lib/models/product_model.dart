@@ -1,9 +1,9 @@
-import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
+import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 
 class ProductForViewModel{
    bool isFavorite = false ;
   final String view ;
-  final String lasPrice ;
+   String?  lasPrice ;
   final String auctionCounter ; //TODO: GET FORM SERVER
   final ProductModel productModel ;
   final String thumbnail = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"  ;
@@ -20,7 +20,6 @@ class ProductForViewModel{
 ProductForViewModel(
     this.view,
     this.productModel,
-    this.lasPrice,
     this.auctionCounter ,
     ){
   title = productModel.product?.name ?? "غير معروف ";
@@ -33,6 +32,7 @@ ProductForViewModel(
   targetPrice = productModel.product?.targetPrice ?? 0.0 ;
   details = productModel.product?.descrption ?? "لا يوجد وصف " ;
   categoryId = productModel.product?.categoryId ?? 0 ;
+
 }
 
 }

@@ -34,3 +34,16 @@ class GetSearchSuccess extends HomeStates {}
 class GetSearchError extends HomeStates {}
 
 
+
+class GetLastPriceLoading extends HomeStates {}
+class GetLastPriceSuccess extends HomeStates {}
+class GetLastPriceError extends HomeStates {}
+
+
+
+
+class GetAllLastPriceLoading extends HomeStates {}
+class GetAllLastPriceSuccess extends HomeStates {}
+class GetAllLastPriceError extends HomeStates {}
+
+

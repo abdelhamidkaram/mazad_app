@@ -27,7 +27,9 @@ class _ProfileHomeState extends State<ProfileHome> {
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) => AppCubit(),
       builder: (context, state) {
-        AppCubit.get(context).getProfileDetails(context);
+        if(AppCubit.get(context).profileEditSuccess.result?.emailAddress == null ){
+          AppCubit.get(context).getProfileDetails(context);
+        }
         List<ProfileItemModel> items = [
           ProfileItemModel(
               "المحفظة", "assets/wallet.svg", const WalletScreen()),

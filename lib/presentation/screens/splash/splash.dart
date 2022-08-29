@@ -41,6 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
             FavoriteCubit.get(context).getFavorite(context).then((value){
               MyAuctionsCubit.get(context).getMyBid("abdelhamidkaram", context).then((value) => null);//TODO:GET CURRENT USER NAME
               FavoriteCubit.get(context).getFavoriteForView(context).then((value){
+
                 if(HomeCubit.get(context).products.isEmpty ){
                   HomeCubit.get(context).getProducts(context).then((value){
                     return  const MainScreen();
