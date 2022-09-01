@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if(AppCubit.get(context).isNewInstall){
      return MaterialPageRoute(builder: (context) => const OnBoardingScreen(),);
     }else {
-      if(AppCubit.get(context).goToLoginScreen){
+      if(!AppCubit.get(context).goToLoginScreen){
         return MaterialPageRoute(builder: (context) {
           HomeCubit.get(context).getCategories(context).then((value){
             FavoriteCubit.get(context).getFavorite(context).then((value){

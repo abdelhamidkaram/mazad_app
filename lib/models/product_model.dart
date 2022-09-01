@@ -1,3 +1,4 @@
+import 'package:soom/constants/app_string.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 
 class ProductForViewModel{
@@ -6,7 +7,7 @@ class ProductForViewModel{
    String?  lasPrice ;
   final String auctionCounter ; //TODO: GET FORM SERVER
   final ProductModel productModel ;
-  final String thumbnail = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"  ;
+   String thumbnail = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"  ;
    List<String>? photos ;
    int? categoryId ;
    String? title ;
@@ -22,6 +23,7 @@ ProductForViewModel(
     this.productModel,
     this.auctionCounter ,
     ){
+
   title = productModel.product?.name ?? "غير معروف ";
   photos = productModel.product?.photo ?? ["https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"];
   tasalsol = productModel.product?.id.toString() ?? 0.toString() ;
@@ -32,7 +34,9 @@ ProductForViewModel(
   targetPrice = productModel.product?.targetPrice ?? 0.0 ;
   details = productModel.product?.descrption ?? "لا يوجد وصف " ;
   categoryId = productModel.product?.categoryId ?? 0 ;
-
+  if(photos!.isNotEmpty && thumbnail != photos![0]){
+    thumbnail = "${AppString.getImageBaseUrl}${photos![0]} ";
+  }
 }
 
 }

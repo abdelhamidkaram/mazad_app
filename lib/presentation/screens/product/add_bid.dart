@@ -35,7 +35,7 @@ class _AddBidState extends State<AddBid> {
  return  BlocConsumer<BidCubit , BidStates>(
    listener: (context, state) => BidCubit(),
    builder: (context , state ){
-      String lastPrice =   widget.productModel.initialPrice.toString() ; //TODO : CONVERT INIT PRICE TO LAST PRICE
+      String lastPrice =   widget.productModel.minPrice!.toInt().toString() ; //TODO : CONVERT min PRICE TO LAST PRICE
      var bidCubit = BidCubit.get(context);
      var controller = bidCubit.controller;
      var bidPriceKey = GlobalKey<FormFieldState>();
@@ -178,7 +178,7 @@ class _AddBidState extends State<AddBid> {
                        AuctionForViewModel auctionForViewModel = AuctionForViewModel(
                          price:int.parse( controller.text),
                          productModel: widget.productModel.productModel,
-                         userModel: UserModel(userId: 3 ) , //TODO : USER MODEL
+                         userModel: UserModel(userId: 5 ) , //TODO : USER MODEL
                        );
                        _checkRangeBidOrCheckAndSendDataToServer(controller.text, auctionForViewModel: auctionForViewModel);
                      }else{

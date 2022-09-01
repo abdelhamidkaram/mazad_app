@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
-import 'package:soom/presentation/components/favorite_icon_widget.dart';
 import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/category/bloc/categories_cubit.dart';
 import 'package:soom/presentation/screens/category/bloc/categories_states.dart';

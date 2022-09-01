@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/widget/home_widgets/category_item_build.dart';
 

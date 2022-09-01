@@ -51,12 +51,12 @@ class _ReportScreenState extends State<ReportScreen> {
           return const CircularProgressIndicator();
         case -3 :
           return const Text("حدث خطأ في جلب الرد حاول لاحقا " ,
-            style: AppTextStyles.smallGrey, textDirection: TextDirection.rtl , maxLines: 50,);
+            style: AppTextStyles.mediumBlack, textDirection: TextDirection.rtl , maxLines: 50,);
         case 0 :
-          return  Text(msg  , style: AppTextStyles.smallGrey,
+          return  Text(msg  , style: AppTextStyles.mediumBlack,
             textDirection: TextDirection.rtl , maxLines: 50,);
           case -2 :
-          return  Text(msg  , style: AppTextStyles.smallGrey,
+          return  Text(msg  , style: AppTextStyles.mediumBlack,
             textDirection: TextDirection.rtl , maxLines: 50,);
       }
       return const Text("لا يوجد رد حتي الان .. عادة ما يتم الرد خلال اسبوع عمل  " ,
@@ -68,15 +68,21 @@ class _ReportScreenState extends State<ReportScreen> {
       child: Scaffold(
         appBar: AppBars.appBarGeneral(context, HomeCubit(), widget.reportModel.title.length > 10 ? widget.reportModel.title.substring(0,10) :  widget.reportModel.title  , cartView: false),
         body:Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const  Text("المشكلة : " , style: AppTextStyles.mediumBlue,textDirection: TextDirection.rtl,) ,
-              Text(widget.reportModel.body , style: AppTextStyles.smallGrey, maxLines: 50,),
-              const   Text("الرد  :" , style: AppTextStyles.mediumBlue,textDirection: TextDirection.rtl) ,
-               _replay(),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const  Text("المشكلة : " , style: AppTextStyles.titleBlue,textDirection: TextDirection.rtl,) ,
+               const SizedBox(height: 20,),
+                Text(widget.reportModel.body , style: AppTextStyles.mediumBlack, maxLines: 50,),
+                const SizedBox(height: 20,),
+                const   Text("الرد  :" , style: AppTextStyles.titleBlue,textDirection: TextDirection.rtl) ,
+                const SizedBox(height: 20,),
+                _replay(),
+              ],
+            ),
           ),
         ),
       ),

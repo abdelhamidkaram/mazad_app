@@ -9,6 +9,9 @@ class AppString{
   static const String onBoardingSubTitle2  = "قم بالمزايدة بالسعر الذي يناسبك للحصول على المنتج"  ;
   static const String onBoardingSubTitle3  = "سيتم بيع المنتج الى صاحب أفضل سعر للمنتج"  ;
 
+  //------------- assets ------------------//
+static const String getImageBaseUrl = "https://sell-order.com/File/DownloadBinaryFile?id=" ;
+
 
 
 }

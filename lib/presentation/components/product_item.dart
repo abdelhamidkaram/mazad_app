@@ -1,18 +1,11 @@
 import 'package:animations/animations.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:soom/constants/api_constants.dart';
-import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/product_model.dart';
-import 'package:soom/presentation/components/favorite_icon_widget.dart';
 import 'package:soom/presentation/components/timer.dart';
-import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
-import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
-import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
 import 'package:soom/presentation/screens/product/product_screen.dart';
 import 'package:soom/presentation/screens/product/widget/product_price_box.dart';
 import 'package:soom/style/text_style.dart';
@@ -73,7 +66,7 @@ class _ProductItemState extends State<ProductItem> {
               transitionDuration: const Duration(milliseconds: 800),
               openBuilder: (context, action) =>
                   ProductScreen(
-                    lastPrice: widget.productForViewModel.productModel.product!.minPrice.toString(),
+                    lastPrice: widget.productForViewModel.productModel.product!.minPrice.toString(), //TODO: LAST PRICE
                     productModel: widget.productForViewModel,
                     isMyAuction: widget.isMyAuction ?? false,
                   ),
@@ -115,9 +108,32 @@ class _ProductItemState extends State<ProductItem> {
                 child: Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Center(
-                    child: Image.network(
+                    child:ExtendedImage.network(
                       widget.productForViewModel.thumbnail,
-                    ),
+                      // width: ScreenUtil.instance.setWidth(400),
+                      // height: ScreenUtil.instance.setWidth(400),
+                      // fit: BoxFit.fill,
+                      cache: true,
+                      //border: Border.all(color: Colors.red, width: 1.0),
+                      // shape: boxShape,
+                      // borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+                      //cancelToken: cancellationToken,
+                        loadStateChanged: (state) {
+                          if (state.extendedImageLoadState == LoadState.loading) {
+                            return const LinearProgressIndicator(
+                              color: ColorManger.primaryLight_10,
+                              backgroundColor: ColorManger.white,
+                              minHeight: double.infinity,
+                            );
+                          }
+                          else if (state.extendedImageLoadState == LoadState.failed) {
+                            return Image.asset("assets/noimg.png");
+
+                          }
+
+                        }
+                    )
+
                   ),
                 ),
               ),
@@ -298,10 +314,11 @@ class _LastBidsTabsAndPriceState extends State<LastBidsTabsAndPrice> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2.0),
             child: SizedBox(
-              width: 80,
+              width: 120,
               child: PriceAndCurrencyGreen(
-                productModel: widget.productModel, lastPrice: widget.productModel.minPrice.toString(),//TODO : GET LAST PRICE
-              ),
+              productModel: widget.productModel,
+                lastPrice: widget.productModel.minPrice.toString(),//TODO : GET LAST PRICE
+                ),
             ),
           ),
           const Spacer(),

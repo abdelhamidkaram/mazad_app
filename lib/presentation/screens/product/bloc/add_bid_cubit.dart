@@ -29,8 +29,9 @@ class BidCubit extends Cubit<BidStates> {
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||
-        price < int.parse(productForViewModel.lasPrice!)) {
-      controller.text = int.parse(productForViewModel.lasPrice!).toString();
+        price < productForViewModel.minPrice!.toInt() //TODO: CONVERT TO LAST PRICE
+    ) {
+      controller.text = productForViewModel.minPrice!.toInt().toString();
       emit(AddBidError());
     } else {
       price = int.parse(controller.text) + bidCounter;
@@ -45,17 +46,17 @@ class BidCubit extends Cubit<BidStates> {
   }
 
   removeBid(ProductForViewModel productModel , context ) {
+    //TODO LAST PRICE
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||
-        price <= int.parse(productModel.lasPrice!)) {
-      price = int.parse(productModel.lasPrice!);
+        price <= productModel.minPrice!.toInt()) {
+      price = productModel.minPrice!.toInt();
       AppToasts.toastError(
-          "لقد ادخلت سعرا اقل من اخر مزايدة يجب ان تزايد بمبلغ اكبر من : ${productModel.lasPrice}",
+          "لقد ادخلت سعرا اقل من اخر مزايدة يجب ان تزايد بمبلغ اكبر من : ${productModel.minPrice}",//TODO : LAST PRICE
           context);
       emit(RemoveBid());
     } else {
-
      controller.text = (int.parse(controller.text) - bidCounter ).toString();
     }
     emit(RemoveBid());
@@ -70,15 +71,13 @@ class BidCubit extends Cubit<BidStates> {
      "productId": auctionForViewModel.productModel.product!.id,
    }).then((value){
      Navigator.pop(context);
-     if(kDebugMode){
-       AppToasts.toastSuccess(value.data["success"].toString() , context);
-     }else{
+
        AppToasts.toastSuccess(" تمت عملية المزايدة بنجاح", context);
        Timer(const Duration(seconds: 2), (){
          Navigator.of(context).pop();
        }
        );
-     }
+
      emit(SendBidToServerSuccess());
    }).catchError((error){
      Navigator.pop(context);

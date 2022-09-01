@@ -102,7 +102,7 @@ class _PriceAndCurrencyGreenState extends State<PriceAndCurrencyGreen> {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         const Text("KW", style: AppTextStyles.currencyGreen,),
-        Text(widget.lastPrice, style: AppTextStyles.titleGreen,),
+        Text(widget.lastPrice.length > 6 ? widget.lastPrice.substring(0,6)  : widget.lastPrice , style: AppTextStyles.titleGreen,),
       ],
     );
   }

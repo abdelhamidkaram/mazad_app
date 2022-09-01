@@ -58,13 +58,14 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
     for(var fav in favoritesItemsResponse){
       if(fav["productName"] == productForViewModel.title ){
         await DioFactory().deleteData(ApiEndPoint.deleteFavorite, {
-          "Id" : fav["productFavorite"]["id"],
+          "id" : fav["productFavorite"]["id"],
         }).then((value){
           if (kDebugMode) {
             print(value.toString());
           }
-          favoritesItems.remove(productForViewModel);
           emit(DeleteFavoriteForViewSuccess());
+          getFavorite(context);
+          getFavoriteForView(context);
         }).catchError((error){
           AppToasts.toastError("message", context);
           if (kDebugMode) {
@@ -79,9 +80,11 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
 
  Future  addTOFavorite(ProductForViewModel productForViewModel , context ) async {
        DioFactory().postData(ApiEndPoint.addToFavorite, {
+         "userId" : 5 , //TODO USER ID
          "productId" : productForViewModel.productModel.product!.id.toString()
        }).then((value){
-         favoritesItems.add(productForViewModel);
+         getFavorite(context);
+         getFavoriteForView(context);
          emit(AddFavoriteForViewSuccess());
        }).catchError((error){
          emit(AddFavoriteForViewError());

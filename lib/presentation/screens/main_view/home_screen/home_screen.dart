@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
-import 'package:soom/presentation/components/favorite_icon_widget.dart';
-import 'package:soom/presentation/screens/category/bloc/categories_cubit.dart';
 import 'package:soom/presentation/screens/category/category.dart';
-import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/presentation/screens/main_view/home_screen/all_products_view.dart';
@@ -29,6 +25,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+   if( HomeCubit.get(context).categories.isNotEmpty){
+     HomeCubit.get(context).getCategoryBlocks();
+   }
   }
 
   @override

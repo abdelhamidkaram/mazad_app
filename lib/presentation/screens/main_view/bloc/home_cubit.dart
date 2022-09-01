@@ -21,10 +21,7 @@ class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(InitHomeState());
 
   static HomeCubit get(context) => BlocProvider.of(context);
-
-
-
-
+  bool isFirstBuild = false ;
   final Repository _repository = Repository();
   int cardNumber = 5;
   int slideCount = 0;
@@ -97,7 +94,7 @@ class HomeCubit extends Cubit<HomeStates> {
 
       }
       products = productsList ;
-      _getCategoryBlocks();
+      getCategoryBlocks();
       emit(GetProductsSuccess());
     });
   }
@@ -121,18 +118,19 @@ class HomeCubit extends Cubit<HomeStates> {
   // ------------------ get category  --------------//
 
   List<CategoryModel> categories = [];
+  bool isGetCatsFinish = false ;
 
   Future getCategories(context) async {
     emit(GetCategoriesLoading());
     (
         await _repository.getCategories()
     ).fold((errorModel) {
+      isGetCatsFinish = true ;
       if (kDebugMode) {
         print(errorModel.message);
       }
       if (errorModel.statusCode == 401) {
         LoginCubit.get(context).logOut(context);
-        AppToasts.toastError("يرجي اعادة تسجيل الدخول ", context);
       }
       var index = 0 ;
       Timer(const Duration(seconds: 3), () {
@@ -144,6 +142,7 @@ class HomeCubit extends Cubit<HomeStates> {
       });
       emit(GetCategoriesError());
     }, (categoriesList) {
+      isGetCatsFinish = true ;
       categories = categoriesList;
       emit(GetCategoriesSuccess());
     });
@@ -152,7 +151,8 @@ class HomeCubit extends Cubit<HomeStates> {
   // ------------------ get categoryBlock  --------------//
 
    List<CategoryBlockModel> categoriesBlocks = [];
-   _getCategoryBlocks(){
+  getCategoryBlocks(){
+     emit(GetCategoriesBlockLoading());
      for(var cat in categories ){
        List<ProductForViewModel> productsList = [];
        for(var product in products ){
@@ -162,7 +162,9 @@ class HomeCubit extends Cubit<HomeStates> {
      }
        categoriesBlocks.add(CategoryBlockModel(cat.title!, productsList , cat ));
    }
- }
+     emit(GetCategoriesBlockSuccess());
+
+   }
 
 
   // ------------------ filter method --------------//
@@ -247,8 +249,12 @@ class HomeCubit extends Cubit<HomeStates> {
 
       emit(GetFilterResultSuccess());
 
-      print("------------------\n");
-      print(filterResult);
+      if (kDebugMode) {
+        print("------------------\n");
+      }
+      if (kDebugMode) {
+        print(filterResult);
+      }
     return filterResult;
   }
 

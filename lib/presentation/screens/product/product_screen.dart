@@ -208,81 +208,76 @@ class _ProductScreenState extends State<ProductScreen> {
                 style: AppTextStyles.titleSmallBlack,
               ),
               Spacer(),
-
             ],
           ),
           const SizedBox(
             height: 16.0,
           ),
-          Container(
-            child: Column(
-              children: List.generate(
-                10,
-                (index) => Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: ColorManger.lightGrey),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 50,
-                          height: 50,
+          Column(
+            children: List.generate(
+              10,
+              (index) => Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: ColorManger.lightGrey),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle ,
+                          border:Border.all(color: ColorManger.lightGrey),
+                          image: DecorationImage(
+                              image: Image.network("https://www.kau.edu.sa/Files/0016617/Galleries/6608/51617_P1016195%20copy.jpg").image ,
+                          ) ,
+                        ),
+
+                      ),
+                      const SizedBox(width: 8,),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                           const Text("عماد خليل  " , style: AppTextStyles.mediumBlackBold_17,) ,
+                          const  SizedBox(height: 8,),
+                            Wrap(
+                                children:  const [
+                                   Text("سعر المزايدة : " , style: AppTextStyles.smallBlack,),
+                                   Text("1200KW" , style:  AppTextStyles.mediumGreen,)
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          //TODO : GET TRUE BID
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          height: 40,
+                          width: 80,
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle ,
-                            border:Border.all(color: ColorManger.lightGrey),
-                            image: DecorationImage(
-                                image: Image.network("https://www.kau.edu.sa/Files/0016617/Galleries/6608/51617_P1016195%20copy.jpg").image ,
-                            ) ,
+                            color: ColorManger.green ,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-
+                          child:Center(child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset("assets/auction.svg" , color: ColorManger.white,),
+                               const Text(" بيع "  , style: AppTextStyles.mediumWhite,),
+                            ],
+                          )),
                         ),
-                        const SizedBox(width: 8,),
-
-                        Expanded(
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                               const Text("عماد خليل  " , style: AppTextStyles.mediumBlackBold_17,) ,
-                              const  SizedBox(height: 8,),
-                                Wrap(
-                                    children:  const [
-                                       Text("سعر المزايدة : " , style: AppTextStyles.smallBlack,),
-                                       Text("1200KW" , style:  AppTextStyles.mediumGreen,)
-                                    ],
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: (){
-                            //TODO : GET TRUE BID
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            height: 40,
-                            width: 80,
-                            decoration: BoxDecoration(
-                              color: ColorManger.green ,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child:Center(child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset("assets/auction.svg" , color: ColorManger.white,),
-                                 const Text(" بيع "  , style: AppTextStyles.mediumWhite,),
-                              ],
-                            )),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

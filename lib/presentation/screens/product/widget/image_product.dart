@@ -1,3 +1,4 @@
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/favorite_icon.dart';
@@ -28,7 +29,31 @@ class _ProductImageBoxState extends State<ProductImageBox> {
         child: Stack(
           children: [
             Center(
-              child: Image.network(widget.productModel.thumbnail ),
+              child: ExtendedImage.network(
+                  widget.productModel.thumbnail,
+                  // width: ScreenUtil.instance.setWidth(400),
+                  // height: ScreenUtil.instance.setWidth(400),
+                  // fit: BoxFit.fill,
+                  cache: true,
+                  //border: Border.all(color: Colors.red, width: 1.0),
+                  // shape: boxShape,
+                  // borderRadius: const BorderRadius.all(Radius.circular(30.0)),
+                  //cancelToken: cancellationToken,
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState == LoadState.loading) {
+                      return const LinearProgressIndicator(
+                        color: Colors.white70,
+                        backgroundColor: ColorManger.white,
+                        minHeight: double.infinity,
+                      );
+                    }
+                    else if (state.extendedImageLoadState == LoadState.failed) {
+                      return Image.asset("assets/noimg.png");
+
+                    }
+
+                  }
+              )
             ),
             Row(
               children:  [
@@ -36,7 +61,6 @@ class _ProductImageBoxState extends State<ProductImageBox> {
                const Spacer(),
                const Icon(Icons.visibility , color: ColorManger.primaryLight,),
               const  SizedBox(width: 5,),
-               const Text("20K" , style: AppTextStyles.smallBlueBold,),
               ],
             ),
           ],

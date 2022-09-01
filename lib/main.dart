@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +15,6 @@ import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions
 import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/splash/splash.dart';
 import 'package:soom/style/theme_style.dart';
-import 'package:soom/test1.dart';
 var  token = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,7 +39,7 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider(create: (context) =>
         AppCubit()
-          ..newInstallCache()
+          ..newInstallCache(context)
         ),
         BlocProvider(create: (context) => LoginCubit()),
         BlocProvider(create: (context) => HomeCubit()),

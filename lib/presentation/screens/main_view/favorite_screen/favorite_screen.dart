@@ -34,15 +34,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               return const  Center(child:  CircularProgressIndicator(),);
             }
            return FavoriteCubit.get(context).isFinish
-               ? RefreshIndicator(
-             onRefresh: () => FavoriteCubit.get(context).getFavoriteForView(context).then((value){
-               setState(() {
-
-               });
-             }),
-             child: Padding(
+               ? Padding(
                padding: const EdgeInsets.all(16.0),
-               child: ListView.separated(
+             child:RefreshIndicator(
+               onRefresh: () => FavoriteCubit.get(context).getFavoriteForView(context).then((value){
+                 setState(() {
+
+                 });
+               }),
+               child:  ListView.separated(
                  physics: const BouncingScrollPhysics(),
                  itemCount: FavoriteCubit.get(context).favoritesItems.length,
                  itemBuilder: (BuildContext context, int index) {

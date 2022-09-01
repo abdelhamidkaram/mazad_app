@@ -28,8 +28,10 @@ dependencies:
   dotted_decoration: ^2.0.0
   connectivity_plus: ^2.3.2
   pretty_dio_logger: ^1.2.0-beta-1
-  signalr_pure: any
-  signalr_netcore:
+  signalr_netcore: any
+  signalr_core: ^1.1.1
+  extended_image: ^6.0.1
+
 
 dev_dependencies:
   flutter_test:

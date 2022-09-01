@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:soom/presentation/screens/profile/screens/support/report_screen.dart';
 import 'package:soom/style/text_style.dart';
@@ -21,7 +22,7 @@ class _OldReportsState extends State<OldReports> {
 @override
   void initState() {
     super.initState();
-    if(itemData == null || itemData.isEmpty ) {
+    if(itemData.isEmpty ) {
       DioFactory().getData(ApiEndPoint.getAllSupportCass, {}).then((value) {
         List itemResponse = value.data["result"]["items"];
 
@@ -44,7 +45,9 @@ class _OldReportsState extends State<OldReports> {
           cont = -3 ;
         });
         AppToasts.toastError("$err", context);
-        print(err.toString());
+        if (kDebugMode) {
+          print(err.toString());
+        }
       });
     }
   }
@@ -72,7 +75,7 @@ class _OldReportsState extends State<OldReports> {
               ),
               const SizedBox(height: 16,),
               Text(
-                itemData![index].body,
+                itemData[index].body,
               maxLines: 2,
                 style:  AppTextStyles.smallGrey,
               ),

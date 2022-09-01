@@ -4,7 +4,6 @@ import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions
 import '../../../../../constants/api_constants.dart';
 import '../../../../../data/api/dio_factory.dart';
 import '../../../../../models/product_model.dart';
-import '../../../../components/toast.dart';
 
 class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
   MyAuctionsCubit() : super(InitAuctionState());
@@ -18,15 +17,10 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
   Future getMyBid (String userName , context )async{
     emit(GetMyBidLoading());
     await DioFactory().getData(ApiEndPoint.myBid, {
-      "UserNameFilter": "testmob3" ,
+      "UserNameFilter": "testmob3",//TODO: USER NAME
     }).then((value){
       myBidsDetails = value.data["result"]["items"];
       getMyBidForView(context , counter: myBidsDetails.length ).then((value) => null);
-      print("-----------------------------------");
-      print(value.data.toString() );
-      print("-----------------------------------");
-      print(myBidsForView.toString() );
-
       emit(GetMyBidSuccess());
     }).catchError((error){
       emit(GetMyBidError());
@@ -39,7 +33,6 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
          deleteOldList = false ;
        }
       if(myBidsForView.isEmpty || counter == 0 ){
-
         for(Map bid in myBidsDetails ){
           --counter;
           DioFactory().getData(ApiEndPoint.getAllProducts, {
@@ -53,14 +46,19 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
             productForViewModel.lasPrice =bid["productAuaction"]["price"].toString() ;
             myBidsForView.add(productForViewModel );
           }).catchError((error){
-            kDebugMode ? print(error.toString()): null ;
+            if (kDebugMode) {
+              print(error.toString()) ;
+            }
             emit(GetMyBidForViewError());
           });
         }
         myBidsForView = myBidsForView.reversed.toList() ;
-        print("=========================================");
-        print(myBidsForView.length);
-        print("=========================================");
+        if (kDebugMode) {
+          print("=========================================");
+          print(myBidsForView.length);
+          print("=========================================");
+        }
+
         emit(GetMyBidForViewSuccess());
       }
      }

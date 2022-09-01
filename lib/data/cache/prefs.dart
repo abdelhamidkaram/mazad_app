@@ -1,5 +1,4 @@
 
-import 'package:shared_preferences/shared_preferences.dart';
 
 // shared_preferences class
 

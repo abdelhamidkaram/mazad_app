@@ -242,7 +242,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                               setState(() {
                                                  SharedPreferences.getInstance().then((value){
                                                    token = value.getString(PrefsKey.token)!;
-
                                                 });
                                               });
                                               HomeCubit.get(context).getCategories(context).then((value){

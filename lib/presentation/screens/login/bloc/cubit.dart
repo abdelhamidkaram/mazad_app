@@ -99,15 +99,15 @@ bool isObscureText2 = true;
     AppToasts.toastSuccess("تم الدخول بنجاح ! ", context );
     if (kDebugMode) {
       print(loginSuccess.result!.accessToken);
+      token = loginSuccess.result!.accessToken.toString();
     }
-    token = loginSuccess.result!.accessToken.toString();
+
+
     emit(LoginSuccess(loginSuccess));
-    SharedPreferences.getInstance().then((prefs){
+        SharedPreferences.getInstance().then((prefs){
+      prefs.setBool(PrefsKey.isLogin , true);
       prefs.setString(PrefsKey.token , loginSuccess.result?.accessToken ?? "").then((value){});
       emit(LoginSuccess(loginSuccess));
-    });
-    SharedPreferences.getInstance().then((prefs){
-      prefs.setBool(PrefsKey.isLogin , true);
     });
     emit(DialogShow());
     Timer(const Duration(seconds: 1), (){
@@ -164,7 +164,9 @@ String serverCode = "1234" ;
 
 nextConformField(String value , int theFocus , TextEditingController controller , context) {
   focus = theFocus ;
-  print(code);
+  if (kDebugMode) {
+    print(code);
+  }
   if(focus != 4 ){
     FocusScope.of(context).nextFocus();
   }else{
@@ -207,11 +209,9 @@ logOut(context){
     emailController.text = "";
     passwordController.text = "";
     token = "";
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
     emit(LogOutSuccess());
   });
-  emit(LogOutSuccess());
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen(),));
-  emit(LogOutSuccess());
 
 }
 

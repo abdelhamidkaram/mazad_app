@@ -28,6 +28,10 @@ class GetCategoriesLoading extends HomeStates {}
 class GetCategoriesSuccess extends HomeStates {}
 class GetCategoriesError extends HomeStates {}
 
+class GetCategoriesBlockLoading extends HomeStates {}
+class GetCategoriesBlockSuccess extends HomeStates {}
+class GetCategoriesBlockError extends HomeStates {}
+
 
 class GetSearchLoading extends HomeStates {}
 class GetSearchSuccess extends HomeStates {}

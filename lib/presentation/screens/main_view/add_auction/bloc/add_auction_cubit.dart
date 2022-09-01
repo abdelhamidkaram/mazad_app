@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:soom/main.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_states.dart';
-import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/repository/repository.dart';
 import '../../../../../data/api/dio_factory.dart';
 import '../../../../../style/color_manger.dart';
@@ -90,7 +90,8 @@ List<ImageObj> imagesObj = [];
   var targetPriceController = TextEditingController();
   var nameController = TextEditingController();
   var catController = TextEditingController();
-  CategoryModel categorySelected = CategoryModel(2, "img", "title") ;
+
+  CategoryModel categorySelected = CategoryModel(2, "img", "2ساعات") ;
  bool customValidate(context){
    if(  dateController.text.isEmpty ){
      AppToasts.toastError("يرجي ادخال تاريخ الانتهاء ", context);
@@ -167,8 +168,14 @@ bool isUploadImages = false ;
       ),
     });
     AppToasts.toastLoading(context);
-    await dio.post("/app/productphotos/uploadphotofile", data: data)
+    await dio(token).post("/app/productphotos/uploadphotofile", data: data)
         .then((response){
+          if (kDebugMode) {
+            print(response.data.toString());
+          }
+          if (kDebugMode) {
+            print(fileName);
+          }
           ImageObj imageObj = ImageObj(fileName , response.data["result"]["fileToken"]);
       _addImageToImagesObject(imageObj, index);
      Navigator.pop(context);

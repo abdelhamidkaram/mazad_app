@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,7 +9,6 @@ import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
-import 'package:soom/presentation/screens/main_view/add_auction/add_auction_progress.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_cubit.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_states.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
@@ -32,6 +32,9 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
         listener: (context, state) => AddAuctionCubit(),
         builder: (context, state) {
           var cubit = AddAuctionCubit.get(context);
+          if(cubit.catController.text.isEmpty){
+            cubit.catController.text = HomeCubit.get(context).categories[0].title.toString();
+          }
           List<CategoryModel> cats = HomeCubit.get(context).categories;
 
           _replaceController() {
@@ -83,10 +86,22 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                           }
                         },
                         decoration:  InputDecoration(
-                          hintText: cubit.catController.text.isEmpty? "اسم المنتج هنا   " : cubit.catController.text,
+                          hintText: cubit.nameController.text.isEmpty? "اسم المنتج هنا   " : cubit.nameController.text,
                           border: const OutlineInputBorder(),
                           hintStyle: AppTextStyles.smallGrey,
                         ),
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        children: const [
+                          Text(
+                            "التصنيف",
+                            style: AppTextStyles.titleSmallBlack,
+                          ),
+                          Spacer()
+                        ],
                       ),
                       const SizedBox(
                         height: 16,
@@ -142,13 +157,13 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                       const SizedBox(
                         height: 16,
                       ),
-                      SwitchBetweenTowCheckBoxWidget(
-                        getCheckTime: () {
-                          cubit.getCheckTime();
-                        },
-                        isCheckTime: cubit.isCheckTime,
-                        isCheckPrice: cubit.isCheckPrice,
-                      ),
+                     // SwitchBetweenTowCheckBoxWidget(
+                     //    getCheckTime: () {
+                     //      cubit.getCheckTime();
+                     //    },
+                     //    isCheckTime: cubit.isCheckTime,
+                     //    isCheckPrice: cubit.isCheckPrice,
+                     //  ),
                       const SizedBox(
                         height: 16,
                       ),
@@ -259,6 +274,9 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                       ),
                       AppButtons.appButtonBlue(() {
                         if (addProductKey.currentState!.validate()) {
+                          if (kDebugMode) {
+                            print("++++++  on    +++++++++++");
+                          }
                           _replaceController();
                           AppToasts.toastLoading(context);
                           DioFactory().postData(ApiEndPoint.uploadProducts, {
@@ -270,17 +288,22 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               "status": 0,
                               "targetPrice": int.parse(cubit.targetPriceController.text.toString()).toDouble(),
                               "categoryId": cubit.categorySelected.index,
-
-
-
                           }).then((value){
+                            if (kDebugMode) {
+                              print("+++++++++++++++++");
+                            }
                             Navigator.pop(context);
                             AppToasts.toastSuccess("تم رفع المنتج ", context);
                           }).catchError((err){
+                            if (kDebugMode) {
+                              print("++++++++++++ errr +++++");
+                            }
                             Navigator.pop(context);
                             AppToasts.toastError("error", context);
                           });
-
+                          if (kDebugMode) {
+                            print("+++++++   out ++++++++++");
+                          }
                           // cubit
                           //     .uploadProductDetails(state, context)
                           //     .then((value) {
@@ -429,6 +452,16 @@ class TimeTextFiledWidget extends StatefulWidget {
 
 class _TimeTextFiledWidgetState extends State<TimeTextFiledWidget> {
   @override
+  void initState() {
+    if (widget.dateController.text.isEmpty) {
+      widget.dateController.text = DateTime.now()
+          .add(const Duration(days: 10))
+          .toString()
+          .substring(0, 10);
+    }
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -476,13 +509,6 @@ class _TimeTextFiledWidgetState extends State<TimeTextFiledWidget> {
                   color: ColorManger.primary,
                 ),
               ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return " ادخل تاريخ الانتهاء";
-                } else {
-                  return "";
-                }
-              },
               autofocus: false,
               enabled: false,
               controller: widget.dateController,
