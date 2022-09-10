@@ -1,14 +1,16 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/favorite_icon.dart';
+import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class ProductImageBox extends StatefulWidget {
-  final ProductForViewModel productModel;
+   ProductForViewModel? productModel;
 
-  const ProductImageBox({Key? key, required this.productModel})
+   ProductImageBox({Key? key, required this.productModel})
       : super(key: key);
 
   @override
@@ -30,7 +32,7 @@ class _ProductImageBoxState extends State<ProductImageBox> {
           children: [
             Center(
               child: ExtendedImage.network(
-                  widget.productModel.thumbnail,
+                  widget.productModel!.thumbnail,
                   // width: ScreenUtil.instance.setWidth(400),
                   // height: ScreenUtil.instance.setWidth(400),
                   // fit: BoxFit.fill,
@@ -57,7 +59,7 @@ class _ProductImageBoxState extends State<ProductImageBox> {
             ),
             Row(
               children:  [
-                FavoriteIcon(widget.productModel),
+                FavoriteIcon(widget.productModel!),
                const Spacer(),
                const Icon(Icons.visibility , color: ColorManger.primaryLight,),
               const  SizedBox(width: 5,),

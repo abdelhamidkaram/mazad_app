@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 
@@ -6,29 +7,25 @@ import 'package:soom/constants/api_constants.dart';
 import '../../main.dart';
 import '../cache/prefs.dart';
 
-Dio dio(token) => Dio(BaseOptions(baseUrl: ApiBase.baseUrl, headers: {
-  "Content-Type": "application/json",
-  "Accept": "text/plain",
-  "Authorization": "Bearer $token",
-}));
+
+
 class DioFactory {
-  String newToken = token ;
-  DioFactory(){
-    //TODO: ADD LOGGER TO DIO
-    // dio.interceptors.add(PrettyDioLogger());
-    SharedPreferences.getInstance().then((prefs){
-      newToken =  prefs.getString(PrefsKey.token)!;
-    });
-  }
+  String newToken ;
+  DioFactory(this.newToken);
+  Dio dio() => Dio(BaseOptions(baseUrl: ApiBase.baseUrl, headers: {
+    "Content-Type": "application/json",
+    "Accept": "text/plain",
+    "Authorization": "Bearer $newToken"  ,
+  }));
   Future<Response> getData(String endpoint, Map<String, dynamic> query) async {
-    return await dio(newToken).get(
+    return await dio().get(
       endpoint,
       queryParameters: query,
     );
   }
 
   Future<Response> postData(String endpoint, Map<String, dynamic> query) async {
-    return await dio(newToken).post(
+    return await dio().post(
       endpoint,
       data: query,
     );
@@ -36,13 +33,13 @@ class DioFactory {
 
   Future<Response> updateData(
       String endpoint, Map<String, dynamic> query) async {
-    return await dio(newToken).put(endpoint, data: query);
+    return await dio().put(endpoint, data: query);
   }
 
 
   Future<Response> deleteData(
       String endpoint, Map<String, dynamic> query) async {
-    return await dio(newToken).delete(endpoint, queryParameters: query);
+    return await dio().delete(endpoint, queryParameters: query);
   }
 
 

@@ -2,9 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
+import 'package:soom/main.dart';
+import 'package:soom/models/favorite_model.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
+import 'package:soom/extension.dart';
+
 
 class FavoriteCubit extends Cubit<FavoriteStates>{
   FavoriteCubit() : super(InitialFavoriteState());
@@ -12,63 +16,63 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
   static FavoriteCubit get(context)=>BlocProvider.of(context);
   bool isFinish = false ;
   bool isFirstBuild = true ;
-  List favoritesItemsResponse = [];
-  List<ProductForViewModel> favoritesItems = [];
-  Future getFavorite (context )async{
-    favoritesItemsResponse = [];
+  bool isLoading = true ;
+  List<FavoriteModel> favoritesItemsResponse = [];
+  List<FavoriteModel> favoritesItems = [];
+  bool isEmpty = false ;
+  List<ProductForViewModel> favoritesItemsForView  = [] ;
+  Future getFavorite (context , {bool isRefresh = false }) async {
+    if((favoritesItemsForView.isEmpty && !isEmpty) || isRefresh) {
     emit(GetFavoriteLoading());
-    DioFactory().getData(ApiEndPoint.myFavorite, {}).then((value){
-      favoritesItemsResponse = value.data["result"]["items"];
-      emit(GetFavoriteSuccess());
-    }).catchError((error){
-      if(kDebugMode){
-        print(error.toString());
+    String newToken = token ;
+    DioFactory(newToken).getData(ApiEndPoint.myFavorite, {}).then((value){
+      List  response = value.data["result"]["items"] ;
+      favoritesItemsResponse = response.map((e) => FavoriteModel.fromJson(e)).toList();
+      if(value.data["result"]["totalCount"] > 0 ){
+        List responseList = value.data["result"]["items"] ;
+       favoritesItemsForView = responseList.map((e) => FavoriteModel.fromJson(e).toProductViewModel()).toList() ;
+       isEmpty = false ;
+       isLoading = false ;
+        emit(GetFavoriteSuccess());
+      }else{
+          isEmpty = true ;
+          isLoading = false ;
+
+          emit(GetFavoriteSuccess());
       }
+    }).catchError((err){
+      if (kDebugMode) {
+        print(err);
+      AppToasts.toastError(err.toString(), context);
+      }
+      isLoading = false ;
       emit(GetFavoriteError());
-      });
-  }
-  Future<List<ProductForViewModel>> getFavoriteForView (context)async {
-    List<ProductForViewModel> _favoritesItems = [];
-    emit(GetFavoriteForViewLoading());
-    for(Map data in favoritesItemsResponse ){
-      //TODO: FAVORITE FORM SERVER
-      await  DioFactory().getData(ApiEndPoint.getAllProducts, {
-        "NameFilter":data["productName"]
-      }).then((value){
-
-        Map<String , dynamic > dataProduct =  value.data["result"]["items"][0];
-        //TODO: LAST PRICE
-        ProductForViewModel productForViewModel = ProductForViewModel( "20", ProductModel.fromJson(dataProduct),  "12");
-        productForViewModel.isFavorite = true ;
-        _favoritesItems.add(productForViewModel);
-
-        favoritesItems = _favoritesItems.reversed.toList();
-        emit(GetFavoriteForViewSuccess());
-        return _favoritesItems ;
-      }).catchError((error){
-        return favoritesItems ;
-      });
     }
-    emit(GetFavoriteForViewSuccess());
-    return _favoritesItems ;
+    );
+    }else {
+      Future.value("") ;
+    }
+
   }
 
  Future  deleteFavorite(ProductForViewModel productForViewModel , context ) async {
     emit(DeleteFavoriteForViewLoading());
     for(var fav in favoritesItemsResponse){
-      if(fav["productName"] == productForViewModel.title ){
-        await DioFactory().deleteData(ApiEndPoint.deleteFavorite, {
-          "id" : fav["productFavorite"]["id"],
+      if(fav.product!.id == productForViewModel.productModel.product!.id ){
+        String newToken = token ;
+        await DioFactory(newToken).deleteData(ApiEndPoint.deleteFavorite, {
+          "id" : fav.productFavorite!.id,
         }).then((value){
           if (kDebugMode) {
             print(value.toString());
           }
-          emit(DeleteFavoriteForViewSuccess());
+          productForViewModel.isFavorite = false;
+          favoritesItemsForView.remove(productForViewModel);
           getFavorite(context);
-          getFavoriteForView(context);
+          emit(DeleteFavoriteForViewSuccess());
         }).catchError((error){
-          AppToasts.toastError("message", context);
           if (kDebugMode) {
+          AppToasts.toastError("message", context);
             print(error.toString());
           }
           emit(DeleteFavoriteForViewError());
@@ -79,35 +83,44 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
   }
 
  Future  addTOFavorite(ProductForViewModel productForViewModel , context ) async {
-       DioFactory().postData(ApiEndPoint.addToFavorite, {
-         "userId" : 5 , //TODO USER ID
+   String newToken = token;
+       DioFactory(newToken).postData(ApiEndPoint.addToFavorite, {
+         "userId" :  id,
          "productId" : productForViewModel.productModel.product!.id.toString()
        }).then((value){
+         productForViewModel.isFavorite = true;
          getFavorite(context);
-         getFavoriteForView(context);
          emit(AddFavoriteForViewSuccess());
        }).catchError((error){
          emit(AddFavoriteForViewError());
        });
   }
 
-  changeFavoriteButton(ProductForViewModel productForViewModel ){
+  Future changeFavoriteButton(ProductForViewModel productForViewModel  , context ) async {
+    productForViewModel.isFavorite = !productForViewModel.isFavorite ;
+    if(productForViewModel.isFavorite){
+      addTOFavorite(productForViewModel, context).then((value){
+        emit(AddFavoriteForViewSuccess());
+      }).catchError((err){
+        emit(AddFavoriteForViewError());
+        productForViewModel.isFavorite = !productForViewModel.isFavorite ;
+      });
 
+    }else{
+      deleteFavorite(productForViewModel, context).then((value){
+        for (var element in favoritesItemsResponse) {
+          if(element.product!.id ==  productForViewModel.productModel.product!.id ){
+            favoritesItemsResponse.remove(element);
+            break;
+          }
+        }
+        emit(DeleteFavoriteForViewSuccess());
+      }).catchError((err){
+        emit(DeleteFavoriteForViewError());
+        productForViewModel.isFavorite = !productForViewModel.isFavorite ;
+      });
+    }
     emit(ChangeFavoriteButtonSuccess());
   }
- bool isFavorite (ProductForViewModel productForViewModel ){
-   for (var fav in favoritesItemsResponse) {
-     if (fav["productName"] == productForViewModel.title) {
-       productForViewModel.isFavorite = true ;
-       emit(ISFavorite());
-       return true ;
-     }else{
-       emit(ISFavorite());
-       return false ;
-     }
-   }
-   emit(ISFavorite());
-   return false ;
- }
 
 }

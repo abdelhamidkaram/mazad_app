@@ -25,9 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-   if( HomeCubit.get(context).categories.isNotEmpty){
-     HomeCubit.get(context).getCategoryBlocks();
-   }
+
   }
 
   @override

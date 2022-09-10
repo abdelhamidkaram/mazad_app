@@ -5,12 +5,12 @@ import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/notification_model.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
-import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/presentation/screens/profile/screens/notifications/no_notification.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
+import '../../../../../main.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({Key? key}) : super(key: key);
@@ -42,23 +42,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   bool isConnect = true;
+  bool isLoading = true;
   List<NotificationModel> items = [];
   StreamSubscription? subscription;
 
   Future<List<NotificationModel>> getNotification() async {
     List<NotificationModel> _items = [];
-    DioFactory().getData(ApiEndPoint.getNotification, {}).then((value) {
+    String newToken = token ;
+    DioFactory(newToken).getData(ApiEndPoint.getNotification, {}).then((value) {
       print(value);
       List itemsResponse = value.data["result"]["items"];
       for (var element in itemsResponse) {
         _items.add(NotificationModel.fromJson(element));
       }
       items = _items;
+
+      setState(() {
+        isLoading = false;
+      });
       return _items;
     }).catchError((err) {
       print("--------------- error ---------------------- ");
       print(err.toString());
       items = _items;
+      setState(() {
+        isLoading = false;
+      });
       return _items;
     });
     items = _items;
@@ -105,7 +114,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     subscription?.cancel();
   }
@@ -174,7 +182,8 @@ class _NotificationItemsBuilderState extends State<NotificationItemsBuilder> {
                     setState(() {
                       notification.state = 0 ;
                     });
-            DioFactory().postData(ApiEndPoint.setNotificationAsRead, {
+                    String newToken = token;
+            DioFactory(newToken).postData(ApiEndPoint.setNotificationAsRead, {
               "id": notification.id!,
             }).then((value) {
               setState(() {

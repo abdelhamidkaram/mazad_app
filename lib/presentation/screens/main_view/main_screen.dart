@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soom/data/cache/prefs.dart';
-import 'package:soom/main.dart';
+
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/add_auction_screen.dart';
@@ -19,10 +17,7 @@ import 'package:soom/presentation/screens/profile/screens/profile_home.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:soom/test1.dart';
 
-import 'favorite_screen/bloc/cubit.dart';
-import 'my_auctions/bloc/my_auctions_cubit.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -34,23 +29,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
-    if(HomeCubit.get(context).isFirstBuild){
-       SharedPreferences.getInstance().then((value){
-      token = value.get(PrefsKey.token).toString();
-      });
-
-      AppCubit.get(context).getProfileDetails(context);
-      if (HomeCubit.get(context).categories.isEmpty) {
-        HomeCubit.get(context).getCategories(context).then((value) {
-          HomeCubit.get(context).getProducts(context).then((value) {
-            setState(() {
-              HomeCubit.get(context).isFirstBuild = false ;
-            });
-
-          });
-        });
-      }
-    }
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: ColorManger.white,
       statusBarBrightness: Brightness.light,
@@ -61,15 +39,8 @@ class _MainScreenState extends State<MainScreen> {
           if (result != ConnectivityResult.none) {
             setState(() {
               isConnect = true;
-              AppCubit.get(context).getProfileDetails(context);
-              if (HomeCubit.get(context).categories.isEmpty) {
-                HomeCubit.get(context).getCategories(context).then((value) {
-                  HomeCubit.get(context).getProducts(context).then((value) {
-                    setState(() {});
-                  });
-                });
-              }
-            });
+                        }
+            );
           } else {
             isConnect = false;
           }
@@ -88,25 +59,7 @@ class _MainScreenState extends State<MainScreen> {
     return BlocConsumer<HomeCubit, HomeStates>(
       listener: (context, state) => HomeCubit(),
       builder: (context, state) {
-        if(HomeCubit.get(context).categories.isEmpty){
-          HomeCubit.get(context).getCategories(context).then((value){
-            FavoriteCubit.get(context).getFavorite(context).then((value){
-              MyAuctionsCubit.get(context).getMyBid("abdelhamidkaram", context).then((value) => null);//TODO:GET CURRENT USER NAME
-              FavoriteCubit.get(context).getFavoriteForView(context).then((value){
-
-                if(HomeCubit.get(context).products.isEmpty ){
-                  HomeCubit.get(context).getProducts(context).then((value){
-                    HomeCubit.get(context).getCategoryBlocks();
-
-                  });
-                }else{
-                  HomeCubit.get(context).getCategoryBlocks();
-                }
-              });
-            });
-
-          });
-        }
+        var homeCubit = HomeCubit.get(context);
         List<bool> cartViewsAndElevation = [true, true, true, true, false];
         List<String> titles = [
           "الرئيسية",
@@ -115,7 +68,6 @@ class _MainScreenState extends State<MainScreen> {
           " المفضلة ",
           " حسابي "
         ];
-        var homeCubit = HomeCubit.get(context);
         List<Widget> screens = [
           HomeScreen(
             homeCubit: homeCubit,

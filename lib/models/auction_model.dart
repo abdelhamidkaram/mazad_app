@@ -2,6 +2,8 @@
 import 'package:soom/models/product_model.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 
+import '../main.dart';
+
 class AuctionForViewModel{
   final ProductModel productModel ;
   final UserModel userModel ;
@@ -10,8 +12,7 @@ class AuctionForViewModel{
   String ? productName ;
   AuctionModel? auctionModel ;
   AuctionForViewModel({required this.price, required this.productModel, required this.userModel}){
-    //TODO: get user id from server
-    auctionModel = AuctionModel(price: price  , productId: productModel.product!.id!.toInt() , userId:userModel.userId!.toInt());
+    auctionModel = AuctionModel(price: price  , productId: productModel.product!.id!.toInt() , userId: int.parse(id));
     productName = productModel.product!.name ;
     userName = userModel.userName ;
   }

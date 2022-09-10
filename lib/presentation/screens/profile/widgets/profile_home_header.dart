@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/profile_detalis_success.dart';
@@ -8,6 +9,7 @@ import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/screens/profile/screens/edit_profile/profile_edit_screen.dart';
 import 'package:soom/presentation/screens/profile/widgets/profile_img.dart';
 import 'package:soom/style/color_manger.dart';
+import '../../../../data/cache/prefs.dart';
 import '../../../../style/text_style.dart';
 
 
@@ -26,7 +28,11 @@ class _ProfileHomeHeaderState extends State<ProfileHomeHeader> {
     String _getImage(){
       //TODO: get image from server
       String response = "";
-      DioFactory().getData(ApiEndPoint.getUserImage, {}).then((value) {
+      String newToken = "";
+      SharedPreferences.getInstance().then((value){
+        newToken =  value.getString(PrefsKey.token)!;
+      });
+      DioFactory(newToken).getData(ApiEndPoint.getUserImage, {}).then((value) {
         if(value != null){
           response = value.toString();
         }else{

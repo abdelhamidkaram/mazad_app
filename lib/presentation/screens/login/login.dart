@@ -1,24 +1,32 @@
 import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soom/data/cache/prefs.dart';
+import 'package:soom/constants/api_constants.dart';
+import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/main.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/components/logo/logo.dart';
+import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/login/bloc/states.dart';
 import 'package:soom/presentation/screens/login/forget_password.dart';
 import 'package:soom/presentation/screens/login/register.dart';
+import 'package:soom/presentation/screens/login/welcome_screen.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
+import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/repository/request_models.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
+
+import '../../../data/cache/prefs.dart';
+import '../main_view/main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -62,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
       onWillPop: () => Future(
         () {
           SystemNavigator.pop();
-         return Future.value(true) ;
+          return Future.value(true);
         },
       ),
       child: BlocConsumer<LoginCubit, LoginStates>(
@@ -78,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ? Directionality(
                   textDirection: TextDirection.rtl,
                   child: Scaffold(
-                    resizeToAvoidBottomInset: false ,
+                    resizeToAvoidBottomInset: false,
                     backgroundColor: Colors.white,
                     body: SafeArea(
                       child: Center(
@@ -163,7 +171,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             onPressed: () {
                                               loginCubit.showPassword();
                                             },
-                                            icon: const Icon(Icons.visibility_off))
+                                            icon: const Icon(
+                                                Icons.visibility_off))
                                         : IconButton(
                                             onPressed: () {
                                               loginCubit.showPassword();
@@ -232,27 +241,60 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: AppButtons.appButtonBlue(
-                                      () {
-                                          LoginRequest loginRequest = LoginRequest(
-                                              email: emailController.text,
-                                              password: passwordController.text);
-                                          if (formKey.currentState!.validate()) {
-                                            loginCubit.login(loginRequest , context).then((value){
-                                              setState(() {
-                                                 SharedPreferences.getInstance().then((value){
-                                                   token = value.getString(PrefsKey.token)!;
+                                  child: BlocConsumer<HomeCubit, HomeStates>(
+                                    listener: (context, state) => HomeCubit(),
+                                    builder: (context, state) {
+                                      return AppButtons.appButtonBlue(() {
+                                        if (formKey.currentState!.validate()) {
+                                          AppToasts.toastLoading(context);
+                                          LoginRequest loginRequest =
+                                              LoginRequest(
+                                            email: emailController.text,
+                                            password: passwordController.text,
+                                          );
+                                         Dio _dio = Dio(BaseOptions(baseUrl: ApiBase.baseUrl, headers: {
+                                            "Content-Type": "application/json",
+                                            "Accept": "text/plain",
+                                          }));
+                                          _dio.post(
+                                              ApiBase.baseUrl +
+                                                  ApiEndPoint.authentication,
+                                              data: {
+                                                "userNameOrEmailAddress":
+                                                    loginRequest.email,
+                                                "password": loginRequest.password,
+                                              }).then((value) async  {
+                                                token = value.data["result"]["accessToken"];
+                                                id = value.data["result"]["userId"].toString();
+                                                SharedPreferences.getInstance().then((pref) async {
+                                                  pref.setString(PrefsKey.token, token).then((value){
+
+                                                  });
+                                                  await pref.setString(PrefsKey.userId, id);
+                                                  await pref.setBool(PrefsKey.isLogin , true );
+                                                  print("*********************************\n" + pref.get(PrefsKey.token).toString());
                                                 });
-                                              });
-                                              HomeCubit.get(context).getCategories(context).then((value){
-                                                HomeCubit.get(context).getProducts(context).then((value) => null);
-                                              });
-                                            });
-                                            setState(() {
-                                              HomeCubit.get(context).currentIndex = 0 ;
-                                            });
+                                               await  getHomeData(context) ;
+                                                Navigator.pop(context);
+                                                AppToasts.toastSuccess("تم تسجيل الدخول بنجاح ! ", context);
+                                                Timer(const Duration(seconds: 1), (){
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    HomeCubit.get(context).currentIndex = 0 ;
+                                                  });
+                                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MainScreen(),));
+                                                });
+                                          }).catchError((err){
+                                            if (kDebugMode) {
+                                              print(err);
+                                            }
+                                            Navigator.pop(context);
+                                            AppToasts.toastError("حدث خطأ ما حاول لاحقا ! ", context);
+                                          });
                                         }
-                                      }, "تسجيل الدخول ", true),
+                                      }, "تسجيل الدخول ", true);
+                                    },
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 1,
@@ -282,7 +324,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         )),
                                   ],
                                 )
-
                               ],
                             ),
                           ),
@@ -302,4 +343,21 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
     subscription!.cancel();
   }
+}
+Future getHomeData(context) async {
+  await AppCubit.get(context).getProfileDetails(context).then((value)async{
+    await HomeCubit.get(context).getCategories(context).then((value)async{
+      await HomeCubit.get(context).getProducts(context).then((value)async{
+        await   HomeCubit.get(context).getCategoryBlocks().then((value)async{
+        });
+      });
+    });
+
+  }).catchError((err){
+    if (kDebugMode) {
+      AppToasts.toastError("error when : get home data method ", context);
+      print(err.toString());
+    }
+  });
+
 }

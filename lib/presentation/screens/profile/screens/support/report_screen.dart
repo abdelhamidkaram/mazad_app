@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
-import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/profile/screens/support/old_reports.dart';
+import 'package:soom/style/color_manger.dart';
 
+import '../../../../../data/cache/prefs.dart';
+import '../../../../../main.dart';
 import '../../../../../style/text_style.dart';
 
 class ReportScreen extends StatefulWidget {
@@ -23,7 +26,8 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   void initState() {
     super.initState();
-    DioFactory().getData(ApiEndPoint.getCommentForSupportCase, {
+    String newToken = token;
+    DioFactory(newToken).getData(ApiEndPoint.getCommentForSupportCase, {
       "SupportCaseTitleFilter" : widget.reportModel.title,
     }).then((value){
        setState(() {
@@ -66,22 +70,27 @@ class _ReportScreenState extends State<ReportScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        backgroundColor: ColorManger.white,
         appBar: AppBars.appBarGeneral(context, HomeCubit(), widget.reportModel.title.length > 10 ? widget.reportModel.title.substring(0,10) :  widget.reportModel.title  , cartView: false),
-        body:Center(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const  Text("المشكلة : " , style: AppTextStyles.titleBlue,textDirection: TextDirection.rtl,) ,
-               const SizedBox(height: 20,),
-                Text(widget.reportModel.body , style: AppTextStyles.mediumBlack, maxLines: 50,),
-                const SizedBox(height: 20,),
-                const   Text("الرد  :" , style: AppTextStyles.titleBlue,textDirection: TextDirection.rtl) ,
-                const SizedBox(height: 20,),
-                _replay(),
-              ],
+        body:Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
+            child: Center(
+              child: Column(
+                textDirection: TextDirection.rtl,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const  Text("المشكلة  " , style: AppTextStyles.titleBlue,) ,
+                 const SizedBox(height: 20,),
+                  Text(widget.reportModel.body , style: AppTextStyles.mediumBlack, maxLines: 50,),
+                  const SizedBox(height: 20,),
+                  const   Text("الرد  " , style: AppTextStyles.titleBlue) ,
+                  const SizedBox(height: 20,),
+                  _replay(),
+                ],
+              ),
             ),
           ),
         ),

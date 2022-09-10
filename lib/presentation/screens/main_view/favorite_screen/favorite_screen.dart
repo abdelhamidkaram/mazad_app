@@ -1,11 +1,10 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
-
-
+import 'package:soom/presentation/screens/main_view/favorite_screen/no_favorite_screen.dart';
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
 
@@ -15,52 +14,47 @@ class FavoriteScreen extends StatefulWidget {
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
 
-  List<ProductForViewModel>  items = FavoriteCubit().favoritesItems ;
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return  BlocBuilder<FavoriteCubit , FavoriteStates>(
-          builder: (context, state){
-            if(FavoriteCubit.get(context).favoritesItems.isEmpty && FavoriteCubit.get(context).isFirstBuild){
-              FavoriteCubit.get(context).getFavoriteForView(context);
-              FavoriteCubit.get(context).isFinish = true ;
-              FavoriteCubit.get(context).isFirstBuild = true ;
-            }
-            if(state is GetFavoriteForViewLoading && FavoriteCubit.get(context).favoritesItems.isEmpty ){
-              return const  Center(child:  CircularProgressIndicator(),);
-            }
-           return FavoriteCubit.get(context).isFinish
-               ? Padding(
-               padding: const EdgeInsets.all(16.0),
-             child:RefreshIndicator(
-               onRefresh: () => FavoriteCubit.get(context).getFavoriteForView(context).then((value){
-                 setState(() {
 
-                 });
-               }),
-               child:  ListView.separated(
-                 physics: const BouncingScrollPhysics(),
-                 itemCount: FavoriteCubit.get(context).favoritesItems.length,
-                 itemBuilder: (BuildContext context, int index) {
-                   return ProductItem(
-                     isFullWidth: true,
-                     productForViewModel: FavoriteCubit.get(context).favoritesItems[index] ,
-                     isFavoriteScreen: true,
-                   );
-                 },
-                 separatorBuilder: (BuildContext context, int index) {
-                   return const SizedBox(height: 16,);
-                 },
-               ),
-             ),
-           )
-               : const Center(child: CircularProgressIndicator(),);
-          },
+    return BlocConsumer<FavoriteCubit , FavoriteStates >(
+        listener: (context, state) => FavoriteCubit() ,
+        builder:(context , state ){
+          var cubit = FavoriteCubit.get(context);
 
-       );
+          return FutureBuilder(
+              future:cubit.getFavorite(context).then((value){setState(() {});}),
+              builder: (context , snapShot){
+                if( cubit.isLoading ){
+                  return const Center(child:  CircularProgressIndicator());
+                }
+                if(snapShot.hasError){
+                  return const Text("حدث خطأ ما .. حاول لاحقا ! ");
+                }
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: RefreshIndicator(
+                    onRefresh:() => cubit.getFavorite(context , isRefresh: true),
+                    child: cubit.isEmpty? const NoFavoriteScreen() : ListView.separated(
+                      itemCount: cubit.favoritesItemsForView.length,
+                      itemBuilder: (context , index )=> ProductItem(
+                        isFullWidth: true,
+                        productForViewModel: cubit.favoritesItemsForView.reversed.toList()[index],
+                      ),
+                      separatorBuilder: (context , index )=> const SizedBox(height: 16,),
+                    ),
+                  ),
+                );
+
+              }
+          );
+        } ,
+
+    );
+
   }
 }
+
+
+
+

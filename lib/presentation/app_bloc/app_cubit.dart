@@ -25,6 +25,7 @@ bool isNewInstall = true ;
 
   newInstallCache(context)async {
     SharedPreferences.getInstance().then((value){
+      emit(NewInstallLoading());
       // from splash to onBoarding
       if(value.getBool(PrefsKey.isNewInstall) != null && value.getBool(PrefsKey.isNewInstall) == false  ){
         isNewInstall = false ;
@@ -34,6 +35,7 @@ bool isNewInstall = true ;
       if(value.getBool(PrefsKey.isLogin) != null && value.getBool(PrefsKey.isLogin) == true  ){
         goToLoginScreen = true ;
         HomeCubit.get(context).isFirstBuild = true ;
+        emit(NewInstallSuccess());
       }
     });
   }
@@ -42,18 +44,17 @@ bool isNewInstall = true ;
   final  Repository _repository = Repository() ;
   //get profile details
   ProfileEditSuccess profileEditSuccess = ProfileEditSuccess();
-  getProfileDetails(context )async {
-    emit(GetProfileDetailsLoading(  ));
+  Future getProfileDetails(context )async {
+    emit(GetProfileDetailsLoading());
     (await _repository.getProfileDetails()).fold(
             (error){
-              Timer(const Duration(seconds: 1), (){
-                LoginCubit.get(context).logOut(context);
-              });
+              LoginCubit.get(context).logOut(context);
           emit(GetProfileDetailsError());
         },
             (profileSuccess){
-          emit(GetProfileDetailsSuccess());
-          profileEditSuccess = profileSuccess;
+
+              profileEditSuccess = profileSuccess;
+              emit(GetProfileDetailsSuccess());
         }
     );
   }

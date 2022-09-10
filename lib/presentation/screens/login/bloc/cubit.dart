@@ -14,6 +14,12 @@ import 'package:soom/presentation/screens/login/bloc/states.dart';
 import 'package:soom/presentation/screens/login/confirm.dart';
 import 'package:soom/repository/repository.dart';
 import 'package:soom/repository/request_models.dart';
+import 'package:soom/test1.dart';
+
+import '../../main_view/bloc/home_cubit.dart';
+import '../../main_view/my_auctions/bloc/my_auctions_cubit.dart';
+import '../welcome_screen.dart';
+
 
 class LoginCubit extends Cubit<LoginStates> {
   LoginCubit() : super(InitState());
@@ -85,36 +91,21 @@ bool isObscureText2 = true;
 
   // ---------- Login ----------------|
 
-  Future login(LoginRequest loginRequest , context )async {
+  Future login(LoginRequest loginRequest , context )async{
   emit(LoginLoading());
-  AppToasts.toastLoading(context);
+  //AppToasts.toastLoading(context);
   (
-   await _repository.login(loginRequest)
+   await _repository.login(loginRequest , context)
   ).fold((error){
     emit(LoginError(error));
-    Navigator.pop(context);
-    emit(DialogShow());
-  }, (loginSuccess){
-    Navigator.pop(context);
-    AppToasts.toastSuccess("تم الدخول بنجاح ! ", context );
+  }, (loginSuccess) async {
     if (kDebugMode) {
       print(loginSuccess.result!.accessToken);
-      token = loginSuccess.result!.accessToken.toString();
     }
-
-
+    id = loginSuccess.result!.userId!.toString();
+    token = loginSuccess.result!.accessToken! ;
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const TestScreen(),));
     emit(LoginSuccess(loginSuccess));
-        SharedPreferences.getInstance().then((prefs){
-      prefs.setBool(PrefsKey.isLogin , true);
-      prefs.setString(PrefsKey.token , loginSuccess.result?.accessToken ?? "").then((value){});
-      emit(LoginSuccess(loginSuccess));
-    });
-    emit(DialogShow());
-    Timer(const Duration(seconds: 1), (){
-      token = loginSuccess.result!.accessToken.toString();
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainScreen(),));
-      emit(LoginSuccess(loginSuccess));
-    });
   });
 }
 

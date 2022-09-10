@@ -24,3 +24,10 @@ class InternetConnectionSuccess extends AppStates{}
 class NoInternetConnection extends AppStates{}
 
 
+
+//new install
+class NewInstallLoading extends AppStates{}
+class NewInstallSuccess extends AppStates{}
+class NewInstall extends AppStates{}
+
+

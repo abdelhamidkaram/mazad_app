@@ -16,12 +16,14 @@ import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/splash/splash.dart';
 import 'package:soom/style/theme_style.dart';
 var  token = "";
+var  id = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SharedPreferences.getInstance().then((value) async {
     if( value.getBool(PrefsKey.isLogin) ?? true  ){
       token = value.getString(PrefsKey.token) ?? "";
+      id = value.get(PrefsKey.userId).toString() ;
     }
     });
   BlocOverrides.runZoned(
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
           ..newInstallCache(context)
         ),
         BlocProvider(create: (context) => LoginCubit()),
-        BlocProvider(create: (context) => HomeCubit()),
+        BlocProvider<HomeCubit>(create: (context) => HomeCubit()),
         BlocProvider(create: (context) => BidCubit()),
         BlocProvider(create: (context) => FavoriteCubit()),
         BlocProvider(create: (context) => MyAuctionsCubit()),
@@ -54,9 +56,20 @@ class MyApp extends StatelessWidget {
             var connectivityResult = await (Connectivity().checkConnectivity());
             if (connectivityResult != ConnectivityResult.none) {
               AppCubit.get(context).isConnect = true ;
+              await SharedPreferences.getInstance().then((value) async {
+                if( value.getBool(PrefsKey.isLogin) ?? true  )  {
+                  HomeCubit.get(context).getCategories(context).then((value) async{
+                    await HomeCubit.get(context).getProducts(context).then((value){
+                      HomeCubit.get(context).getCategoryBlocks() ;
+                    });
+                  });
+                }
+              });
+
             }else{
               AppCubit.get(context).isConnect = false ;
             }
+
           }
           return MaterialApp(
             debugShowCheckedModeBanner: false,

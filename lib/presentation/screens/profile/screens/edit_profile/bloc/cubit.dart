@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/data/cache/prefs.dart';
+import 'package:soom/main.dart';
 import 'package:soom/presentation/screens/profile/screens/edit_profile/bloc/states.dart';
 import 'package:soom/style/color_manger.dart';
 
@@ -121,7 +122,8 @@ class EditCubit extends Cubit<EditStates> {
       required String email,
       required String name,
       required String phone}) {
-    DioFactory().updateData(ApiEndPoint.updateProfile, {
+    String newToken = token ;
+    DioFactory(newToken).updateData(ApiEndPoint.updateProfile, {
       "emailAddress": email,
       "name": name,
       "surname": name,

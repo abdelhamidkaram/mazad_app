@@ -136,7 +136,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         style: AppTextStyles.smallBlack,
                       ),
                       Text(
-                        widget.productModel.auctionCounter,
+                        "${widget.productModel.productModel.product?.count ?? 0}" ,
                         style: AppTextStyles.smallBlueBold,
                       ),
                       const SizedBox(
@@ -154,7 +154,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         style: AppTextStyles.smallBlack,
                       ),
                       Text(
-                        widget.productModel.auctionCounter,
+                        "${widget.productModel.productModel.product?.count ?? 0}" ,
                         style: AppTextStyles.smallBlueBold,
                       ),
                     ],

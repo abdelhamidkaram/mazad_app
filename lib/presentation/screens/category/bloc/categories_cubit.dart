@@ -18,7 +18,7 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
         emit(GetCategoryProductsError());
       }, (productsList) {
         //TODO: GET THE Last Price and last price
-        products = productsList.map((product)=> ProductForViewModel( "2000", product, "12",) ).toList();
+        products = productsList.map((product)=> ProductForViewModel( "2000", product, ) ).toList();
        emit(GetCategoryProductsSuccess());
       });
     }
@@ -33,7 +33,7 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
         return _products.reversed.toList()  ;
       }, (productsList) {
         //TODO: GET THE Last price  and last price
-        List<ProductForViewModel>  _products = productsList.map((product)=> ProductForViewModel("2000", product, "12") ).toList();
+        List<ProductForViewModel>  _products = productsList.map((product)=> ProductForViewModel("2000", product) ).toList();
         emit(GetCategoryProductsSuccess());
         return _products.reversed.toList() ;
       });

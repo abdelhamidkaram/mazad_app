@@ -6,6 +6,7 @@ import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_states.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/my_auctions_tab.dart';
+import 'package:soom/presentation/screens/main_view/my_auctions/my_bid_tab.dart';
 import 'package:soom/style/color_manger.dart';
 
 
@@ -23,14 +24,16 @@ class _MyAuctionsState extends State<MyAuctions> {
         listener: (context, state) => MyAuctionsCubit(),
         builder: (context, state) {
           var cubit = MyAuctionsCubit.get(context);
-          if(cubit.myBidsForView.isEmpty && cubit.isFirstBuild ){
-            cubit.getMyBid("testmob3",context).then((value){ cubit.isFinish = true ;});
-            cubit.isFirstBuild = true ;
+          if(cubit.myBidsForView.isEmpty && !cubit.isEmptyLast ){
+            cubit.getMyBids(context).then((value){
+              cubit.isFirstBuild = true ;
+            });
+
           }
           if((state is GetMyBidForViewLoading || state is GetMyBidLoading ) && cubit.myBidsForView.isEmpty  ){
             return const  Center(child:  CircularProgressIndicator(),);
           }
-          List<ProductForViewModel> myProducts  = cubit.myProductsForView;
+
           return  DefaultTabController(
                   length: 2,
                   child: Scaffold(
@@ -53,40 +56,14 @@ class _MyAuctionsState extends State<MyAuctions> {
                         ]),
                       ),
                     ),
+                    // ignore: prefer_const_constructors
                     body: TabBarView(
-                          children: [
-                       cubit.myBidsForView.isNotEmpty
-                                  ?
-                              Padding(
-                                padding: const EdgeInsets.only(left: 16 , right: 16 , top: 16 ),
-                                child: RefreshIndicator(
-                                  onRefresh: () =>  cubit.getMyBid("testmob3", context).then((value){
-                                    setState(() {
-
-                                    });
-                                  }) ,
-                                  child: ListView.separated(
-                                        itemBuilder: (context, index) => ProductItem(
-                                            isFullWidth: true,
-                                            productForViewModel: cubit.myBidsForView[index],
-                                        ) ,
-                                      separatorBuilder:(context, index) => const SizedBox(
-                                        height: 20,
-                                      ) ,
-                                      itemCount:cubit.myBidsForView.length ,
-                                    ),
-                                ),
-                              )
-                                  :
-                              Center(
-                                child:  ((state is GetMyBidLoading || state is GetMyBidForViewLoading ) && cubit.myBidsForView.isEmpty) ? const CircularProgressIndicator() :  SvgPicture.asset("assets/nobids.svg")  ,
-                              ) ,
-
-                            myProducts.isNotEmpty
-                            ? MyAuctionsTab(myAuctions: myProducts)
-                            : Center(
-                                child: SvgPicture.asset("assets/nobids.svg"),
-                              ),
+                      // ignore: prefer_const_constructors, prefer_const_literals_to_create_immutables
+                          children:  [
+                           // ignore: prefer_const_constructors
+                           MyBids() ,
+                            // ignore: prefer_const_constructors
+                            MyAuctionsTab() , 
                       ],
                       ),
                     ),

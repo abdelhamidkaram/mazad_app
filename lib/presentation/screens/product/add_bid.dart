@@ -58,7 +58,7 @@ class _AddBidState extends State<AddBid> {
            AppToasts.toastError("لقد ادخلت سعرا أقل من أو يساوي آخر مزايدة يجب ان تزايد بمبلغ أكبر من  : $lastPrice", context);
          }else{
           if(auctionForViewModel !=null ){
-            bidCubit.sendBidToServer(auctionForViewModel, context).then((value){});
+            bidCubit.sendBidToServer(productId:auctionForViewModel.productModel.product!.id! , price: int.parse(value).toDouble() , context: context ).then((value){});
           }
          }
        }

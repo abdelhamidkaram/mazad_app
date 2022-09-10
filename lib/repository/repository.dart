@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/login_success.dart';
@@ -11,13 +12,20 @@ import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/repository/error_model.dart';
 import 'package:soom/repository/request_models.dart';
 
+import '../data/cache/prefs.dart';
+import '../main.dart';
+import '../presentation/screens/main_view/bloc/home_cubit.dart';
+import '../presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
+
 class Repository {
+
+
   // ------------ login --------------//
   Future<Either<ErrorModel, LoginSuccessModel>> login(
-      LoginRequest loginRequest) async {
+      LoginRequest loginRequest , context ) async {
     Response _response;
     try {
-      _response = await DioFactory().postData(ApiEndPoint.authentication, {
+      _response = await DioFactory(token).postData(ApiEndPoint.authentication, {
         "userNameOrEmailAddress": loginRequest.email,
         "password": loginRequest.password,
       });
@@ -27,6 +35,11 @@ class Repository {
           statusCode: error.hashCode));
     }
     if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
+      token = _response.data["result"]['accessToken'];
+      SharedPreferences.getInstance().then((value){
+        value.setString(PrefsKey.token, _response.data["result"]['accessToken'].toString() ).then((value) => null);
+        value.setInt(PrefsKey.userId, _response.data["result"]['userId']).then((value) => null);
+      });
       return Right(LoginSuccessModel.fromJson(_response.data));
     } else {
       return Left(ErrorModel(
@@ -41,7 +54,7 @@ class Repository {
       RegisterRequest registerRequest, context) async {
     Response _response;
     try {
-      _response = await DioFactory().postData(ApiEndPoint.register, {
+      _response = await DioFactory(token).postData(ApiEndPoint.register, {
         "emailAddress": registerRequest.email,
         "name": registerRequest.name,
         "password": registerRequest.password,
@@ -73,8 +86,10 @@ class Repository {
   Future<Either<ErrorModel, ProfileEditSuccess>> getProfileDetails() async {
     Response _response;
     try {
-      _response = await DioFactory().getData(ApiEndPoint.getProfileDetails, {});
+      _response = await DioFactory(token).getData(ApiEndPoint.getProfileDetails, {});
     } catch (error) {
+      print("profile  error : :::::::::::::::::::::::: ");
+      print(error.toString());
       return Left(ErrorModel(
           message: error.toString() +
               "\n" +
@@ -98,11 +113,11 @@ class Repository {
     Response _response;
     try {
       if (maxResult != null) {
-        _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+        _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
           "MaxResultCount": maxResult,
         });
       } else {
-        _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {});
+        _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {});
       }
     } catch (error) {
       return Left(ErrorModel(
@@ -129,23 +144,23 @@ class Repository {
     try {
       if (maxResult != null) {
         if (categoryName != null) {
-          _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
             "CategoryNameFilter": categoryName,
           });
         } else {
-          _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
           });
         }
       } else {
         if (categoryName != null) {
-          _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "CategoryNameFilter": categoryName,
           });
         } else {
           _response =
-              await DioFactory().getData(ApiEndPoint.getAllProducts, {});
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {});
         }
       }
     } catch (error) {
@@ -173,23 +188,23 @@ class Repository {
     try {
       if (maxResult != null) {
         if (searchKeywords != null) {
-          _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
             "Filter": searchKeywords,
           });
         } else {
-          _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
           });
         }
       } else {
         if (searchKeywords != null) {
-          _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "Filter": searchKeywords,
           });
         } else {
           _response =
-              await DioFactory().getData(ApiEndPoint.getAllProducts, {});
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {});
         }
       }
     } catch (error) {
@@ -223,7 +238,7 @@ class Repository {
   }) async {
     Response _response;
     try {
-      _response = await DioFactory().getData(ApiEndPoint.getAllProducts, {
+      _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
         "MaxResultCount": maxResult,
         "CategoryNameFilter": categoryModel.title,
         "MaxminPriceFilter": maxRang,
@@ -278,12 +293,12 @@ class Repository {
     Response _response;
     try {
       if (maxResult != null) {
-        _response = await DioFactory().getData(ApiEndPoint.getAllCategories, {
+        _response = await DioFactory(token).getData(ApiEndPoint.getAllCategories, {
           "MaxResultCount": maxResult,
         });
       } else {
         _response =
-            await DioFactory().getData(ApiEndPoint.getAllCategories, {});
+            await DioFactory(token).getData(ApiEndPoint.getAllCategories, {});
       }
     } catch (error) {
       return Left(ErrorModel(
@@ -310,7 +325,7 @@ class Repository {
   Response _response;
   try {
   _response =
-  await DioFactory().postData(ApiEndPoint.uploadProducts, data);
+  await DioFactory(token).postData(ApiEndPoint.uploadProducts, data);
   } catch (error) {
   return Left(ErrorModel(
   message: (kDebugMode ? error.toString() + "\n" : "") +
@@ -318,6 +333,7 @@ class Repository {
   statusCode: error.hashCode),
   );
   }
+ print( _response.data);
   if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
   return Right(_response.data);
   } else {

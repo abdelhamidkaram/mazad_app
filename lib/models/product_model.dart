@@ -1,14 +1,13 @@
 import 'package:soom/constants/app_string.dart';
-import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 
 class ProductForViewModel{
    bool isFavorite = false ;
   final String view ;
    String?  lasPrice ;
-  final String auctionCounter ; //TODO: GET FORM SERVER
+   String? auctionCounter ;
   final ProductModel productModel ;
-   String thumbnail = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"  ;
-   List<String>? photos ;
+   String thumbnail = "https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png" ;
+   List? photos ;
    int? categoryId ;
    String? title ;
    String? tasalsol ;
@@ -21,7 +20,9 @@ class ProductForViewModel{
 ProductForViewModel(
     this.view,
     this.productModel,
-    this.auctionCounter ,
+   {
+     this.isFavorite = false  ,
+   }
     ){
 
   title = productModel.product?.name ?? "غير معروف ";
@@ -36,6 +37,11 @@ ProductForViewModel(
   categoryId = productModel.product?.categoryId ?? 0 ;
   if(photos!.isNotEmpty && thumbnail != photos![0]){
     thumbnail = "${AppString.getImageBaseUrl}${photos![0]} ";
+  }
+  if(productModel.product!.count != null ){
+    auctionCounter = productModel.product!.count.toString() ;
+  }else {
+    auctionCounter = 0.toString() ;
   }
 }
 
@@ -71,9 +77,10 @@ class Product {
   double? minPrice;
   String? endDate;
   int? status;
+  int? count;
   double? targetPrice;
   int? categoryId;
-  List<String>? photo;
+  List? photo;
   int? id;
 
   Product(
@@ -86,6 +93,7 @@ class Product {
         this.targetPrice,
         this.categoryId,
         this.photo,
+        this.count,
         this.id});
 
   Product.fromJson(Map<String, dynamic> json) {
@@ -97,8 +105,9 @@ class Product {
     status = json['status'];
     targetPrice = json['targetPrice'];
     categoryId = json['categoryId'];
-    photo = json['photo'].cast<String>();
+    photo = json['photo'];
     id = json['id'];
+    count = json['count'];
   }
 
   Map<String, dynamic> toJson() {

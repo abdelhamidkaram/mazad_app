@@ -46,10 +46,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ?
                         const Center(child: CircularProgressIndicator(),)
                     :
-                    Center(child: SingleChildScrollView(
+                    SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
-                        child: bodyWidget(state, cubit)) ,
-                    ),
+                        child: bodyWidget(state, cubit)),
                   ),
                 ),
               ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
@@ -14,6 +15,9 @@ import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
+
+import '../../../../data/cache/prefs.dart';
+import '../../../../main.dart';
 
 class AddAuctionScreen extends StatefulWidget {
   const AddAuctionScreen({Key? key}) : super(key: key);
@@ -279,7 +283,8 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                           }
                           _replaceController();
                           AppToasts.toastLoading(context);
-                          DioFactory().postData(ApiEndPoint.uploadProducts, {
+                          String newToken = token;
+                          DioFactory(newToken).postData(ApiEndPoint.uploadProducts, {
                               "name": cubit.nameController.text,
                               "descrption": cubit.detailsController.text,
                               "intitalPrice": int.parse(cubit.initialPriceController.text.toString()).toDouble(),
@@ -290,7 +295,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               "categoryId": cubit.categorySelected.index,
                           }).then((value){
                             if (kDebugMode) {
-                              print("+++++++++++++++++");
+                              print("++++++++${value.toString()}+++++++++");
                             }
                             Navigator.pop(context);
                             AppToasts.toastSuccess("تم رفع المنتج ", context);

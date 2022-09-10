@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
@@ -7,6 +8,8 @@ import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/style/text_style.dart';
 
 import '../../../../../constants/api_constants.dart';
+import '../../../../../data/cache/prefs.dart';
+import '../../../../../main.dart';
 
 class NewReport extends StatefulWidget {
   const NewReport({Key? key}) : super(key: key);
@@ -81,11 +84,12 @@ class _NewReportState extends State<NewReport> {
               AppButtons.appButtonBlue(() {
                 if(formKey.currentState!.validate()){
                   AppToasts.toastLoading(context);
-                  DioFactory().postData(ApiEndPoint.createSupportCass,
+                  String newToken = token;
+                  DioFactory(newToken).postData(ApiEndPoint.createSupportCass,
                       {
                         "title": titleController.text,
                         "body": detailsController.text,
-                        "createdByUserId": AppCubit.get(context).profileEditSuccess.result?.userId,
+                        "createdByUserId": id,
                       }).then((value){
                         Navigator.pop(context);
                         AppToasts.toastSuccess("تم الارسال بنجاح ", context);

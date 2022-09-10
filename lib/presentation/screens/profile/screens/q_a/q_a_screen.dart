@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
+import 'package:soom/main.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
+
+import '../../../../../data/cache/prefs.dart';
 
 class QAScreen extends StatefulWidget {
    const QAScreen({Key? key}) : super(key: key);
@@ -18,7 +22,8 @@ class _QAScreenState extends State<QAScreen> {
   void initState() {
     super.initState();
     if(itemData.isEmpty) {
-      DioFactory().getData(ApiEndPoint.getFQA, {}).then((value) {
+      String newToken = token;
+      DioFactory(newToken).getData(ApiEndPoint.getFQA, {}).then((value) {
         List itemResponse = value.data["result"]["items"];
         int count = 0;
         for (var element in itemResponse) {

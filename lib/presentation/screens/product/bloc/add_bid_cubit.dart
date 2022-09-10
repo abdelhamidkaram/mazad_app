@@ -2,13 +2,15 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
-import 'package:soom/models/auction_model.dart';
+import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
-import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_states.dart';
+
+import '../../../../data/cache/prefs.dart';
 
 class BidCubit extends Cubit<BidStates> {
   BidCubit() : super(InitBidState());
@@ -19,7 +21,10 @@ class BidCubit extends Cubit<BidStates> {
   int bidCounter = 100;
 
   TextEditingController getController(  context ,   ProductForViewModel productModel) {
-    MyAuctionsCubit.get(context).myBidsForView.add(productModel);
+    String newToken = token;
+    DioFactory(newToken).getData(ApiEndPoint.getLastBid, {
+      "id":productModel.productModel.product!.id ,
+    });
     controller.text = (!isAddBid ? productModel.lasPrice : controller.text) ?? 200.toString();
     emit(GetBidController());
     return controller;
@@ -62,16 +67,16 @@ class BidCubit extends Cubit<BidStates> {
     emit(RemoveBid());
   }
 
- Future sendBidToServer(AuctionForViewModel auctionForViewModel ,  context ) async {
+ Future sendBidToServer({required double price, required int productId, required context}) async {
     emit(SendBidToServerLoading());
     AppToasts.toastLoading(context);
-   await DioFactory().postData(ApiEndPoint.addBid, {
-     "price": auctionForViewModel.price,
-     "userId": auctionForViewModel.userModel.userId,
-     "productId": auctionForViewModel.productModel.product!.id,
+    String newToken = token;
+   await DioFactory(newToken).postData(ApiEndPoint.addBid, {
+     "price": price,
+     "userId": int.parse(id) ,
+     "productId": productId ,
    }).then((value){
      Navigator.pop(context);
-
        AppToasts.toastSuccess(" تمت عملية المزايدة بنجاح", context);
        Timer(const Duration(seconds: 2), (){
          Navigator.of(context).pop();

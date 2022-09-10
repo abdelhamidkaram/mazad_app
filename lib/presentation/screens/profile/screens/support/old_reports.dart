@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/presentation/screens/profile/screens/support/report_screen.dart';
 import 'package:soom/style/text_style.dart';
 
 import '../../../../../constants/api_constants.dart';
 import '../../../../../data/api/dio_factory.dart';
+import '../../../../../data/cache/prefs.dart';
+import '../../../../../main.dart';
 import '../../../../components/toast.dart';
 import '../q_a/q_a_screen.dart';
 
@@ -23,7 +26,8 @@ class _OldReportsState extends State<OldReports> {
   void initState() {
     super.initState();
     if(itemData.isEmpty ) {
-      DioFactory().getData(ApiEndPoint.getAllSupportCass, {}).then((value) {
+      String newToken = token;
+      DioFactory(newToken).getData(ApiEndPoint.getAllSupportCass, {}).then((value) {
         List itemResponse = value.data["result"]["items"];
 
         for (var element in itemResponse) {
