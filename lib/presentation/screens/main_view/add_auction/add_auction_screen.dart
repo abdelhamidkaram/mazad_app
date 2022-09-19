@@ -27,6 +27,39 @@ class AddAuctionScreen extends StatefulWidget {
 }
 
 class _AddAuctionScreenState extends State<AddAuctionScreen> {
+  List<String> buildClockList() {
+    return List.generate(24, (int num) {
+      String clock = "ساعة";
+      if ((num+1) >= 3 && (num+1) <= 10) {
+        clock = "ساعات";
+        return (num+1) == 10 ?  (num+1).toString() + clock : "0" + (num+1).toString() + clock ;
+      } else {
+        if ((num+1) == 2) {
+          return "ساعتين";
+        }
+        if ((num+1) == 1) {
+          return clock;
+        }
+      }
+      return (num+1).toString() + clock;
+    });
+  }
+
+  InkWell popUpItemBuilder(AddAuctionCubit cubit, List<String> list, int index,
+      BuildContext context) {
+    return InkWell(
+      onTap: () {
+        cubit.dateController.text = list[index];
+        cubit.timeSelected = list[index];
+        Navigator.pop(context);
+      },
+      child: Text(
+        list[index],
+        style: AppTextStyles.mediumBlack,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var addProductKey = GlobalKey<FormState>();
@@ -36,8 +69,13 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
         listener: (context, state) => AddAuctionCubit(),
         builder: (context, state) {
           var cubit = AddAuctionCubit.get(context);
-          if(cubit.catController.text.isEmpty){
-            cubit.catController.text = HomeCubit.get(context).categories[0].title.toString();
+          if (cubit.catController.text.isEmpty) {
+            cubit.catController.text =
+                HomeCubit.get(context).categories[0].title.toString();
+          }
+          if (cubit.dateController.text.isEmpty) {
+            cubit.dateController.text =
+                cubit.timeSelected;
           }
           List<CategoryModel> cats = HomeCubit.get(context).categories;
 
@@ -65,21 +103,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                   child: Column(
                     children: [
                       AddProductImages(cubit: cubit),
-                      const SizedBox(
-                        height: 24,
-                      ),
-                      Row(
-                        children: const [
-                          Text(
-                            "اسم المنتج ",
-                            style: AppTextStyles.titleSmallBlack,
-                          ),
-                          Spacer()
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
+                      const CustomFieldTitle(title:    "اسم المنتج "),
                       TextFormField(
                         controller: cubit.nameController,
                         validator: (value) {
@@ -89,51 +113,49 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                             return null;
                           }
                         },
-                        decoration:  InputDecoration(
-                          hintText: cubit.nameController.text.isEmpty? "اسم المنتج هنا   " : cubit.nameController.text,
+                        decoration: InputDecoration(
+                          hintText: cubit.nameController.text.isEmpty
+                              ? "اسم المنتج هنا   "
+                              : cubit.nameController.text,
                           border: const OutlineInputBorder(),
                           hintStyle: AppTextStyles.smallGrey,
                         ),
                       ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        children: const [
-                          Text(
-                            "التصنيف",
-                            style: AppTextStyles.titleSmallBlack,
-                          ),
-                          Spacer()
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
+                      const CustomFieldTitle(title:    "التصنيف "),
                       GestureDetector(
-                        onTap:  () {
+                        onTap: () {
                           showDialog(
                             context: context,
-                            builder: (context){
-                              return Dialog(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(30.0),
-                                  child: SizedBox(
-                                    height: 300,
-                                    child: Center(
-                                      child: ListView.separated(
-                                        itemCount: cats.length,
-                                        itemBuilder:(context, index) => InkWell(
-                                          onTap: (){
-                                            cubit.catController.text = cats[index].title.toString();
-                                            cubit.categorySelected = cats[index] ;
-                                            Navigator.pop(context);
+                            builder: (context) {
+                              return Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: Dialog(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(30.0),
+                                    child: SizedBox(
+                                      height: 300,
+                                      child: Center(
+                                        child: ListView.separated(
+                                          itemCount: cats.length,
+                                          itemBuilder: (context, index) =>
+                                              InkWell(
+                                            onTap: () {
+                                              cubit.catController.text =
+                                                  cats[index].title.toString();
+                                              cubit.categorySelected =
+                                                  cats[index];
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              cats[index].title.toString(),
+                                              style: AppTextStyles.mediumBlack,
+                                            ),
+                                          ),
+                                          separatorBuilder:
+                                              (BuildContext context, int index) {
+                                            return const Divider();
                                           },
-                                          child: Text(cats[index].title.toString() , style: AppTextStyles.mediumBlack,),
                                         ),
-                                        separatorBuilder: (BuildContext context, int index) {
-                                          return const Divider();
-                                        },
                                       ),
                                     ),
                                   ),
@@ -143,46 +165,24 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                           );
                         },
                         child: TextFormField(
-                          validator: (value){
-                            if(value!.isEmpty){
+                          validator: (value) {
+                            if (value!.isEmpty) {
                               return "اختر التصنيف ";
                             }
-                            return null ;
+                            return null;
                           },
                           controller: cubit.catController,
                           decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            enabled: false,
-                            hintText: "اختر التصنيف ",
-                            prefixIcon: Icon(Icons.apps , color: ColorManger.primary,)
-                          ),
+                              border: OutlineInputBorder(),
+                              enabled: false,
+                              hintText: "اختر التصنيف ",
+                              prefixIcon: Icon(
+                                Icons.apps,
+                                color: ColorManger.primary,
+                              )),
                         ),
                       ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                     // SwitchBetweenTowCheckBoxWidget(
-                     //    getCheckTime: () {
-                     //      cubit.getCheckTime();
-                     //    },
-                     //    isCheckTime: cubit.isCheckTime,
-                     //    isCheckPrice: cubit.isCheckPrice,
-                     //  ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        children: const [
-                          Text(
-                            "السعر ",
-                            style: AppTextStyles.titleSmallBlack,
-                          ),
-                          Spacer()
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
+                      const CustomFieldTitle(title:    "السعر"),
                       TextFormField(
                         controller: cubit.initialPriceController,
                         keyboardType: const TextInputType.numberWithOptions(
@@ -199,21 +199,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        children: const [
-                          Text(
-                            "أقل سعر ",
-                            style: AppTextStyles.titleSmallBlack,
-                          ),
-                          Spacer()
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
+                      const CustomFieldTitle(title:    "أقل سعر"),
                       TextFormField(
                           controller: cubit.minPriceController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -229,21 +215,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                             }
                             return null;
                           }),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        children: const [
-                          Text(
-                            "السعر المستهدف ",
-                            style: AppTextStyles.titleSmallBlack,
-                          ),
-                          Spacer()
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 16,
-                      ),
+                      const CustomFieldTitle(title:    "السعر المستهدف"),
                       TextFormField(
                           controller: cubit.targetPriceController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -259,17 +231,57 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                             }
                             return null;
                           }),
-                      const SizedBox(
-                        height: 16,
-                      ),
-                      TimeTextFiledWidget(
-                        dateController: cubit.dateController,
-                        timeController: cubit.timeController,
-                        isCheckTime: cubit.isCheckTime,
-                        keyForm: addProductKey,
-                      ),
-                      const SizedBox(
-                        height: 16,
+                      const CustomFieldTitle(title:    "وقت المزاد"),
+                      GestureDetector(
+                        onTap: () {
+                          showDialog(
+
+                            context: context,
+                            builder: (context) {
+                              List<String> num = buildClockList();
+                              return Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: Dialog(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(30.0),
+                                    child: SizedBox(
+                                      height: 300,
+                                      child: Center(
+                                        child: ListView.separated(
+                                          itemCount: num.length,
+                                          itemBuilder: (context, index) =>
+                                              popUpItemBuilder(
+                                                  cubit, num, index, context),
+                                          separatorBuilder:
+                                              (BuildContext context, int index) {
+                                            return const Divider();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return "اختر وقت انتهاء المزاد";
+                            }
+                            return null;
+                          },
+                          controller: cubit.dateController,
+                          decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                              enabled: false,
+                              hintText: "اختر وقت الانتهاء ",
+                              prefixIcon: Icon(
+                                Icons.watch_later_outlined,
+                                color: ColorManger.primary,
+                              )),
+                        ),
                       ),
                       TextFormFieldDetailsWidget(
                           detailsController: cubit.detailsController),
@@ -278,59 +290,55 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                       ),
                       AppButtons.appButtonBlue(() {
                         if (addProductKey.currentState!.validate()) {
-                          if (kDebugMode) {
-                            print("++++++  on    +++++++++++");
-                          }
                           _replaceController();
                           AppToasts.toastLoading(context);
                           String newToken = token;
-                          DioFactory(newToken).postData(ApiEndPoint.uploadProducts, {
-                              "name": cubit.nameController.text,
-                              "descrption": cubit.detailsController.text,
-                              "intitalPrice": int.parse(cubit.initialPriceController.text.toString()).toDouble(),
-                              "minPrice": int.parse(cubit.minPriceController.text.toString()).toDouble(),
-                              "endDate": cubit.dateController.text.substring(0, 10)+"T21:19:57.233Z",
-                              "status": 0,
-                              "targetPrice": int.parse(cubit.targetPriceController.text.toString()).toDouble(),
-                              "categoryId": cubit.categorySelected.index,
-                          }).then((value){
+                          String endDate =
+                          cubit.dateController.text == "ساعة" ?
+                          //2022-09-10 18:58:51.572
+                          DateTime.now().add(const Duration(hours: 1)).toString()
+                              :
+                          cubit.dateController.text == "ساعتين" ?
+                          DateTime.now().add(const Duration(hours: 2)).toString()
+                              :
+
+                          DateTime.now().add(
+                            Duration(hours:int.parse(cubit.dateController.text.substring(0,2))),
+                          ).toString();
+                          DioFactory(newToken)
+                              .postData(ApiEndPoint.uploadProducts, {
+                            "name": cubit.nameController.text,
+                            "descrption": cubit.detailsController.text,
+                            "intitalPrice": int.parse(cubit
+                                    .initialPriceController.text
+                                    .toString())
+                                .toDouble(),
+                            "minPrice": int.parse(
+                                    cubit.minPriceController.text.toString())
+                                .toDouble(),
+                            //2022-09-12T14:54:18.065297Z
+                            "endDate":endDate.substring(0,10)+"T"+endDate.substring(11)+"Z",
+                            "status": 0,
+                            "targetPrice": int.parse(
+                                    cubit.targetPriceController.text.toString())
+                                .toDouble(),
+                            "categoryId": cubit.categorySelected.index,
+                          }).then((value) {
                             if (kDebugMode) {
                               print("++++++++${value.toString()}+++++++++");
                             }
                             Navigator.pop(context);
                             AppToasts.toastSuccess("تم رفع المنتج ", context);
-                          }).catchError((err){
+                          }).catchError((err) {
                             if (kDebugMode) {
                               print("++++++++++++ errr +++++");
                             }
                             Navigator.pop(context);
-                            AppToasts.toastError("error", context);
+                            AppToasts.toastError(
+                                "حدث خطأ ما .. حاول لاحقا", context);
                           });
-                          if (kDebugMode) {
-                            print("+++++++   out ++++++++++");
-                          }
-                          // cubit
-                          //     .uploadProductDetails(state, context)
-                          //     .then((value) {
-                          //   if (state is UploadDetailsSuccess) {
-                          //     cubit.dateController.clear();
-                          //     cubit.nameController.clear();
-                          //     cubit.targetPriceController.clear();
-                          //     cubit.initialPriceController.clear();
-                          //     cubit.minPriceController.clear();
-                          //     cubit.detailsController.clear();
-                          //     cubit.catController.clear();
-                          //   }
-                          // });
-                          // if (cubit.customValidate(context)) {
-                          //   Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) =>
-                          //     const AddAuctionProgress(),
-                          //   ));
-                          // }
                         }
                       }, "إضافة المنتج ", true),
-
                     ],
                   ),
                 ),
@@ -339,6 +347,40 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
           );
         },
       ),
+    );
+  }
+
+
+}
+
+class CustomFieldTitle extends StatelessWidget {
+  final String title ;
+  const CustomFieldTitle({
+    Key? key,
+    required this.title ,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(
+          height: 16,
+        ),
+        Row(
+          children:  [
+            Text(
+              title,
+              style: AppTextStyles.titleSmallBlack,
+            ),
+            const Spacer()
+          ],
+        ),
+        const SizedBox(
+          height: 16,
+        ),
+
+      ],
     );
   }
 }
@@ -466,6 +508,7 @@ class _TimeTextFiledWidgetState extends State<TimeTextFiledWidget> {
     }
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -548,10 +591,7 @@ class _SmallImgProductItemState extends State<SmallImgProductItem> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          AddAuctionCubit.get(context).pickerCamera(
-            widget.index,
-            context
-          );
+          AddAuctionCubit.get(context).pickerCamera(widget.index, context);
         });
       },
       child: Padding(
@@ -590,18 +630,7 @@ class _TextFormFieldDetailsWidgetState
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(
-          children: const [
-            Text(
-              "التفاصيل ",
-              style: AppTextStyles.titleSmallBlack,
-            ),
-            Spacer()
-          ],
-        ),
-        const SizedBox(
-          height: 16,
-        ),
+        const CustomFieldTitle(title:    "التفاصيل"),
         TextFormField(
           controller: widget.detailsController,
           maxLines: 10,
@@ -641,7 +670,7 @@ class _AddProductImagesState extends State<AddProductImages> {
       children: [
         GestureDetector(
           onTap: () {
-            AddAuctionCubit.get(context).pickerCamera(0 , context );
+            AddAuctionCubit.get(context).pickerCamera(0, context);
           },
           child: Container(
             width: double.infinity,

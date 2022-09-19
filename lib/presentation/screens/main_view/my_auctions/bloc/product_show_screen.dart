@@ -28,12 +28,17 @@ return FutureBuilder(
   builder: (context, snapshot) {
     if(snapshot.hasData){
       Response? response = snapshot.data as Response ;
+      String lastPrice = ProductModel.fromJson(response.data["result"]).product!.minPrice.toString();
+      for(var bid in HomeCubit.get(context).allLastBids){
+        if(bid.productId ==ProductModel.fromJson(response.data["result"]).product!.id ){
+          lastPrice = bid.price.toString();
+        }
+      }
       return
       ProductScreen(
           productModel: ProductForViewModel(
-              "2", ProductModel.fromJson(response.data["result"]))
+              "", ProductModel.fromJson(response.data["result"])), lastPrice: lastPrice
           ,
-          lastPrice: "2" ,
       );
     }else{
    return Scaffold(

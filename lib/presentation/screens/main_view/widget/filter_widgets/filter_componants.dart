@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/style/color_manger.dart';
@@ -16,41 +17,56 @@ class _RangePriceFilterState extends State<RangePriceFilter> {
 
     return Column(
       children: [
-        SizedBox(
-          width: 250,
-          child: RangeSlider(
-              activeColor: ColorManger.primary,
-              inactiveColor: ColorManger.lightGrey,
-              max: 10000,
-              min: 50 ,
-              values: HomeCubit.get(context).getRangeValues() ,
-              onChanged: (value){
-                setState(() {
-                  HomeCubit.get(context).changeRangeValue(value);
-                });
-              }),
-        ),
-        SizedBox(
-          width: 180,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children:  [
-              Row(
-                children: [
-                  const  Text("KW" ,style: AppTextStyles.currencyGreen),
-                  Text(HomeCubit.get(context).minRangeFilter.toString(), style : AppTextStyles.titleGreen),
-                  const SizedBox(width: 5,),
-                ],
-              ),
-              const Spacer(),
-              Row(
-                children: [
-                  const  Text("KW" ,style: AppTextStyles.currencyGreen),
-                  Text(HomeCubit.get(context).maxRangeFilter.toString(), style : AppTextStyles.titleGreen),
-                  const SizedBox(width: 5,),
-                ],
-              ),
-            ],),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+           Column(
+             children: [
+               const Text("من"),
+               Container(
+                 width:  60,
+                 decoration: BoxDecoration(
+                   border: Border.all(color: ColorManger.lightGrey),
+                   borderRadius: BorderRadius.circular(12),
+                 ),
+                 child: TextFormField(
+                   controller: HomeCubit.get(context).minController,
+                   keyboardType: TextInputType.number,
+                   decoration: const InputDecoration(
+                     border: InputBorder.none,
+                   ),
+                   textAlign: TextAlign.center,
+                 ),
+               ) ,
+               const  Text("KW" ,style: AppTextStyles.currencyGreen),
+             ],
+           ),
+            const SizedBox(width: 10,),
+            const Text(":"),
+            const SizedBox(width: 10,),
+            Column(
+              children: [
+                const Text("إلى"),
+                Container(
+                  width:  60,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: ColorManger.lightGrey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: TextFormField(
+                    controller: HomeCubit.get(context).maxController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ) ,
+                const  Text("KW" ,style: AppTextStyles.currencyGreen),
+              ],
+            ),
+
+          ],
         ),
 
       ],

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:soom/models/product_model.dart';
+import 'package:soom/models/system_conf_model.dart';
+import 'package:soom/presentation/app_bloc/app_cubit.dart';
+import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
@@ -44,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 height: 10,
               ),
               CategoriesListView(homeCubit: widget.homeCubit),
-              SlideImage(homeCubit: widget.homeCubit),
+               const SlideImage(),
               HomeProductsView(homeCubit: widget.homeCubit,state: widget.state),
 
             ],

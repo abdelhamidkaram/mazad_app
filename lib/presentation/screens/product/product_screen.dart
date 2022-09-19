@@ -12,6 +12,8 @@ import 'package:soom/presentation/screens/product/widget/product_price_box.dart'
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
+import '../main_view/favorite_screen/bloc/cubit.dart';
+
 class ProductScreen extends StatefulWidget {
   final ProductForViewModel productModel;
   final bool isMyAuction;
@@ -28,6 +30,16 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
+    if(FavoriteCubit.get(context).favoritesItemsResponse.isNotEmpty){
+      for(var fav in FavoriteCubit.get(context).favoritesItemsResponse){
+        if(fav.product!.id  == widget.productModel.productModel.product!.id  ){
+          setState(() {
+            widget.productModel.isFavorite = true ;
+          });
+          break ;
+        }
+      }
+    }
     return Directionality(
       textDirection: TextDirection.rtl,
       child: WillPopScope(
@@ -102,17 +114,10 @@ class _ProductScreenState extends State<ProductScreen> {
                         style: AppTextStyles.smallGrey_12,
                       ),
                       Text(
-                        "${widget.productModel.tasalsol}   |   ",
+                        "${widget.productModel.tasalsol} ",
                         style: AppTextStyles.smallGreyBold_12,
                       ),
-                      const Text(
-                        "البند : ",
-                        style: AppTextStyles.smallGrey_12,
-                      ),
-                      Text(
-                        widget.productModel.pand!,
-                        style: AppTextStyles.smallGreyBold_12,
-                      ),
+
                     ],
                   ),
                   const SizedBox(
@@ -125,23 +130,6 @@ class _ProductScreenState extends State<ProductScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SvgPicture.asset(
-                        "assets/dollar.svg",
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Text(
-                        "المزادات الفعالة : ",
-                        style: AppTextStyles.smallBlack,
-                      ),
-                      Text(
-                        "${widget.productModel.productModel.product?.count ?? 0}" ,
-                        style: AppTextStyles.smallBlueBold,
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
                       SvgPicture.asset(
                         "assets/auction.svg",
                         color: ColorManger.primary,

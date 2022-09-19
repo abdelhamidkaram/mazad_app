@@ -36,9 +36,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                   child: RefreshIndicator(
                     onRefresh:() => cubit.getFavorite(context , isRefresh: true),
                     child: cubit.isEmpty? const NoFavoriteScreen() : ListView.separated(
+                      physics: const BouncingScrollPhysics(),
                       itemCount: cubit.favoritesItemsForView.length,
                       itemBuilder: (context , index )=> ProductItem(
-                        isFullWidth: true,
+                        isFullWidth: false,
                         productForViewModel: cubit.favoritesItemsForView.reversed.toList()[index],
                       ),
                       separatorBuilder: (context , index )=> const SizedBox(height: 16,),

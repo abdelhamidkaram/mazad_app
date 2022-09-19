@@ -22,9 +22,9 @@ ProductForViewModel(
     this.productModel,
    {
      this.isFavorite = false  ,
+     this.lasPrice ,
    }
     ){
-
   title = productModel.product?.name ?? "غير معروف ";
   photos = productModel.product?.photo ?? ["https://upload.wikimedia.org/wikipedia/commons/d/d1/Image_not_available.png"];
   tasalsol = productModel.product?.id.toString() ?? 0.toString() ;
@@ -43,6 +43,7 @@ ProductForViewModel(
   }else {
     auctionCounter = 0.toString() ;
   }
+  lasPrice ??= minPrice!.toInt().toString();
 }
 
 }
@@ -51,9 +52,7 @@ ProductForViewModel(
 class ProductModel {
   Product? product;
   String? categoryName;
-
   ProductModel({this.product, this.categoryName});
-
   ProductModel.fromJson(Map<String, dynamic> json) {
     product =
     json['product'] != null ? Product.fromJson(json['product']) : null;
@@ -72,8 +71,8 @@ class ProductModel {
 
 class Product {
   String? name;
-  String? descrption;
-  double? intitalPrice;
+  String? descrption ;
+  double? intitalPrice ;
   double? minPrice;
   String? endDate;
   int? status;

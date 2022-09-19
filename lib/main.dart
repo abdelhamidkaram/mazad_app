@@ -1,5 +1,7 @@
 
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,16 +16,18 @@ import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.d
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/splash/splash.dart';
+import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/theme_style.dart';
 var  token = "";
 var  id = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  ErrorWidget.builder = (error)=> const CustomErrorWidget();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await SharedPreferences.getInstance().then((value) async {
-    if( value.getBool(PrefsKey.isLogin) ?? true  ){
-      token = value.getString(PrefsKey.token) ?? "";
-      id = value.get(PrefsKey.userId).toString() ;
+    if( value.getBool(PrefsKey.isLogin) ?? true){
+      token = value.getString(PrefsKey.token)??"";
+      id = value.get(PrefsKey.userId).toString();
     }
     });
   BlocOverrides.runZoned(
@@ -32,6 +36,17 @@ void main() async {
     },
     blocObserver: MyBlocObserver(),
   );
+}
+
+class CustomErrorWidget extends StatelessWidget {
+  const CustomErrorWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(color:ColorManger.lightGrey,child:  const Icon(Icons.error, color: ColorManger.red,),);
+  }
 }
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);

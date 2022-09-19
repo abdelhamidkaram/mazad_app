@@ -10,6 +10,7 @@ import 'package:soom/style/text_style.dart';
 import '../../../../../constants/api_constants.dart';
 import '../../../../../data/cache/prefs.dart';
 import '../../../../../main.dart';
+import '../../../../components/buttons/whatsapp_btn.dart';
 
 class NewReport extends StatefulWidget {
   const NewReport({Key? key}) : super(key: key);
@@ -99,7 +100,9 @@ class _NewReportState extends State<NewReport> {
                   }).catchError((err){ Navigator.pop(context); AppToasts.toastError("حدث خطأ ما .. حاول لاحقا  !", context); });
                 }
 
-              }, "ارسال ", true )
+              }, "ارسال ", true ) ,
+            const  SizedBox(height: 30,),
+           const WhatsappButton()
             ],
           ),
         ),

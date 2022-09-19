@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:soom/models/product_model.dart';
-import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_states.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/my_auctions_tab.dart';
@@ -28,7 +25,6 @@ class _MyAuctionsState extends State<MyAuctions> {
             cubit.getMyBids(context).then((value){
               cubit.isFirstBuild = true ;
             });
-
           }
           if((state is GetMyBidForViewLoading || state is GetMyBidLoading ) && cubit.myBidsForView.isEmpty  ){
             return const  Center(child:  CircularProgressIndicator(),);
@@ -69,6 +65,9 @@ class _MyAuctionsState extends State<MyAuctions> {
                     ),
 
               );
+
+
+
         });
   }
 }

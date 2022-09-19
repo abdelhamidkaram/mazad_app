@@ -22,7 +22,10 @@ class _AllProductsScreenState extends State<AllProductsScreen> {
           children: List.generate(
             HomeCubit.get(context).products.length,
             (index) => ProductItem(
-                 productForViewModel: HomeCubit.get(context).products[index], isFullWidth: true,),
+                 productForViewModel:
+                 HomeCubit.get(context).products[index],
+                 isFullWidth: true,
+            ),
           ),
         ),
       ),

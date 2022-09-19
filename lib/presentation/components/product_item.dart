@@ -66,7 +66,7 @@ class _ProductItemState extends State<ProductItem> {
               transitionDuration: const Duration(milliseconds: 800),
               openBuilder: (context, action) =>
                   ProductScreen(
-                    lastPrice: widget.productForViewModel.productModel.product!.minPrice.toString(), //TODO: LAST PRICE
+                    lastPrice: widget.productForViewModel.lasPrice!, //TODO: LAST PRICE
                     productModel: widget.productForViewModel,
                     isMyAuction: widget.isMyAuction ?? false,
                   ),
@@ -224,7 +224,7 @@ class _LastBidsPriceState extends State<LastBidsPrice> {
         child: SizedBox(
           width: 80,
           child: PriceAndCurrencyGreen(
-            lastPrice: widget.productModel.minPrice.toString(),
+            lastPrice: widget.productModel.lasPrice! ,
             //TODO: GET LAST PRICE
             productModel: widget.productModel,
           ),
@@ -277,7 +277,7 @@ class _LastBidsTabsState extends State<LastBidsTabs> {
           child: SizedBox(
             width: 90,
             child: PriceAndCurrencyGreen(
-              lastPrice: widget.productModel.productModel.product!.minPrice.toString(), //TODO: GET MY BID
+              lastPrice: widget.productModel.lasPrice!, //TODO: GET MY BID
               productModel: widget.productModel,
             ),
           ),
@@ -317,7 +317,7 @@ class _LastBidsTabsAndPriceState extends State<LastBidsTabsAndPrice> {
               width: 120,
               child: PriceAndCurrencyGreen(
               productModel: widget.productModel,
-                lastPrice: widget.productModel.minPrice.toString(),//TODO : GET LAST PRICE
+                lastPrice:widget.productModel.lasPrice!,//TODO : GET LAST PRICE
                 ),
             ),
           ),

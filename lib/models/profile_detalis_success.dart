@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/data/cache/prefs.dart';
+import 'package:soom/main.dart';
 
 class ProfileEditSuccess {
   UserModel? result;
@@ -32,7 +33,7 @@ class UserModel {
   String? timezone;
   String? qrCodeSetupImageUrl;
   bool? isGoogleAuthenticatorEnabled;
-  int? userId; //TODO: get user id from server
+  int? userId;
 
   UserModel(
       {this.name,
@@ -44,9 +45,9 @@ class UserModel {
         this.timezone,
         this.qrCodeSetupImageUrl,
         this.isGoogleAuthenticatorEnabled,
-        this.userId
+     this.userId
       }){
-    _getUserId();
+    userId =  int.parse(id) ;
   }
 
 
@@ -60,7 +61,7 @@ class UserModel {
     timezone = json['timezone'];
     qrCodeSetupImageUrl = json['qrCodeSetupImageUrl'];
     isGoogleAuthenticatorEnabled = json['isGoogleAuthenticatorEnabled'];
-    _getUserId();
+    userId =  int.parse(id) ;
   }
 
   Map<String, dynamic> toJson() {
@@ -77,12 +78,6 @@ class UserModel {
     return data;
   }
 
- _getUserId(){
-    SharedPreferences.getInstance().then((prefs){
-      userId =   prefs.getInt(PrefsKey.userId) ;
-    });
 
-    userId =  0 ;
-  }
 
 }

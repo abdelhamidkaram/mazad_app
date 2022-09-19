@@ -31,3 +31,10 @@ class NewInstallSuccess extends AppStates{}
 class NewInstall extends AppStates{}
 
 
+
+// conf
+class GetSystemConfLoading extends AppStates{}
+class GetSystemConfSuccess extends AppStates{}
+class GetSystemConfError extends AppStates{}
+
+

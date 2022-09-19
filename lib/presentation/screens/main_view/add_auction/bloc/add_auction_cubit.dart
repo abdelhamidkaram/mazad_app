@@ -92,6 +92,7 @@ List<ImageObj> imagesObj = [];
   var catController = TextEditingController();
 
   CategoryModel categorySelected = CategoryModel(2, "img", "2ساعات") ;
+  String timeSelected = "24ساعات";
  bool customValidate(context){
    if(  dateController.text.isEmpty ){
      AppToasts.toastError("يرجي ادخال تاريخ الانتهاء ", context);
@@ -128,36 +129,37 @@ bool isUploadDetails = false ;
 bool isUploadImages = false ;
 
 //---------------- upload product -------------|
- Future uploadProductDetails (AddAuctionStates state , context)async{
-   emit(UploadDetailsLoading());
-   if(state is UploadDetailsLoading ){
-     AppToasts.toastLoading(context);
-   }
-   (
-   await _repository.uploadProductDetails(data:  {
-     "name": nameController.text,
-     "descrption": detailsController.text,
-     "intitalPrice": int.parse(initialPriceController.text).toDouble(),
-     "minPrice": int.parse(minPriceController.text).toDouble(),
-     "endDate": dateController.text.toString() + "T16:01:24.302Z",
-     "status": 0,
-     "targetPrice": int.parse(minPriceController.text).toDouble(),
-     "categoryId": categorySelected.index ?? 2 ,
-   })
-   ).fold((error){
-     isUploadDetails = false ;
-     emit(UploadDetailsError());
-     AppToasts.toastError(error.message, context);
-   }, (map){
-     if(kDebugMode){
-       print(map.toString());
-     }
-     isUploadDetails = false ;
-     emit(UploadDetailsSuccess());
-     AppToasts.toastSuccess("تم رفع تفاصيل المنتج بنجاح ", context);
-
-   });
-}
+//  Future uploadProductDetails (AddAuctionStates state , context)async{
+//    emit(UploadDetailsLoading());
+//    if(state is UploadDetailsLoading ){
+//      AppToasts.toastLoading(context);
+//    }
+//
+//    (
+//    await _repository.uploadProductDetails(data:  {
+//      "name": nameController.text,
+//      "descrption": detailsController.text,
+//      "intitalPrice": int.parse(initialPriceController.text).toDouble(),
+//      "minPrice": int.parse(minPriceController.text).toDouble(),
+//      "endDate": endDate.substring(0,10)+"T"+endDate.substring(11)+"Z",
+//      "status": 0,
+//      "targetPrice": int.parse(minPriceController.text).toDouble(),
+//      "categoryId": categorySelected.index ?? 2 ,
+//    })
+//    ).fold((error){
+//      isUploadDetails = false ;
+//      emit(UploadDetailsError());
+//      AppToasts.toastError(error.message, context);
+//    }, (map){
+//      if(kDebugMode){
+//        print(map.toString());
+//      }
+//      isUploadDetails = false ;
+//      emit(UploadDetailsSuccess());
+//      AppToasts.toastSuccess("تم رفع تفاصيل المنتج بنجاح ", context);
+//
+//    });
+// }
 //---------------- upload image  -------------|
    void _uploadImage(File file , BuildContext context, int index  ) async {
     String fileName = file.path.split('/').last;

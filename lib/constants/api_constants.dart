@@ -25,5 +25,7 @@ class ApiEndPoint {
   static const String createSupportCass = "api/services/app/SupportCases/CreateOrEdit";
   static const String getAllSupportCass = "api/services/app/SupportCases/GetAll";
   static const String getCommentForSupportCase = "api/services/app/SupoortCaseCommentses/GetAll";
+  static const String getSystemConf = "api/services/app/SystemConfigrations/GetAll";
+  static const String getAllLastBids = "api/services/app/ProductAuactions/GetLastBidForProduct";
 
 }

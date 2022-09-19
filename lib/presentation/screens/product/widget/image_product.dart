@@ -61,8 +61,6 @@ class _ProductImageBoxState extends State<ProductImageBox> {
               children:  [
                 FavoriteIcon(widget.productModel!),
                const Spacer(),
-               const Icon(Icons.visibility , color: ColorManger.primaryLight,),
-              const  SizedBox(width: 5,),
               ],
             ),
           ],

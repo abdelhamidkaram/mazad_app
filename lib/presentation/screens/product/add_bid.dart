@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:soom/constants/app_string.dart';
+import 'package:soom/main.dart';
 import 'package:soom/models/auction_model.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/models/profile_detalis_success.dart';
@@ -35,11 +36,12 @@ class _AddBidState extends State<AddBid> {
  return  BlocConsumer<BidCubit , BidStates>(
    listener: (context, state) => BidCubit(),
    builder: (context , state ){
-      String lastPrice =   widget.productModel.minPrice!.toInt().toString() ; //TODO : CONVERT min PRICE TO LAST PRICE
+     //TODO: Get Last Price With SIGNAL R
+      String lastPrice =   widget.productModel.lasPrice! ;
      var bidCubit = BidCubit.get(context);
      var controller = bidCubit.controller;
      var bidPriceKey = GlobalKey<FormFieldState>();
-     List<int> bidCounter = [10 , 20 , 30 , 40 , 50 , 70 , 80 , 100 , 150 , 200 ,250 ,  300 , 350 , 400 , 450 , 500 , 600 , 700 , 800 , 900 , 1000 ];
+     List<int> bidCounter = [1,2,3,4,5,6,7,8,10,20,30,40,50];
      _replaceController(){
           setState(() {
             if(controller.text.contains(",") || controller.text.contains(".") || controller.text.contains(" ") )
@@ -54,6 +56,7 @@ class _AddBidState extends State<AddBid> {
        if(value.isNotEmpty){
          _replaceController();
          if((int.parse(value) <= int.parse(lastPrice))){
+
            controller.text = lastPrice ;
            AppToasts.toastError("لقد ادخلت سعرا أقل من أو يساوي آخر مزايدة يجب ان تزايد بمبلغ أكبر من  : $lastPrice", context);
          }else{
@@ -178,7 +181,7 @@ class _AddBidState extends State<AddBid> {
                        AuctionForViewModel auctionForViewModel = AuctionForViewModel(
                          price:int.parse( controller.text),
                          productModel: widget.productModel.productModel,
-                         userModel: UserModel(userId: 5 ) , //TODO : USER MODEL
+                         userModel: UserModel(userId: int.parse(id)) , //TODO : USER MODEL
                        );
                        _checkRangeBidOrCheckAndSendDataToServer(controller.text, auctionForViewModel: auctionForViewModel);
                      }else{

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
+import 'package:soom/presentation/components/buttons/whatsapp_btn.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/presentation/screens/profile/widgets/wallet_widget/wallet_widget.dart';
@@ -19,7 +20,6 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   @override
   void initState() {
-
     subscription = Connectivity().onConnectivityChanged.listen(
           (ConnectivityResult result) {
         setState(() {
@@ -103,6 +103,8 @@ class _WalletScreenState extends State<WalletScreen> {
                  ),
                ),
                const SizedBox(height: 12,),
+               const WhatsappButton() ,
+               const SizedBox(height: 12,),
                Column(
                  children: List.generate(10, (index) =>  BalanceItemBuilder(balanceModel: items[index])),
                ),
@@ -145,7 +147,12 @@ class _BalanceItemBuilderState extends State<BalanceItemBuilder> {
           const SizedBox(height: 16,),
           Row(
               children:   [
-                  Icon(widget.balanceModel.isAdd ? Icons.add_circle : Icons.remove_circle, color: widget.balanceModel.isAdd ? ColorManger.green : ColorManger.red, size:  30,) ,
+                  Icon(
+                    widget.balanceModel.isAdd ?
+                    Icons.add_circle : Icons.remove_circle,
+                    color: widget.balanceModel.isAdd ? ColorManger.green : ColorManger.red,
+                    size:  30,
+                  ) ,
                 const SizedBox(width:8,),
                  Text(widget.balanceModel.name , style: AppTextStyles.mediumBlackBold,),
                 const Spacer(),

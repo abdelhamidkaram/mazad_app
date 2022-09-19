@@ -30,7 +30,8 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
       favoritesItemsResponse = response.map((e) => FavoriteModel.fromJson(e)).toList();
       if(value.data["result"]["totalCount"] > 0 ){
         List responseList = value.data["result"]["items"] ;
-       favoritesItemsForView = responseList.map((e) => FavoriteModel.fromJson(e).toProductViewModel()).toList() ;
+       favoritesItemsForView = responseList.map(
+               (e) => FavoriteModel.fromJson(e).toProductViewModel(context)).toList() ;
        isEmpty = false ;
        isLoading = false ;
         emit(GetFavoriteSuccess());

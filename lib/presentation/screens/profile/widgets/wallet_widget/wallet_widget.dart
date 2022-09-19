@@ -30,7 +30,7 @@ class _BalanceWidgetState extends State<BalanceWidget> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                 const Text(" الرصيد المتبقي " , style: AppTextStyles.mediumWhite,) ,
+                 const Text(" الرصيد المتوفر " , style: AppTextStyles.mediumWhite,) ,
                   const SizedBox(height: 16,),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

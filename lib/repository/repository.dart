@@ -14,6 +14,7 @@ import 'package:soom/repository/request_models.dart';
 
 import '../data/cache/prefs.dart';
 import '../main.dart';
+import '../models/bids_model.dart';
 import '../presentation/screens/main_view/bloc/home_cubit.dart';
 import '../presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 
@@ -108,8 +109,8 @@ class Repository {
 
 // ------------ get all products details   --------------//
 
-  Future<Either<ErrorModel, List<ProductModel>>> getProducts(
-      {int? maxResult}) async {
+  Future<Either<ErrorModel, List<ProductForViewModel>>> getProducts(
+      {int? maxResult , List<BidsModel>? lastBids} ) async {
     Response _response;
     try {
       if (maxResult != null) {
@@ -126,9 +127,12 @@ class Repository {
           statusCode: error.hashCode));
     }
     if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
-      List _products = _response.data["result"]["items"];
-      return Right(
-          _products.map((product) => ProductModel.fromJson(product)).toList());
+      List _productsResponse = _response.data["result"]["items"];
+      List<ProductModel> _products = _productsResponse.map((e){
+        return ProductModel.fromJson(e);
+      }).toList();
+       return Right(
+          _products.map((product) => ProductForViewModel("", product)).toList());
     } else {
       return Left(ErrorModel(
           message: "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ",

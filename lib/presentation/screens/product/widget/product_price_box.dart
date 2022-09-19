@@ -72,7 +72,10 @@ class _ProductPriceBoxState extends State<ProductPriceBox> {
                   padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: Text("آخر مزايدة" , style: AppTextStyles.mediumBlack,),
                 ),
-                PriceAndCurrencyGreen(productModel: widget.productModel, lastPrice: widget.lastPrice,),
+                PriceAndCurrencyGreen(
+                  productModel: widget.productModel,
+                  lastPrice: widget.lastPrice,
+                ),
 
               ],
             ),

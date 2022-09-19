@@ -51,3 +51,10 @@ class GetAllLastPriceSuccess extends HomeStates {}
 class GetAllLastPriceError extends HomeStates {}
 
 
+
+
+class GetAllLastBidsLoading extends HomeStates {}
+class GetAllLastBidsSuccess extends HomeStates {}
+class GetAllLastBidsError extends HomeStates {}
+
+

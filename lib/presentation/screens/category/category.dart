@@ -36,20 +36,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
               backgroundColor: ColorManger.white,
               appBar: AppBars.appBarGeneral(
                   context, HomeCubit.get(context), widget.category.title!),
-              body: RefreshIndicator(
-                onRefresh: () => cubit.getProductWithCategoryName(
-                    widget.category.title!, context),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SizedBox(
-                    child: (state is GetCategoryProductsLoading)
-                        ?
-                        const Center(child: CircularProgressIndicator(),)
-                    :
-                    SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: bodyWidget(state, cubit)),
-                  ),
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SizedBox(
+                  child: (state is GetCategoryProductsLoading)
+                      ?
+                      const Center(child: CircularProgressIndicator(),)
+                  :
+                  SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: RefreshIndicator(
+                          onRefresh: () => cubit.getProductWithCategoryName(
+                              widget.category.title!, context) ,
+                          child: bodyWidget(state, cubit))
+                    ,),
                 ),
               ),
             ),
@@ -59,7 +59,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
     
   }
-  Widget? bodyWidget(CategoriesStates state , CategoriesCubit cubit){
+  Widget bodyWidget(CategoriesStates state , CategoriesCubit cubit){
     if(state is GetCategoryProductsSuccess ){
       if(cubit.products.isNotEmpty){
         return ListView.separated(
@@ -79,7 +79,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         return const Center(child: Text("لايوجد منتجات لهذا التصنيف بعد ! "),);
       }
     }else{
-     return null ; 
+     return const SizedBox() ;
     }
 }
 }

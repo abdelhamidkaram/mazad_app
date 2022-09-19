@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:soom/models/my_bids_model.dart';
-
+import 'package:soom/models/bids_model.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_states.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/product_show_screen.dart';
-import 'package:soom/presentation/screens/product/product_screen.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
@@ -37,6 +35,7 @@ class _MyBidsState extends State<MyBids> {
                   SvgPicture.asset("assets/nobids")
                       :
                   ListView.separated(
+                    physics: const BouncingScrollPhysics(),
                     itemCount: cubit.myBidsForView.length,
                     itemBuilder: (context, index) =>
                        MyBidItemBuilder(myAuctionModel: cubit.myBidsForView.reversed.toList()[index]),
@@ -58,7 +57,7 @@ class MyBidItemBuilder extends StatelessWidget {
     required this.myAuctionModel,
   }) : super(key: key);
 
-  final MyBidsModel myAuctionModel;
+  final BidsModel myAuctionModel;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +81,7 @@ class MyBidItemBuilder extends StatelessWidget {
           ),
           title: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text( "مزايدتك :  ${myAuctionModel.price ?? " غير معروف " }" , style: AppTextStyles.mediumBlue,),
+            child: Text( " مزايدتك :  ${myAuctionModel.price ?? " غير معروف " }" , style: AppTextStyles.mediumBlue,),
           ),
             subtitle:Padding(
               padding: const EdgeInsets.all(8.0),

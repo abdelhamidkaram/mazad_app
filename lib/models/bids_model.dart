@@ -1,14 +1,14 @@
-class MyBidsModel {
+class BidsModel {
   double? price;
   int? userId;
   int? productId;
   String? productName;
   int? id;
 
-  MyBidsModel(
+  BidsModel(
       {this.price, this.userId, this.productId, this.productName, this.id});
 
-  MyBidsModel.fromJson(Map<String, dynamic> json) {
+  BidsModel.fromJson(Map<String, dynamic> json) {
     price = json['price'];
     userId = json['userId'];
     productId = json['productId'];
