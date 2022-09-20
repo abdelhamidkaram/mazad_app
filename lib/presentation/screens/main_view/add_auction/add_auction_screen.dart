@@ -317,22 +317,25 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                     cubit.minPriceController.text.toString())
                                 .toDouble(),
                             //2022-09-12T14:54:18.065297Z
-                            "endDate":endDate.substring(0,10)+"T"+endDate.substring(11)+"Z",
+                            "endDate":endDate.substring(0,10)+"T"+endDate.substring(11,19),
                             "status": 0,
                             "targetPrice": int.parse(
                                     cubit.targetPriceController.text.toString())
                                 .toDouble(),
                             "categoryId": cubit.categorySelected.index,
                           }).then((value) {
-                            if (kDebugMode) {
-                              print("++++++++${value.toString()}+++++++++");
-                            }
-                            Navigator.pop(context);
-                            AppToasts.toastSuccess("تم رفع المنتج ", context);
+                           int  _productId = value.data["result"];
+                           for(var photo in cubit.imagesObj){
+                             DioFactory(token).postData(ApiEndPoint.createProductPhoto, {
+                               "photo" : photo.token,
+                               "productId" : _productId
+                             }).then((value){
+                             });
+                           }
+                           Navigator.pop(context);
+                           AppToasts.toastSuccess("تمت إضافة المنتج بنجاح ", context) ;
+
                           }).catchError((err) {
-                            if (kDebugMode) {
-                              print("++++++++++++ errr +++++");
-                            }
                             Navigator.pop(context);
                             AppToasts.toastError(
                                 "حدث خطأ ما .. حاول لاحقا", context);

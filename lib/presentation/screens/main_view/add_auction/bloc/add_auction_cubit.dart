@@ -171,7 +171,7 @@ bool isUploadImages = false ;
     });
     AppToasts.toastLoading(context);
     String newToken = token;
-    await DioFactory(newToken).dio().post("/app/productphotos/uploadphotofile", data: data)
+    await DioFactory(newToken).dio().post("app/productphotos/uploadphotofile", data: data)
         .then((response){
           if (kDebugMode) {
             print(response.data.toString());
@@ -188,18 +188,23 @@ bool isUploadImages = false ;
      });
    }).catchError((error){
       Navigator.pop(context);
-          AppToasts.toastError("حدث خطأ ما حاول لاحقا !", context);
-      Timer(const Duration(seconds: 1), (){
+          AppToasts.toastError(kDebugMode ? error :  "حدث خطأ ما حاول مرة أخري !", context);
+      Timer(const Duration(seconds: 2), (){
         Navigator.pop(context);
       });
     });
   }
 _addImageToImagesObject (ImageObj imageObj , int index ){
-   if(imagesObj.length >= index ){
-     imagesObj[index] = imageObj ;
-   }else{
-     imagesObj.add(imageObj);
-   }
+  if(imagesObj.isEmpty){
+    imagesObj.add(imageObj);
+  }else{
+    if(imagesObj.length >= index+1 ){
+      imagesObj[index] = imageObj ;
+
+    }else{
+      imagesObj.add(imageObj);
+    }
+  }
 
 }
 

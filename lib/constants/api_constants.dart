@@ -27,5 +27,6 @@ class ApiEndPoint {
   static const String getCommentForSupportCase = "api/services/app/SupoortCaseCommentses/GetAll";
   static const String getSystemConf = "api/services/app/SystemConfigrations/GetAll";
   static const String getAllLastBids = "api/services/app/ProductAuactions/GetLastBidForProduct";
+  static const String createProductPhoto = "api/services/app/ProductPhotos/CreateOrEdit";
 
 }

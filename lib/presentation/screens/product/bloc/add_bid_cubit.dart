@@ -2,16 +2,12 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_states.dart';
-
-import '../../../../data/cache/prefs.dart';
-
 class BidCubit extends Cubit<BidStates> {
   BidCubit() : super(InitBidState());
 
@@ -34,7 +30,7 @@ class BidCubit extends Cubit<BidStates> {
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||
-        price < productForViewModel.minPrice!.toInt() //TODO: CONVERT TO LAST PRICE
+        price < int.parse(productForViewModel.lasPrice!) //TODO: CONVERT TO LAST PRICE
     ) {
       controller.text = productForViewModel.minPrice!.toInt().toString();
       emit(AddBidError());
@@ -55,10 +51,10 @@ class BidCubit extends Cubit<BidStates> {
     int price = int.parse(controller.text);
     if (price.isNaN ||
         price.isNegative ||
-        price <= productModel.minPrice!.toInt()) {
+        price <= int.parse(productModel.lasPrice!)) {
       price = productModel.minPrice!.toInt();
       AppToasts.toastError(
-          "لقد ادخلت سعرا اقل من اخر مزايدة يجب ان تزايد بمبلغ اكبر من : ${productModel.minPrice}",//TODO : LAST PRICE
+          "لقد ادخلت سعرا اقل من اخر مزايدة يجب ان تزايد بمبلغ اكبر من : ${int.parse(productModel.lasPrice!)}",//TODO : LAST PRICE
           context);
       emit(RemoveBid());
     } else {

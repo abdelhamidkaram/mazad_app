@@ -55,28 +55,27 @@ class AppToasts {
         backgroundColor: ColorManger.white,
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Card(
-              child: Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Image.asset(
-                "assets/success.png",
-                width: 60,
-              ),
-              const SizedBox(
-                height: 25,
-              ),
-              Text(
-                message,
-                style: AppTextStyles.titleBlue,
-                maxLines: 3,
-              ),
-              const SizedBox(
-                height: 15,
-              ),
+          Image.asset(
+            "assets/success.png",
+            width: 60,
+          ),
+          const SizedBox(
+            height: 25,
+          ),
+          Text(
+            message,
+            style: AppTextStyles.titleBlue,
+            maxLines: 3,
+          ),
+          const SizedBox(
+            height: 15,
+          ),
             ],
-          )),
+          ),
         ),
       ),
       barrierDismissible: false,
@@ -90,23 +89,22 @@ class AppToasts {
         backgroundColor: ColorManger.white,
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Card(
-              child: Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: const [
-              SizedBox(
-                height: 25,
-              ),
-              CircularProgressIndicator(
-                color: ColorManger.primary,
-                backgroundColor: ColorManger.lightGrey,
-              ),
-              SizedBox(
-                height: 25,
-              ),
+          SizedBox(
+            height: 25,
+          ),
+          CircularProgressIndicator(
+            color: ColorManger.primary,
+            backgroundColor: ColorManger.lightGrey,
+          ),
+          SizedBox(
+            height: 25,
+          ),
             ],
-          )),
+          ),
         ),
       ),
       barrierDismissible: false,
@@ -135,7 +133,7 @@ class AppToasts {
                         child: Row(
                           children: [
                             const Text(
-                              "الفلتر ",
+                              "الفلتر",
                               style: AppTextStyles.titleBlue,
                             ),
                             const Spacer(),

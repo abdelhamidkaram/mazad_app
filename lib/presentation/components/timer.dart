@@ -26,7 +26,7 @@ class _TimerDownDateState extends State<TimerDownDate> {
             ),
             endTime: DateTime.parse(widget.time),
             enableDescriptions: false,
-            format: CountDownTimerFormat.daysHoursMinutesSeconds,
+            format: CountDownTimerFormat.hoursMinutesSeconds,
           ),
         ));
   }
