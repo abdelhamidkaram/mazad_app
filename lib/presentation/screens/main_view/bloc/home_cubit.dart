@@ -161,7 +161,7 @@ class HomeCubit extends Cubit<HomeStates> {
       if (kDebugMode) {
         print(errorModel.message);
       }
-      LoginCubit.get(context).logOut(context);
+     // LoginCubit.get(context).logOut(context);
       emit(GetCategoriesError());
     }, (categoriesList) async {
       isGetCatsFinish = true;
@@ -252,9 +252,7 @@ class HomeCubit extends Cubit<HomeStates> {
 
     (await _repository.getProductsBaseOnFilter(
       maxResult: 200,
-      categoryModel:
-          filterCategories.isNotEmpty ? filterCategories[0] : categories[0],
-      //TODO: FILTER LIST NOT STRING
+      categoryIds:filterCategories.map((e) => e.index! ).toList(),
       isMost: isMost,
       isLess: isLess,
       isNew: isNew,
@@ -269,20 +267,32 @@ class HomeCubit extends Cubit<HomeStates> {
       filterResult = [];
     }, (productsList) {
       //TODO :  LAST Auction Counter
-      filterResult = productsList.map((e) {
-      var ele =   ProductForViewModel(
-          "",
-          e,
-        );
-      for(var bid in allLastBids ){
-        if(bid.id == e.product!.id){
-          ele.lasPrice = bid.price!.toInt().toString();
-          return ele ;
-        }
+      if(isNew){
+        filterResult = productsList.map((e) {
+          return convertResponseMapToProductModel(e);
+        }).toList().reversed.toList();
       }
-      ele.lasPrice = e.product!.minPrice!.toInt().toString();
-      return ele ;
-      }).toList();
+      if(isOld){
+        filterResult = productsList.map((e) {
+          return convertResponseMapToProductModel(e);
+        }).toList();
+      }
+      if(isMost){
+        filterResult = productsList.map((e) {
+          return convertResponseMapToProductModel(e);
+        }).toList().reversed.toList();
+          filterResult.sort((a, b) => a.productModel.product!.count!.compareTo(b.productModel.product!.count!));
+         filterResult =  filterResult.reversed.toList();
+      }
+      if (isLess) {
+        filterResult = productsList
+            .map((e) {
+              return convertResponseMapToProductModel(e);
+            })
+            .toList();
+        filterResult.sort((a, b) => a.productModel.product!.count!
+            .compareTo(b.productModel.product!.count ?? 0));
+      }
     });
 
     emit(GetFilterResultSuccess());
@@ -294,6 +304,21 @@ class HomeCubit extends Cubit<HomeStates> {
       print(filterResult);
     }
     return filterResult;
+  }
+
+  ProductForViewModel convertResponseMapToProductModel(ProductModel e) {
+      var ele =   ProductForViewModel(
+      "",
+      e,
+    );
+    for(var bid in allLastBids ){
+      if(bid.id == e.product!.id){
+        ele.lasPrice = bid.price!.toInt().toString();
+        return ele ;
+      }
+    }
+    ele.lasPrice = e.product!.minPrice!.toInt().toString();
+    return ele ;
   }
 
 // ------------------  search Result --------------//

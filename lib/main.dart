@@ -19,6 +19,7 @@ import 'package:soom/presentation/screens/splash/splash.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/theme_style.dart';
 var  token = "";
+var  refreshToken = "";
 var  id = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,8 @@ void main() async {
   await SharedPreferences.getInstance().then((value) async {
     if( value.getBool(PrefsKey.isLogin) ?? true){
       token = value.getString(PrefsKey.token)??"";
+      //TODO:
+      refreshToken =" ${value.get(PrefsKey.refreshToken) ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1IiwibmFtZSI6InRlc3Rtb2IzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoic3d0YWxhcWxAZ21haWwuY29tIiwiQXNwTmV0LklkZW50aXR5LlNlY3VyaXR5U3RhbXAiOiIzWFdXQlZTVkJPRDZUSjRaR0VHQkRKUE5RT04zRUJMNiIsInJvbGUiOiJVc2VyIiwiaHR0cDovL3d3dy5hc3BuZXRib2lsZXJwbGF0ZS5jb20vaWRlbnRpdHkvY2xhaW1zL3RlbmFudElkIjoiMSIsImp0aSI6IjMyZGVlNTc3LTYwNTAtNGI2ZC05YzlmLTNhYWU3ODAwMWNlMCIsImlhdCI6MTY2MzY3ODc4MiwidG9rZW5fdmFsaWRpdHlfa2V5IjoiYjdlOWYzZWQtMzBhZC00MTMxLTliYTktNjI4Mzc1Y2JhMGRmIiwidXNlcl9pZGVudGlmaWVyIjoiNUAxIiwidG9rZW5fdHlwZSI6IjEiLCJuYmYiOjE2NjM2Nzg3ODIsImV4cCI6MTY5NTIxNDc4MiwiaXNzIjoiQXVhY3Rpb24iLCJhdWQiOiJBdWFjdGlvbiJ9.Z5uA-XLaZAyBMxmF85TllKpTD8IXq_ULr5VitGrDsLE" }" ;
       id = value.get(PrefsKey.userId).toString();
     }
     });

@@ -29,7 +29,6 @@ class _SearchAndFilterState extends State<SearchAndFilter> {
           child: TextFormField(
             onFieldSubmitted: (value) {
               if (value.isNotEmpty) {
-                //TODO : SEARCH
                 Navigator.push(
                   context,
                   MaterialPageRoute(

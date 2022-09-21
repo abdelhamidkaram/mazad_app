@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
-import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/main.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
@@ -17,7 +16,6 @@ import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/login/bloc/states.dart';
 import 'package:soom/presentation/screens/login/forget_password.dart';
 import 'package:soom/presentation/screens/login/register.dart';
-import 'package:soom/presentation/screens/login/welcome_screen.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
@@ -265,11 +263,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 "password": loginRequest.password,
                                               }).then((value) async  {
                                                 token = value.data["result"]["accessToken"];
+                                                refreshToken = value.data["result"]["refreshToken"];
                                                 id = value.data["result"]["userId"].toString();
                                                 SharedPreferences.getInstance().then((pref) async {
-                                                  pref.setString(PrefsKey.token, token).then((value){
-
-                                                  });
+                                                  pref.setString(PrefsKey.token, token).then((value){});
+                                                  pref.setString(PrefsKey.refreshToken, token).then((value){});
                                                   await pref.setString(PrefsKey.userId, id);
                                                   await pref.setBool(PrefsKey.isLogin , true );
                                                   print("*********************************\n" + pref.get(PrefsKey.token).toString());

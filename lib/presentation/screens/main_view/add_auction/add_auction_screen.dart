@@ -327,7 +327,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                            int  _productId = value.data["result"];
                            for(var photo in cubit.imagesObj){
                              DioFactory(token).postData(ApiEndPoint.createProductPhoto, {
-                               "photo" : photo.token,
+                               "photoToken" : photo.token,
                                "productId" : _productId
                              }).then((value){
                              });

@@ -41,8 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
       if(!AppCubit.get(context).goToLoginScreen){
         return MaterialPageRoute(builder: (context) {
           SharedPreferences.getInstance().then((prefs){
-            token =  prefs.getString(PrefsKey.token)!;
-            id = "${ prefs.get(PrefsKey.userId) ?? 5 }";
+            token =  prefs.getString(PrefsKey.token) ?? "";
+            id = "${ prefs.get(PrefsKey.userId) ?? "" }";
           });
           HomeCubit.get(context).getCategories(context).then((value){
             MyAuctionsCubit.get(context).getMyBids(context).then((value) => null);

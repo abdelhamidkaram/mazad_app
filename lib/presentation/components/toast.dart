@@ -228,7 +228,7 @@ class AppToasts {
                             height: 30,
                           ),
                           AppButtons.toastButtonBlue(() {
-                            //TODO:ADD FILTER METHOD
+                            Navigator.pop(context);
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -236,7 +236,9 @@ class AppToasts {
                                   homeCubit: homeCubit ,
                                 ),
                               ),
+
                             );
+
                           }, "فلترة", true),
                         ],
                       ),

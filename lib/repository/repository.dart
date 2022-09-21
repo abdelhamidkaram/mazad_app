@@ -19,11 +19,9 @@ import '../presentation/screens/main_view/bloc/home_cubit.dart';
 import '../presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 
 class Repository {
-
-
   // ------------ login --------------//
   Future<Either<ErrorModel, LoginSuccessModel>> login(
-      LoginRequest loginRequest , context ) async {
+      LoginRequest loginRequest, context) async {
     Response _response;
     try {
       _response = await DioFactory(token).postData(ApiEndPoint.authentication, {
@@ -37,9 +35,14 @@ class Repository {
     }
     if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
       token = _response.data["result"]['accessToken'];
-      SharedPreferences.getInstance().then((value){
-        value.setString(PrefsKey.token, _response.data["result"]['accessToken'].toString() ).then((value) => null);
-        value.setInt(PrefsKey.userId, _response.data["result"]['userId']).then((value) => null);
+      SharedPreferences.getInstance().then((value) {
+        value
+            .setString(PrefsKey.token,
+                _response.data["result"]['accessToken'].toString())
+            .then((value) => null);
+        value
+            .setInt(PrefsKey.userId, _response.data["result"]['userId'])
+            .then((value) => null);
       });
       return Right(LoginSuccessModel.fromJson(_response.data));
     } else {
@@ -87,7 +90,8 @@ class Repository {
   Future<Either<ErrorModel, ProfileEditSuccess>> getProfileDetails() async {
     Response _response;
     try {
-      _response = await DioFactory(token).getData(ApiEndPoint.getProfileDetails, {});
+      _response =
+          await DioFactory(token).getData(ApiEndPoint.getProfileDetails, {});
     } catch (error) {
       print("profile  error : :::::::::::::::::::::::: ");
       print(error.toString());
@@ -110,15 +114,17 @@ class Repository {
 // ------------ get all products details   --------------//
 
   Future<Either<ErrorModel, List<ProductForViewModel>>> getProducts(
-      {int? maxResult , List<BidsModel>? lastBids} ) async {
+      {int? maxResult, List<BidsModel>? lastBids}) async {
     Response _response;
     try {
       if (maxResult != null) {
-        _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
+        _response =
+            await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
           "MaxResultCount": maxResult,
         });
       } else {
-        _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {});
+        _response =
+            await DioFactory(token).getData(ApiEndPoint.getAllProducts, {});
       }
     } catch (error) {
       return Left(ErrorModel(
@@ -128,11 +134,12 @@ class Repository {
     }
     if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
       List _productsResponse = _response.data["result"]["items"];
-      List<ProductModel> _products = _productsResponse.map((e){
+      List<ProductModel> _products = _productsResponse.map((e) {
         return ProductModel.fromJson(e);
       }).toList();
-       return Right(
-          _products.map((product) => ProductForViewModel("", product)).toList());
+      return Right(_products
+          .map((product) => ProductForViewModel("", product))
+          .toList());
     } else {
       return Left(ErrorModel(
           message: "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ",
@@ -148,18 +155,21 @@ class Repository {
     try {
       if (maxResult != null) {
         if (categoryName != null) {
-          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
+          _response =
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
             "CategoryNameFilter": categoryName,
           });
         } else {
-          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
+          _response =
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
           });
         }
       } else {
         if (categoryName != null) {
-          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
+          _response =
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "CategoryNameFilter": categoryName,
           });
         } else {
@@ -192,18 +202,21 @@ class Repository {
     try {
       if (maxResult != null) {
         if (searchKeywords != null) {
-          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
+          _response =
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
             "Filter": searchKeywords,
           });
         } else {
-          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
+          _response =
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "MaxResultCount": maxResult,
           });
         }
       } else {
         if (searchKeywords != null) {
-          _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
+          _response =
+              await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
             "Filter": searchKeywords,
           });
         } else {
@@ -232,7 +245,7 @@ class Repository {
 
   Future<Either<ErrorModel, List<ProductModel>>> getProductsBaseOnFilter({
     required int maxResult,
-    required CategoryModel categoryModel,
+    required List<int> categoryIds,
     required bool isMost,
     required bool isLess,
     required bool isNew,
@@ -244,7 +257,7 @@ class Repository {
     try {
       _response = await DioFactory(token).getData(ApiEndPoint.getAllProducts, {
         "MaxResultCount": maxResult,
-        "CategoryNameFilter": categoryModel.title,
+        "CategoryIds": categoryIds,
         "MaxminPriceFilter": maxRang,
         "MinminPriceFilter": minRang,
       });
@@ -297,7 +310,8 @@ class Repository {
     Response _response;
     try {
       if (maxResult != null) {
-        _response = await DioFactory(token).getData(ApiEndPoint.getAllCategories, {
+        _response =
+            await DioFactory(token).getData(ApiEndPoint.getAllCategories, {
           "MaxResultCount": maxResult,
         });
       } else {
@@ -316,6 +330,20 @@ class Repository {
           .map((category) => CategoryModel.fromJson(category["category"]))
           .toList());
     } else {
+      if (_response.statusCode! == 401 && token.isNotEmpty) {
+        DioFactory(token).getData(ApiEndPoint.getRefreshToken,
+            {"refreshToken": refreshToken}).then((value) async {
+          if (kDebugMode) {
+            print("\n \n \n refresh token success \n \n \n ");
+          }
+          token = value.data["result"]["accessToken"];
+          await SharedPreferences.getInstance().then((pref) async {
+            await pref.setString(
+                PrefsKey.token, value.data["result"]["accessToken"]);
+          });
+          getCategories();
+        });
+      }
       return Left(ErrorModel(
           message: "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ",
           statusCode: _response.hashCode));
@@ -324,26 +352,27 @@ class Repository {
 
 // ------------ upload  products details    --------------//
 
-  Future<Either<ErrorModel, Map<String , dynamic>>> uploadProductDetails(
-      {required Map<String , dynamic > data}) async {
-  Response _response;
-  try {
-  _response =
-  await DioFactory(token).postData(ApiEndPoint.uploadProducts, data);
-  } catch (error) {
-  return Left(ErrorModel(
-  message: (kDebugMode ? error.toString() + "\n" : "") +
-  "فشل رفع المنتجات في الوقت الحالي حاول لاحقا ! ",
-  statusCode: error.hashCode),
-  );
-  }
- print( _response.data);
-  if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
-  return Right(_response.data);
-  } else {
-  return Left(ErrorModel(
-  message: "فشل رفع المنتجات في الوقت الحالي حاول لاحقا !  ",
-  statusCode: _response.hashCode));
-  }
+  Future<Either<ErrorModel, Map<String, dynamic>>> uploadProductDetails(
+      {required Map<String, dynamic> data}) async {
+    Response _response;
+    try {
+      _response =
+          await DioFactory(token).postData(ApiEndPoint.uploadProducts, data);
+    } catch (error) {
+      return Left(
+        ErrorModel(
+            message: (kDebugMode ? error.toString() + "\n" : "") +
+                "فشل رفع المنتجات في الوقت الحالي حاول لاحقا ! ",
+            statusCode: error.hashCode),
+      );
+    }
+    print(_response.data);
+    if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
+      return Right(_response.data);
+    } else {
+      return Left(ErrorModel(
+          message: "فشل رفع المنتجات في الوقت الحالي حاول لاحقا !  ",
+          statusCode: _response.hashCode));
+    }
   }
 }

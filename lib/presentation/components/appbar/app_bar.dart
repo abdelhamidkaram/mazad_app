@@ -23,40 +23,42 @@ class AppBars {
       titleTextStyle: AppTextStyles.titleBlack,
       centerTitle: true,
       elevation:  0.9  ,
-      actions: [
-         cartView ? Padding(
-          padding: const EdgeInsets.only(bottom: 4, left: 4, top: 1),
-          child: Stack(alignment: const Alignment((0.8), (5.0)), children: [
-            IconButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=> const  CartScreen()));
-                },
-                icon: const Icon(
-                  Icons.shopping_cart_outlined,
-                  size: 25,
-                  color: ColorManger.black,
-                )),
-            Center(
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                width: 15,
-                height: 15,
-                decoration:const  BoxDecoration(
-                  color: ColorManger.red,
-                  shape: BoxShape.circle,
-                  
-                ),
-                child: Center(
-                  child: Text(
-                    homeCubit.cardNumber.toString(),
-                    style: AppTextStyles.smallWhite,
-                  ),
-                ),
-              ),
-            ),
-          ]),
-        ) :const SizedBox(),
-      ],
+      //TODO: ADD CART VIWE
+
+      // actions: [
+      //    cartView ? Padding(
+      //     padding: const EdgeInsets.only(bottom: 4, left: 4, top: 1),
+      //     child: Stack(alignment: const Alignment((0.8), (5.0)), children: [
+      //       IconButton(
+      //           onPressed: () {
+      //             Navigator.push(context, MaterialPageRoute(builder: (context)=> const  CartScreen()));
+      //           },
+      //           icon: const Icon(
+      //             Icons.shopping_cart_outlined,
+      //             size: 25,
+      //             color: ColorManger.black,
+      //           )),
+      //       Center(
+      //         child: Container(
+      //           padding: const EdgeInsets.all(2),
+      //           width: 15,
+      //           height: 15,
+      //           decoration:const  BoxDecoration(
+      //             color: ColorManger.red,
+      //             shape: BoxShape.circle,
+      //
+      //           ),
+      //           child: Center(
+      //             child: Text(
+      //               homeCubit.cardNumber.toString(),
+      //               style: AppTextStyles.smallWhite,
+      //             ),
+      //           ),
+      //         ),
+      //       ),
+      //     ]),
+      //   ) :const SizedBox(),
+      // ],
       bottom: isProfile ?  PreferredSize(
         child: Padding(
           padding:  const EdgeInsets.only(left: 16.0 , right: 16.0 , bottom: 5.0 , top: 0),
