@@ -1,15 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/screens/profile/screens/support/report_screen.dart';
 import 'package:soom/style/text_style.dart';
 
 import '../../../../../constants/api_constants.dart';
 import '../../../../../data/api/dio_factory.dart';
-import '../../../../../data/cache/prefs.dart';
 import '../../../../../main.dart';
 import '../../../../components/toast.dart';
-import '../q_a/q_a_screen.dart';
 
 class OldReports extends StatefulWidget {
   const OldReports({Key? key}) : super(key: key);
@@ -27,9 +25,10 @@ class _OldReportsState extends State<OldReports> {
     super.initState();
     if(itemData.isEmpty ) {
       String newToken = token;
-      DioFactory(newToken).getData(ApiEndPoint.getAllSupportCass, {}).then((value) {
+      DioFactory(newToken).getData(ApiEndPoint.getAllSupportCass, {
+       "UserNameFilter":AppCubit.get(context).profileEditSuccess.result!.userName,
+      }).then((value) {
         List itemResponse = value.data["result"]["items"];
-
         for (var element in itemResponse) {
           itemData.add(
               ReportModel(element["supportCase"]["title"],

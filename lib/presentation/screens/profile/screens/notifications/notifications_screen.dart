@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
@@ -50,7 +51,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     List<NotificationModel> _items = [];
     String newToken = token ;
     DioFactory(newToken).getData(ApiEndPoint.getNotification, {}).then((value) {
-      print(value);
+      if (kDebugMode) {
+        print(value);
+      }
       List itemsResponse = value.data["result"]["items"];
       for (var element in itemsResponse) {
         _items.add(NotificationModel.fromJson(element));
@@ -172,7 +175,7 @@ class _NotificationItemsBuilderState extends State<NotificationItemsBuilder> {
                       ),
                       content: SingleChildScrollView(
                           child: Text(
-                        notification.notification?.data?.message?.sourceName
+                        notification.notification?.data?.message
                                 .toString() ??
                             ".....",
                         style: AppTextStyles.mediumGrey,
@@ -245,7 +248,7 @@ class _NotificationItemsBuilderState extends State<NotificationItemsBuilder> {
                   SizedBox(
                       width: MediaQuery.of(context).size.width - 32,
                       child:  Text(
-                        notification.notification?.data?.message?.sourceName!.toString() ?? "...." ,
+                        notification.notification?.data?.message.toString() ?? "...." ,
                         style: AppTextStyles.smallBlack,
                         maxLines: 2,
                       )),

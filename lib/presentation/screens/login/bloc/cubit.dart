@@ -280,6 +280,7 @@ class LoginCubit extends Cubit<LoginStates> {
       passwordController.text = "";
       token = "";
       MyAuctionsCubit.get(context).myBidsForView = [] ;
+      MyAuctionsCubit.get(context).myProductsForView = [] ;
       FavoriteCubit.get(context).favoritesItemsForView = [] ;
       FavoriteCubit.get(context).favoritesItemsResponse = [] ;
       HomeCubit.get(context).currentIndex = 0 ;
