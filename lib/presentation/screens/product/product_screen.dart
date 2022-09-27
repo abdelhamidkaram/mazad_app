@@ -50,110 +50,114 @@ class _ProductScreenState extends State<ProductScreen> {
           widget.fromAddScreen ? Navigator.push(context, MaterialPageRoute(builder: (context) => const MainScreen(),)) :Navigator.pop(context);
           return await Future.value(true);
         },
-        child: Scaffold(
-          backgroundColor: ColorManger.white,
-          appBar: AppBars.appBarGeneral(
-            context,
-            HomeCubit.get(context),
-            _appbarTitle(),
-          ),
-          bottomNavigationBar: !widget.isMyAuction
-              ? BlocProvider<BidCubit>.value(
-                  value: BidCubit.get(context),
-                  child: AppButtons.toastButtonBlue(
-                    () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                AddBid(productModel: widget.productModel),
-                          ));
-                      BidCubit.get(context).controller.text =
-                          widget.productModel.lasPrice!;
-                    },
-                    "اضافة مزايدة ",
-                    true,
-                    icon: SvgPicture.asset(
-                      "assets/auction.svg",
-                      color: ColorManger.white,
-                    ),
-                  ),
-                )
-              : null,
-          body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30),
-              child: Column(
-                children: [
-                  ProductImageBox(
-                    productModel: widget.productModel,
-                  ),
-                  const SizedBox(
-                    height: 18,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width - 50,
-                        child: Text(
-                          widget.productModel.title!,
-                          style: AppTextStyles.titleBlue_24,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 18,
-                  ),
-                  Row(
-                    children: [
-                      const Text(
-                        "الرقم التسلسلي :  ",
-                        style: AppTextStyles.smallGrey_12,
-                      ),
-                      Text(
-                        "${widget.productModel.tasalsol} ",
-                        style: AppTextStyles.smallGreyBold_12,
-                      ),
-
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ProductPriceBox(productModel: widget.productModel , lastPrice:widget.lastPrice ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SvgPicture.asset(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: Scaffold(
+            persistentFooterButtons: [],
+            backgroundColor: ColorManger.white,
+            appBar: AppBars.appBarGeneral(
+              context,
+              HomeCubit.get(context),
+              _appbarTitle(),
+            ),
+            bottomNavigationBar: !widget.isMyAuction
+                ? BlocProvider<BidCubit>.value(
+                    value: BidCubit.get(context),
+                    child: AppButtons.toastButtonBlue(
+                      () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  AddBid(productModel: widget.productModel),
+                            ));
+                        BidCubit.get(context).controller.text =
+                            widget.productModel.lasPrice!;
+                      },
+                      "اضافة مزايدة ",
+                      true,
+                      icon: SvgPicture.asset(
                         "assets/auction.svg",
-                        color: ColorManger.primary,
+                        color: ColorManger.white,
                       ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      const Text(
-                        "إجمالي المزادات : ",
-                        style: AppTextStyles.smallBlack,
-                      ),
-                      Text(
-                        "${widget.productModel.productModel.product?.count ?? 0}" ,
-                        style: AppTextStyles.smallBlueBold,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  widget.isMyAuction ? _myProductDetails() : _productDetails(),
-                ],
+                    ),
+                  )
+                : null,
+            body: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 30),
+                child: Column(
+                  children: [
+                    ProductImageBox(
+                      productModel: widget.productModel,
+                    ),
+                    const SizedBox(
+                      height: 18,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width - 50,
+                          child: Text(
+                            widget.productModel.title!,
+                            style: AppTextStyles.titleBlue_24,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 18,
+                    ),
+                    Row(
+                      children: [
+                        const Text(
+                          "الرقم التسلسلي :  ",
+                          style: AppTextStyles.smallGrey_12,
+                        ),
+                        Text(
+                          "${widget.productModel.tasalsol} ",
+                          style: AppTextStyles.smallGreyBold_12,
+                        ),
+
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    ProductPriceBox(productModel: widget.productModel , lastPrice:widget.lastPrice ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          "assets/auction.svg",
+                          color: ColorManger.primary,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        const Text(
+                          "إجمالي المزادات : ",
+                          style: AppTextStyles.smallBlack,
+                        ),
+                        Text(
+                          "${widget.productModel.productModel.product?.count ?? 0}" ,
+                          style: AppTextStyles.smallBlueBold,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    widget.isMyAuction ? _myProductDetails() : _productDetails(),
+                  ],
+                ),
               ),
             ),
           ),
