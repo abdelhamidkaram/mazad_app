@@ -36,7 +36,7 @@ class _MyAuctionsTabState extends State<MyAuctionsTab> {
               onRefresh: () => cubit.getMyProducts(context , isRefresh: true),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: cubit.isEmpty ? SvgPicture.asset("assets/nobids") : ListView
+                child: cubit.isEmpty ? Center(child: SvgPicture.asset("assets/nobids.svg")) : ListView
                     .separated(
                   physics: const BouncingScrollPhysics(),
                   itemCount: cubit.myProductsForView.length,

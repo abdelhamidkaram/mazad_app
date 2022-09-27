@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:soom/main.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/screens/profile/screens/about/about_screen.dart';
@@ -11,6 +12,7 @@ import 'package:soom/presentation/screens/profile/widgets/item.dart';
 import 'package:soom/presentation/screens/profile/widgets/logout_widget.dart';
 import 'package:soom/style/color_manger.dart';
 import '../../../components/buttons/whatsapp_btn.dart';
+import '../../../components/login_required_widget.dart';
 
 class ProfileHome extends StatefulWidget {
   const ProfileHome({Key? key}) : super(key: key);
@@ -26,7 +28,7 @@ class _ProfileHomeState extends State<ProfileHome> {
       listener: (context, state) => AppCubit(),
       builder: (context, state) {
         if (AppCubit.get(context).profileEditSuccess.result?.emailAddress ==
-            null) {
+            null && token.isNotEmpty) {
           AppCubit.get(context).getProfileDetails(context);
         }
         List<ProfileItemModel> items = [
@@ -44,7 +46,7 @@ class _ProfileHomeState extends State<ProfileHome> {
           ProfileItemModel(
               "الدعم الفني", "assets/support.svg", const SupportScreen()),
         ];
-        return Center(
+        return token.isNotEmpty ? Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
             child: Directionality(
@@ -84,7 +86,9 @@ class _ProfileHomeState extends State<ProfileHome> {
               ),
             ),
           ),
-        );
+        ):
+        const LoginRequiredWidget(message: "يرجي تسجيل الدخول لعرض معلومات حسابك ");
+
       },
     );
   }

@@ -7,7 +7,6 @@ import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
-import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/login/bloc/cubit.dart';
@@ -29,7 +28,8 @@ class HomeCubit extends Cubit<HomeStates> {
   int slideCount = 0;
   int currentIndex = 0;
 
-  changeBottomNavBar() {
+  changeBottomNavBar({int? index }) {
+    index != null ? currentIndex = index : null ;
     emit(ChangeBottomNBIndex());
   }
 
@@ -75,7 +75,7 @@ class HomeCubit extends Cubit<HomeStates> {
   List<BidsModel> allLastBids = [];
 
   Future getProducts(context) async {
-    await getAllLastBids(context).then((value) async {
+    await _getAllLastBids(context).then((value) async {
       await FavoriteCubit.get(context).getFavorite(context);
       emit(GetProductsLoading());
       (await _repository.getProducts(maxResult: 1000, lastBids: value)).fold(
@@ -118,12 +118,12 @@ class HomeCubit extends Cubit<HomeStates> {
     });
   }
 
-  Future<List<BidsModel>> getAllLastBids(context) async {
+  Future<List<BidsModel>> _getAllLastBids(context) async {
     emit(GetAllLastBidsLoading());
     DioFactory(token).getData(ApiEndPoint.getAllLastBids, {}).then((value) {
       emit(GetAllLastBidsSuccess());
       List responseList = value.data["result"];
-      allLastBids = responseList.map((e) => BidsModel.fromJson(e)).toList();
+      allLastBids = responseList.map((e) => BidsModel(price: e["price"] , userId: e["userId"] , productId: e["productId"] , id: e["id"] , productName: e["productName"] )).toList();
     }).catchError((err) {
       if (kDebugMode) {
         print(err.toString());
@@ -136,17 +136,17 @@ class HomeCubit extends Cubit<HomeStates> {
 
 //-------------------- get last Price ------------||
   Future<String> getLastPrice(int id) async {
-    String newToken = token;
-    DioFactory dioFactory = DioFactory(newToken);
+    DioFactory dioFactory = DioFactory(token);
     dioFactory.getData(ApiEndPoint.getLastBid, {"id": id}).then((value) {
       emit(GetLastPriceSuccess());
-      return value.data["result"]["price"].toString();
+      return value.data["result"][0]["price"].toString();
     }).catchError((erro) {
       if (kDebugMode) {
         print(erro.toString());
       }
+      return "";
     });
-    return "000";
+    return "";
   }
 
   // ------------------ get category  --------------//

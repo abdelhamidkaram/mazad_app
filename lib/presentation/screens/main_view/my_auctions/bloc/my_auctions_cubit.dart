@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +8,6 @@ import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_states.dart';
 import '../../../../../constants/api_constants.dart';
 import '../../../../../data/api/dio_factory.dart';
-import '../../../../../data/cache/prefs.dart';
 import '../../../../../main.dart';
 import '../../../../../models/product_model.dart';
 
@@ -34,7 +34,7 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
         "MaxResultCount" : 10000,
         "CreatedBy" : id
       }).then((value){
-        if(value.data["result"]["totalCount"] >= 0 ){
+        if(value.data["result"]["totalCount"] > 0 ){
           List responseList = value.data["result"]["items"] ;
           myProductsForView = responseList.map((ele){
             var e = ProductForViewModel("", ProductModel.fromJson(ele));
@@ -81,21 +81,26 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
   bool isEmptyLast = false ;
   List<BidsModel> myBidsForView = [];
 
-  Future getMyBids (context , {bool isRefresh = false }) async {
-    if((myBidsForView.isEmpty && !isEmptyLast) || isRefresh){
+  Future<Response?> getMyBids (context , {bool isRefresh = false }) async {
+    if(((myBidsForView.isEmpty && !isEmptyLast) || isRefresh) && token.isNotEmpty){
       emit(GetMyBidForViewLoading());
-      String newToken = token;
-      DioFactory(newToken).getData(ApiEndPoint.myBid, {
+     await DioFactory(token).getData(ApiEndPoint.myBid, {
         "UserId" : id
       }).then((value){
-        List responseList = value.data["result"];
-        if(responseList.isNotEmpty ){
+
+        if (kDebugMode) {
+          print(value.data["result"]);
+        }
+        List responseList = value.data["result"]["items"];
+        if(value.data["result"]["totalCount"] != 0 ){
           myBidsForView = responseList.map((e) => BidsModel.fromJson(e)).toList();
           isEmptyLast = false ;
           emit(GetMyBidForViewSuccess());
+          return value;
         }else{
           isEmptyLast = true ;
           emit(GetMyBidForViewSuccess());
+          return Response(requestOptions: RequestOptions(path:"0" , data: "empty") , statusCode: -1);
         }
       }).catchError((err){
         if (kDebugMode) {
@@ -104,8 +109,6 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
         }
         emit(GetMyBidForViewError());
       });
-    }else{
-      Future.value("") ;
     }
   }
 

@@ -26,6 +26,12 @@ abstract  class LoginStates {}
   RegisterError(this.errorModel);
  }
 
+
+
+ class GetPrivacySuccess extends LoginStates {}
+ class GetPrivacyError extends LoginStates {}
+
+
  // confirm
  class NextConfirm extends LoginStates {}
 

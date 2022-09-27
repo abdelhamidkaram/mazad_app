@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:soom/main.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
-import 'package:soom/presentation/screens/main_view/cart/cart_screen.dart';
 import 'package:soom/presentation/screens/profile/widgets/profile_home_header.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
@@ -23,7 +23,7 @@ class AppBars {
       titleTextStyle: AppTextStyles.titleBlack,
       centerTitle: true,
       elevation:  0.9  ,
-      //TODO: ADD CART VIWE
+      //TODO: ADD CART VIEW
 
       // actions: [
       //    cartView ? Padding(
@@ -59,7 +59,7 @@ class AppBars {
       //     ]),
       //   ) :const SizedBox(),
       // ],
-      bottom: isProfile ?  PreferredSize(
+      bottom: (isProfile && token.isNotEmpty) ?  PreferredSize(
         child: Padding(
           padding:  const EdgeInsets.only(left: 16.0 , right: 16.0 , bottom: 5.0 , top: 0),
           child: ProfileHomeHeader(profile: AppCubit.get(context).profileEditSuccess),),

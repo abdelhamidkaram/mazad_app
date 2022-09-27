@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
@@ -58,13 +59,14 @@ class Repository {
       RegisterRequest registerRequest, context) async {
     Response _response;
     try {
-      _response = await DioFactory(token).postData(ApiEndPoint.register, {
+      _response = await DioFactory(token , noToken: true ).postData(ApiEndPoint.register, {
+
         "emailAddress": registerRequest.email,
         "name": registerRequest.name,
         "password": registerRequest.password,
         "surname": registerRequest.surName,
         "userName": registerRequest.userName,
-        // "phone": registerRequest.phone, TODO : ADD PHONE
+        //"phone": registerRequest.phone, TODO:
       });
     } catch (error) {
       return Left(ErrorModel(
@@ -93,8 +95,10 @@ class Repository {
       _response =
           await DioFactory(token).getData(ApiEndPoint.getProfileDetails, {});
     } catch (error) {
-      print("profile  error : :::::::::::::::::::::::: ");
-      print(error.toString());
+      if (kDebugMode) {
+        print("profile  error : :::::::::::::::::::::::: ");
+        print(error.toString());
+      }
       return Left(ErrorModel(
           message: error.toString() +
               "\n" +
@@ -104,11 +108,15 @@ class Repository {
     if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
       return Right(ProfileEditSuccess.fromJson(_response.data));
     } else {
+      if (_response.statusCode! >= 401 && refreshToken.isNotEmpty){
+
+      }
       return Left(ErrorModel(
         statusCode: _response.hashCode,
         message: "فشل جلب معلومات حسابك في الوقت الحالي يرجي المحاولة لاحقا",
       ));
     }
+
   }
 
 // ------------ get all products details   --------------//
@@ -149,7 +157,7 @@ class Repository {
 
 // ------------ get products Details based on category name    --------------//
 
-  Future<Either<ErrorModel, List<ProductModel>>> getProductsBaseOnCategoryName(
+  Future<Either<ErrorModel, List<ProductForViewModel>>> getProductsBaseOnCategoryName(
       {int? maxResult, String? categoryName}) async {
     Response _response;
     try {
@@ -186,7 +194,7 @@ class Repository {
     if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
       List _products = _response.data["result"]["items"];
       return Right(
-          _products.map((product) => ProductModel.fromJson(product)).toList());
+          _products.map((product) => ProductForViewModel("", ProductModel.fromJson(product))).toList());
     } else {
       return Left(ErrorModel(
           message: "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ",
@@ -262,14 +270,18 @@ class Repository {
         "MinminPriceFilter": minRang,
       });
     } catch (error) {
-      print(error.toString());
+      if (kDebugMode) {
+        print(error.toString());
+      }
       return Left(ErrorModel(
           message: "حدث خطأ ما يرجي المحاولة لاحقا!",
           statusCode: error.hashCode));
     }
     if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
       List _products = _response.data["result"]["items"];
-      print(_products);
+      if (kDebugMode) {
+        print(_products);
+      }
       List<ProductModel> products =
           _products.map((product) => ProductModel.fromJson(product)).toList();
       if (isNew) {
@@ -330,25 +342,14 @@ class Repository {
           .map((category) => CategoryModel.fromJson(category["category"]))
           .toList());
     } else {
-      if (_response.statusCode! == 401 && token.isNotEmpty) {
-        DioFactory(token).getData(ApiEndPoint.getRefreshToken,
-            {"refreshToken": refreshToken}).then((value) async {
-          if (kDebugMode) {
-            print("\n \n \n refresh token success \n \n \n ");
-          }
-          token = value.data["result"]["accessToken"];
-          await SharedPreferences.getInstance().then((pref) async {
-            await pref.setString(
-                PrefsKey.token, value.data["result"]["accessToken"]);
-          });
-          getCategories();
-        });
-      }
+
+
       return Left(ErrorModel(
           message: "فشل جلب المعلومات في الوقت الحالي يرجي المحاولة لاحقا ",
           statusCode: _response.hashCode));
     }
   }
+
 
 // ------------ upload  products details    --------------//
 

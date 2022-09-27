@@ -3,23 +3,23 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class AppButtons {
-  static Widget appButtonBlue (VoidCallback onPressed , String text , bool fullWidth ){
+  static Widget appButtonBlue (VoidCallback onPressed , String text , bool fullWidth ,{bool isVisitor = false } ){
    return  TextButton(
         onPressed:onPressed ,
         child: Container(
           width:fullWidth ? double.infinity :  120 ,
           height: 50,
           decoration: BoxDecoration(
-              color: ColorManger.primary,
+              color: isVisitor ? ColorManger.primaryLight_10 : ColorManger.primary,
 
             borderRadius: BorderRadius.circular(10)
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children:  [
-              Text(text , style: AppTextStyles.buttonTextStyle,),
+              Text(text , style: AppTextStyles.buttonTextStyle(isVisitor),),
               const SizedBox(width: 8,),
-              const Icon(Icons.arrow_forward , size: 22,color: ColorManger.white,),
+               Icon(Icons.arrow_forward , size: 22,color: isVisitor ? ColorManger.black :  ColorManger.white,),
             ],
           ),
         ));
@@ -39,7 +39,7 @@ class AppButtons {
             children: [
               icon ?? const SizedBox(),
               const SizedBox(width: 10,),
-              Text(text , style: AppTextStyles.buttonTextStyle,),
+              Text(text , style: AppTextStyles.buttonTextStyle(false),),
             ],
           )),
         ));

@@ -73,7 +73,7 @@ class _ProductItemState extends State<ProductItem> {
               closedBuilder: (context, action) =>
                   Directionality(
                     textDirection: TextDirection.rtl,
-                    child: (difference.inDays > 0) ? Banner(
+                    child: (difference.inSeconds > 0) ? Banner(
                       color: ColorManger.red,
                       message: "منتهي",
                       textStyle: AppTextStyles.smallWhite,
@@ -128,7 +128,6 @@ class _ProductItemState extends State<ProductItem> {
                           }
                           else if (state.extendedImageLoadState == LoadState.failed) {
                             return Image.asset("assets/noimg.png");
-
                           }
 
                         }
@@ -146,7 +145,6 @@ class _ProductItemState extends State<ProductItem> {
                   textDirection: TextDirection.ltr,
                   child: Row(
                     children: [
-
                       const Spacer(),
                       Container(
                         height: 30,
@@ -222,10 +220,9 @@ class _LastBidsPriceState extends State<LastBidsPrice> {
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: 2.0),
         child: SizedBox(
-          width: 80,
+          width: 82,
           child: PriceAndCurrencyGreen(
             lastPrice: widget.productModel.lasPrice! ,
-            //TODO: GET LAST PRICE
             productModel: widget.productModel,
           ),
         ),

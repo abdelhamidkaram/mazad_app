@@ -32,7 +32,7 @@ class _MyBidsState extends State<MyBids> {
                   onRefresh: () => cubit.getMyBids(context , isRefresh: true),
                   child: cubit.isEmptyLast
                       ?
-                  SvgPicture.asset("assets/nobids")
+                  Center(child: SvgPicture.asset("assets/nobids.svg"))
                       :
                   ListView.separated(
                     physics: const BouncingScrollPhysics(),

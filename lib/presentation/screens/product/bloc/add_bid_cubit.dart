@@ -7,6 +7,8 @@ import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
+import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
+import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_states.dart';
 class BidCubit extends Cubit<BidStates> {
   BidCubit() : super(InitBidState());
@@ -17,9 +19,16 @@ class BidCubit extends Cubit<BidStates> {
   int bidCounter = 100;
 
   TextEditingController getController(  context ,   ProductForViewModel productModel) {
-    String newToken = token;
-    DioFactory(newToken).getData(ApiEndPoint.getLastBid, {
+    //TODO:
+    DioFactory(token).getData(ApiEndPoint.getLastBid, {
       "id":productModel.productModel.product!.id ,
+    }).then((value){
+      if(value.data["result"][0]["price"] != 0){
+        controller.text = value.data["result"][0]["price"];
+        print("++++++++++++++++++++++++++++++++ ${value.data["result"][0]["price"]} ");
+        emit(GetBidController());
+        return controller;
+      }
     });
     controller.text = (!isAddBid ? productModel.lasPrice : controller.text) ?? 200.toString();
     emit(GetBidController());
@@ -72,6 +81,10 @@ class BidCubit extends Cubit<BidStates> {
      "userId": int.parse(id) ,
      "productId": productId ,
    }).then((value){
+     MyAuctionsCubit.get(context).getMyBids(context , isRefresh: true);
+     HomeCubit.get(context).getProducts(context).whenComplete((){
+       HomeCubit.get(context).getCategoryBlocks();
+     });
      Navigator.pop(context);
        AppToasts.toastSuccess(" تمت عملية المزايدة بنجاح", context);
        Timer(const Duration(seconds: 2), (){

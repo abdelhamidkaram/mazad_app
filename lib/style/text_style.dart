@@ -126,11 +126,11 @@ class AppTextStyles {
   );
 
   //--------- Buttons ---------//
-  static const TextStyle buttonTextStyle = TextStyle(
+  static  TextStyle buttonTextStyle(bool isVisitor) =>  TextStyle(
     fontFamily: AppString.fontName,
-    color: ColorManger.white,
+    color: isVisitor ? ColorManger.primary :  ColorManger.white,
     fontWeight: FontWeight.w500,
-    fontSize: 20,
+    fontSize: 20 ,
     overflow: TextOverflow.ellipsis,
   );
 

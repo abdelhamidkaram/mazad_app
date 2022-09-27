@@ -55,6 +55,7 @@ class AppCubit extends Cubit<AppStates> {
 
   Future getProfileDetails(context) async {
     emit(GetProfileDetailsLoading());
+  if(token.isNotEmpty){
     (await _repository.getProfileDetails()).fold((error) {
       LoginCubit.get(context).logOut(context);
       emit(GetProfileDetailsError());
@@ -63,6 +64,7 @@ class AppCubit extends Cubit<AppStates> {
       getSystemConf(context).then((value) => null);
       emit(GetProfileDetailsSuccess());
     });
+  }
   }
 
   //getSystemConfiguration

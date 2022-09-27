@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,10 +9,13 @@ import 'package:soom/presentation/components/logo/logo.dart';
 import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/login/bloc/states.dart';
 import 'package:soom/presentation/screens/login/login.dart';
+import 'package:soom/presentation/screens/login/privacy_screen.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/repository/request_models.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
+
+import '../../components/toast.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({Key? key}) : super(key: key);
@@ -30,6 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       statusBarColor: ColorManger.white,
       statusBarBrightness: Brightness.light,
     ));
+    
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       setState(() {
         if(result != ConnectivityResult.none){
@@ -205,13 +208,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           RegisterRequest registerRequest = RegisterRequest(
                             email: emailController.text,
                             password: passwordController.text,
-                            name: emailController.text ,
+                            name: emailController.text.substring(0,emailController.text.indexOf("@")),
                             phone: phoneController.text,
-                            surName: emailController.text,
-                            userName: emailController.text,
+                            surName: emailController.text.substring(0,emailController.text.indexOf("@")),
+                            userName: emailController.text.substring(0,emailController.text.indexOf("@")),
                           );
                           if (formKey.currentState!.validate()) {
-                            loginCubit.register(registerRequest, context);
+                            loginCubit.privacyPolicy.isNotEmpty ? 
+                                showDialog(context: context, builder: (context)=> Dialog(
+                                  child: SizedBox(
+                                      height: 500,
+                                      child: PrivacyScreen(registerRequest: registerRequest)),
+                                ))
+                               : loginCubit.register(registerRequest, context);
                           }
                         }, "إنشاء حساب", true),
                       ),

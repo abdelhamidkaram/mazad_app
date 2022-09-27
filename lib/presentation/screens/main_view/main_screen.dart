@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-
+import 'package:soom/main.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/add_auction_screen.dart';
@@ -11,6 +11,7 @@ import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/favorite_screen.dart';
 import 'package:soom/presentation/screens/main_view/home_screen/home_screen.dart';
+import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/my_auctions_screen.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/presentation/screens/profile/screens/profile_home.dart';
@@ -92,11 +93,6 @@ class _MainScreenState extends State<MainScreen> {
                     child: DefaultTabController(
                       length: 2,
                       child: Scaffold(
-                        // floatingActionButton: FloatingActionButton(
-                        //   onPressed: (){
-                        //     Navigator.push(context, MaterialPageRoute(builder: (context) => const TestScreen(),));
-                        //   },
-                        // ),
                         backgroundColor: ColorManger.white,
                         appBar: AppBars.appBarGeneral(
                           context,
@@ -133,6 +129,7 @@ class _MainScreenState extends State<MainScreen> {
                                 child: CircularProgressIndicator(),
                               ),
                         bottomNavigationBar: BottomNavigationBar(
+                            type: BottomNavigationBarType.fixed,
                             onTap: (value) {
                               homeCubit.currentIndex = value;
                               pageController.jumpToPage(value);
@@ -146,7 +143,9 @@ class _MainScreenState extends State<MainScreen> {
                             currentIndex: homeCubit.currentIndex,
                             items: [
                               const BottomNavigationBarItem(
-                                  icon: Icon(Icons.home), label: "الرئيسية"),
+                                  icon: Icon(Icons.home), label: "الرئيسية" ,
+
+                              ),
                               BottomNavigationBarItem(
                                   icon: svgIcon(homeCubit), label: "مزاداتي "),
                               const BottomNavigationBarItem(

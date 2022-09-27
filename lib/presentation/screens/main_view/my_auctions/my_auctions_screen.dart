@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:soom/main.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_states.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/my_auctions_tab.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/my_bid_tab.dart';
 import 'package:soom/style/color_manger.dart';
+import '../../../components/login_required_widget.dart';
 
 
 class MyAuctions extends StatefulWidget {
@@ -30,7 +32,9 @@ class _MyAuctionsState extends State<MyAuctions> {
             return const  Center(child:  CircularProgressIndicator(),);
           }
 
-          return  DefaultTabController(
+          return token.isNotEmpty
+              ?
+          DefaultTabController(
                   length: 2,
                   child: Scaffold(
                     backgroundColor: ColorManger.white,
@@ -64,10 +68,13 @@ class _MyAuctionsState extends State<MyAuctions> {
                       ),
                     ),
 
-              );
+              )
+          :
+          const LoginRequiredWidget(message: "يرجي تسجيل الدخول لعرض مزاداتك  ");
 
 
 
         });
   }
 }
+

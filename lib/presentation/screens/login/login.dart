@@ -18,6 +18,7 @@ import 'package:soom/presentation/screens/login/forget_password.dart';
 import 'package:soom/presentation/screens/login/register.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
+import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/repository/request_models.dart';
 import 'package:soom/style/color_manger.dart';
@@ -250,45 +251,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                             email: emailController.text,
                                             password: passwordController.text,
                                           );
-                                         Dio _dio = Dio(BaseOptions(baseUrl: ApiBase.baseUrl, headers: {
-                                            "Content-Type": "application/json",
-                                            "Accept": "text/plain",
-                                          }));
-                                          _dio.post(
-                                              ApiBase.baseUrl +
-                                                  ApiEndPoint.authentication,
-                                              data: {
-                                                "userNameOrEmailAddress":
-                                                    loginRequest.email,
-                                                "password": loginRequest.password,
-                                              }).then((value) async  {
-                                                token = value.data["result"]["accessToken"];
-                                                refreshToken = value.data["result"]["refreshToken"];
-                                                id = value.data["result"]["userId"].toString();
-                                                SharedPreferences.getInstance().then((pref) async {
-                                                  pref.setString(PrefsKey.token, token).then((value){});
-                                                  pref.setString(PrefsKey.refreshToken, token).then((value){});
-                                                  await pref.setString(PrefsKey.userId, id);
-                                                  await pref.setBool(PrefsKey.isLogin , true );
-                                                  print("*********************************\n" + pref.get(PrefsKey.token).toString());
-                                                });
-                                               await  getHomeData(context) ;
-                                                Navigator.pop(context);
-                                                AppToasts.toastSuccess("تم تسجيل الدخول بنجاح ! ", context);
-                                                Timer(const Duration(seconds: 1), (){
-                                                  Navigator.pop(context);
-                                                  setState(() {
-                                                    HomeCubit.get(context).currentIndex = 0 ;
-                                                  });
-                                                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MainScreen(),));
-                                                });
-                                          }).catchError((err){
-                                            if (kDebugMode) {
-                                              print(err);
-                                            }
-                                            Navigator.pop(context);
-                                            AppToasts.toastError("حدث خطأ ما حاول لاحقا ! ", context);
-                                          });
+                                          LoginCubit.get(context)
+                                              .loginUser(loginRequest, context)
+                                              .then((value) => null);
                                         }
                                       }, "تسجيل الدخول ", true);
                                     },
@@ -305,23 +270,33 @@ class _LoginScreenState extends State<LoginScreen> {
                                       style: AppTextStyles.mediumGrey,
                                     ),
                                     TextButton(
-                                        onPressed: () {
-                                          emailController.text = "";
-                                          passwordController.text = "";
-
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    const RegisterScreen(),
-                                              ));
-                                        },
-                                        child: const Text(
-                                          "انشاء حساب ",
-                                          style: AppTextStyles.mediumBlue,
-                                        )),
+                                      onPressed: () {
+                                        emailController.text = "";
+                                        passwordController.text = "";
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const RegisterScreen(),
+                                            ));
+                                      },
+                                      child: const Text(
+                                        "انشاء حساب ",
+                                        style: AppTextStyles.mediumBlue,
+                                      ),
+                                    ),
                                   ],
-                                )
+                                ),
+                                AppButtons.appButtonBlue(
+                                    () {
+                                      HomeCubit.get(context).currentIndex = 0 ;
+
+                                      Navigator.pushReplacement(
+                                          context,MaterialPageRoute(
+                                        builder: (context) => const MainScreen(),),
+                                      );
+                                    }, "الدخول كزائر", true,
+                                    isVisitor: true),
                               ],
                             ),
                           ),
@@ -342,20 +317,22 @@ class _LoginScreenState extends State<LoginScreen> {
     subscription!.cancel();
   }
 }
-Future getHomeData(context) async {
-  await AppCubit.get(context).getProfileDetails(context).then((value)async{
-    await HomeCubit.get(context).getCategories(context).then((value)async{
-      await HomeCubit.get(context).getProducts(context).then((value)async{
-        await   HomeCubit.get(context).getCategoryBlocks().then((value)async{
-        });
-      });
-    });
 
-  }).catchError((err){
+Future getHomeData(context) async {
+  await AppCubit.get(context).getProfileDetails(context).then((value) async {
+   await MyAuctionsCubit.get(context).getMyBids(context).then((value)async{
+     await HomeCubit.get(context).getCategories(context).then((value) async {
+       await HomeCubit.get(context).getProducts(context).then((value) async {
+         await HomeCubit.get(context).getCategoryBlocks().then((value) async {
+           AppCubit.get(context).getSystemConf(context);
+         });
+       });
+     });
+   });
+  }).catchError((err) {
     if (kDebugMode) {
       AppToasts.toastError("error when : get home data method ", context);
       print(err.toString());
     }
   });
-
 }

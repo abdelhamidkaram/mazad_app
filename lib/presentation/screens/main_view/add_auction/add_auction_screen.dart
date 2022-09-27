@@ -7,17 +7,22 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
+import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_cubit.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_states.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
+import 'package:soom/presentation/screens/main_view/main_screen.dart';
+import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
+import 'package:soom/presentation/screens/product/product_screen.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 import '../../../../data/cache/prefs.dart';
 import '../../../../main.dart';
+import '../../../components/login_required_widget.dart';
 
 class AddAuctionScreen extends StatefulWidget {
   const AddAuctionScreen({Key? key}) : super(key: key);
@@ -30,18 +35,20 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
   List<String> buildClockList() {
     return List.generate(24, (int num) {
       String clock = "ساعة";
-      if ((num+1) >= 3 && (num+1) <= 10) {
+      if ((num + 1) >= 3 && (num + 1) <= 10) {
         clock = "ساعات";
-        return (num+1) == 10 ?  (num+1).toString() + clock : "0" + (num+1).toString() + clock ;
+        return (num + 1) == 10
+            ? (num + 1).toString() + clock
+            : "0" + (num + 1).toString() + clock;
       } else {
-        if ((num+1) == 2) {
+        if ((num + 1) == 2) {
           return "ساعتين";
         }
-        if ((num+1) == 1) {
+        if ((num + 1) == 1) {
           return clock;
         }
       }
-      return (num+1).toString() + clock;
+      return (num + 1).toString() + clock;
     });
   }
 
@@ -63,7 +70,8 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
   @override
   Widget build(BuildContext context) {
     var addProductKey = GlobalKey<FormState>();
-    return BlocProvider(
+    return token.isNotEmpty ?
+    BlocProvider(
       create: (context) => AddAuctionCubit(),
       child: BlocConsumer<AddAuctionCubit, AddAuctionStates>(
         listener: (context, state) => AddAuctionCubit(),
@@ -74,8 +82,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                 HomeCubit.get(context).categories[0].title.toString();
           }
           if (cubit.dateController.text.isEmpty) {
-            cubit.dateController.text =
-                cubit.timeSelected;
+            cubit.dateController.text = cubit.timeSelected;
           }
           List<CategoryModel> cats = HomeCubit.get(context).categories;
 
@@ -103,7 +110,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                   child: Column(
                     children: [
                       AddProductImages(cubit: cubit),
-                      const CustomFieldTitle(title:    "اسم المنتج "),
+                      const CustomFieldTitle(title: "اسم المنتج "),
                       TextFormField(
                         controller: cubit.nameController,
                         validator: (value) {
@@ -121,7 +128,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                           hintStyle: AppTextStyles.smallGrey,
                         ),
                       ),
-                      const CustomFieldTitle(title:    "التصنيف "),
+                      const CustomFieldTitle(title: "التصنيف "),
                       GestureDetector(
                         onTap: () {
                           showDialog(
@@ -152,7 +159,8 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                             ),
                                           ),
                                           separatorBuilder:
-                                              (BuildContext context, int index) {
+                                              (BuildContext context,
+                                                  int index) {
                                             return const Divider();
                                           },
                                         ),
@@ -182,7 +190,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               )),
                         ),
                       ),
-                      const CustomFieldTitle(title:    "السعر"),
+                      const CustomFieldTitle(title: "السعر"),
                       TextFormField(
                         controller: cubit.initialPriceController,
                         keyboardType: const TextInputType.numberWithOptions(
@@ -199,7 +207,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                           return null;
                         },
                       ),
-                      const CustomFieldTitle(title:    "أقل سعر"),
+                      const CustomFieldTitle(title: "أقل سعر"),
                       TextFormField(
                           controller: cubit.minPriceController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -215,7 +223,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                             }
                             return null;
                           }),
-                      const CustomFieldTitle(title:    "السعر المستهدف"),
+                      const CustomFieldTitle(title: "السعر المستهدف"),
                       TextFormField(
                           controller: cubit.targetPriceController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -231,11 +239,10 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                             }
                             return null;
                           }),
-                      const CustomFieldTitle(title:    "وقت المزاد"),
+                      const CustomFieldTitle(title: "وقت المزاد"),
                       GestureDetector(
                         onTap: () {
                           showDialog(
-
                             context: context,
                             builder: (context) {
                               List<String> num = buildClockList();
@@ -253,7 +260,8 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                               popUpItemBuilder(
                                                   cubit, num, index, context),
                                           separatorBuilder:
-                                              (BuildContext context, int index) {
+                                              (BuildContext context,
+                                                  int index) {
                                             return const Divider();
                                           },
                                         ),
@@ -290,56 +298,101 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                       ),
                       AppButtons.appButtonBlue(() {
                         if (addProductKey.currentState!.validate()) {
+                        if(cubit.imagesObj.isNotEmpty){
                           _replaceController();
                           AppToasts.toastLoading(context);
                           String newToken = token;
-                          String endDate =
-                          cubit.dateController.text == "ساعة" ?
+                          String endDate = cubit.dateController.text == "ساعة"
+                              ?
                           //2022-09-10 18:58:51.572
-                          DateTime.now().add(const Duration(hours: 1)).toString()
-                              :
-                          cubit.dateController.text == "ساعتين" ?
-                          DateTime.now().add(const Duration(hours: 2)).toString()
-                              :
-
-                          DateTime.now().add(
-                            Duration(hours:int.parse(cubit.dateController.text.substring(0,2))),
-                          ).toString();
+                          DateTime.now()
+                              .add(const Duration(hours: 1))
+                              .toString()
+                              : cubit.dateController.text == "ساعتين"
+                              ? DateTime.now()
+                              .add(const Duration(hours: 2))
+                              .toString()
+                              : DateTime.now()
+                              .add(
+                            Duration(
+                                hours: int.parse(cubit
+                                    .dateController.text
+                                    .substring(0, 2))),
+                          )
+                              .toString();
                           DioFactory(newToken)
                               .postData(ApiEndPoint.uploadProducts, {
                             "name": cubit.nameController.text,
                             "descrption": cubit.detailsController.text,
                             "intitalPrice": int.parse(cubit
-                                    .initialPriceController.text
-                                    .toString())
+                                .initialPriceController.text
+                                .toString())
                                 .toDouble(),
                             "minPrice": int.parse(
-                                    cubit.minPriceController.text.toString())
+                                cubit.minPriceController.text.toString())
                                 .toDouble(),
                             //2022-09-12T14:54:18.065297Z
-                            "endDate":endDate.substring(0,10)+"T"+endDate.substring(11,19),
+                            "endDate": endDate.substring(0, 10) +
+                                "T" +
+                                endDate.substring(11, 19),
                             "status": 0,
                             "targetPrice": int.parse(
-                                    cubit.targetPriceController.text.toString())
+                                cubit.targetPriceController.text.toString())
                                 .toDouble(),
                             "categoryId": cubit.categorySelected.index,
                           }).then((value) {
-                           int  _productId = value.data["result"];
-                           for(var photo in cubit.imagesObj){
-                             DioFactory(token).postData(ApiEndPoint.createProductPhoto, {
-                               "photoToken" : photo.token,
-                               "productId" : _productId
-                             }).then((value){
-                             });
-                           }
-                           Navigator.pop(context);
-                           AppToasts.toastSuccess("تمت إضافة المنتج بنجاح ", context) ;
+                            int _productId = value.data["result"];
+                            for (var photo in cubit.imagesObj) {
+                              DioFactory(token).postData(
+                                  ApiEndPoint.createProductPhoto, {
+                                "photoToken": photo.token,
+                                "productId": _productId
+                              }).then((value) {});
+                            }
 
+                            DioFactory(newToken).getData(
+                                "api/services/app/Products/GetProductForView",
+                                {"id": _productId}).then((value) {
+                              HomeCubit.get(context).changeBottomNavBar(index: 0);
+                              MyAuctionsCubit.get(context).myProductsForView.add(ProductForViewModel(
+                                "",
+                                ProductModel.fromJson(
+                                    value.data["result"]),
+                              ));
+                              MyAuctionsCubit.get(context).isEmpty = false ;
+                              MyAuctionsCubit.get(context).getMyProducts(context , isRefresh: true);
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProductScreen(
+                                    fromAddScreen: true,
+                                    productModel: ProductForViewModel(
+                                      "",
+                                      ProductModel.fromJson(
+                                          value.data["result"]),
+                                    ),
+                                    lastPrice: cubit.minPriceController.text.toString(),
+                                  ),
+                                ),
+                              );
+                            }).catchError((err){
+                              if (kDebugMode) {
+                                print(err.toString());
+                              }
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const MainScreen(),));
+                            });
+                            Navigator.pop(context);
+                            AppToasts.toastSuccess(
+                                "تمت الإضافة بنجاح ", context);
                           }).catchError((err) {
                             Navigator.pop(context);
                             AppToasts.toastError(
                                 "حدث خطأ ما .. حاول لاحقا", context);
                           });
+                        }else{
+                          AppToasts.toastError("يجب إضافة صورة واحدة علي الأقل ", context);
+                        }
                         }
                       }, "إضافة المنتج ", true),
                     ],
@@ -350,17 +403,20 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
           );
         },
       ),
-    );
+    )
+        :
+    const LoginRequiredWidget(message: "يرجي تسجيل الدخول لتتمكن من اضافة مزاد جديد ");
+
+    ;
   }
-
-
 }
 
 class CustomFieldTitle extends StatelessWidget {
-  final String title ;
+  final String title;
+
   const CustomFieldTitle({
     Key? key,
-    required this.title ,
+    required this.title,
   }) : super(key: key);
 
   @override
@@ -371,7 +427,7 @@ class CustomFieldTitle extends StatelessWidget {
           height: 16,
         ),
         Row(
-          children:  [
+          children: [
             Text(
               title,
               style: AppTextStyles.titleSmallBlack,
@@ -382,7 +438,6 @@ class CustomFieldTitle extends StatelessWidget {
         const SizedBox(
           height: 16,
         ),
-
       ],
     );
   }
@@ -633,7 +688,7 @@ class _TextFormFieldDetailsWidgetState
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const CustomFieldTitle(title:    "التفاصيل"),
+        const CustomFieldTitle(title: "التفاصيل"),
         TextFormField(
           controller: widget.detailsController,
           maxLines: 10,

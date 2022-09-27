@@ -43,13 +43,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ?
                       const Center(child: CircularProgressIndicator(),)
                   :
-                  SingleChildScrollView(
+                  RefreshIndicator(
+                    onRefresh: () => cubit.getProductWithCategoryName(
+                            widget.category.title!, context),
+                    child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      child: RefreshIndicator(
-                          onRefresh: () => cubit.getProductWithCategoryName(
-                              widget.category.title!, context) ,
-                          child: bodyWidget(state, cubit))
-                    ,),
+                      child: bodyWidget(state, cubit),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -68,7 +69,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           scrollDirection: Axis.vertical,
           itemBuilder: (context, index) => ProductItem(
             isFullWidth: true,
-            productForViewModel: cubit.products[index],
+            productForViewModel: cubit.products.reversed.toList()[index],
           ),
           separatorBuilder: (context, index) => const SizedBox(
             height: 20,

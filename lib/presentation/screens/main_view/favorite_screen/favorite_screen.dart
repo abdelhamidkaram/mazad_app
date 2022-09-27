@@ -1,10 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:soom/main.dart';
 import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/no_favorite_screen.dart';
+
+import '../../../components/login_required_widget.dart';
 class FavoriteScreen extends StatefulWidget {
   const FavoriteScreen({Key? key}) : super(key: key);
 
@@ -21,8 +24,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         listener: (context, state) => FavoriteCubit() ,
         builder:(context , state ){
           var cubit = FavoriteCubit.get(context);
-
-          return FutureBuilder(
+          return token.isNotEmpty ?
+          FutureBuilder(
               future:cubit.getFavorite(context).then((value){setState(() {});}),
               builder: (context , snapShot){
                 if( cubit.isLoading ){
@@ -31,11 +34,14 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 if(snapShot.hasError){
                   return const Text("حدث خطأ ما .. حاول لاحقا ! ");
                 }
+                if(cubit.favoritesItemsForView.length == 1 ){
+                  cubit.getFavorite(context).then((value){setState(() {});});
+                }
                 return Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: RefreshIndicator(
                     onRefresh:() => cubit.getFavorite(context , isRefresh: true),
-                    child: cubit.isEmpty? const NoFavoriteScreen() : ListView.separated(
+                    child:  cubit.isEmpty? const NoFavoriteScreen() : ListView.separated(
                       physics: const BouncingScrollPhysics(),
                       itemCount: cubit.favoritesItemsForView.length,
                       itemBuilder: (context , index )=> ProductItem(
@@ -48,7 +54,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 );
 
               }
-          );
+          )
+          :
+          const LoginRequiredWidget(message: "يرجي تسجيل الدخول لعرض مفضلتك  ");
+
         } ,
 
     );

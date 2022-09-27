@@ -5,6 +5,7 @@ import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
+import 'package:soom/presentation/screens/main_view/main_screen.dart';
 import 'package:soom/presentation/screens/product/add_bid.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/product/widget/image_product.dart';
@@ -17,10 +18,11 @@ import '../main_view/favorite_screen/bloc/cubit.dart';
 class ProductScreen extends StatefulWidget {
   final ProductForViewModel productModel;
   final bool isMyAuction;
+  final bool fromAddScreen;
   final String lastPrice ;
 
   const ProductScreen(
-      {Key? key, required this.productModel, this.isMyAuction = false, required this.lastPrice})
+      {Key? key, required this.productModel, this.isMyAuction = false, required this.lastPrice , this.fromAddScreen = false})
       : super(key: key);
 
   @override
@@ -45,7 +47,7 @@ class _ProductScreenState extends State<ProductScreen> {
       child: WillPopScope(
         onWillPop: () async {
           FocusScope.of(context).unfocus();
-          Navigator.pop(context);
+          widget.fromAddScreen ? Navigator.push(context, MaterialPageRoute(builder: (context) => const MainScreen(),)) :Navigator.pop(context);
           return await Future.value(true);
         },
         child: Scaffold(

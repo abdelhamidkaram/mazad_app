@@ -5,6 +5,7 @@ import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/favorite_model.dart';
 import 'package:soom/models/product_model.dart';
+import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
 import 'package:soom/extension.dart';
@@ -22,10 +23,12 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
   bool isEmpty = false ;
   List<ProductForViewModel> favoritesItemsForView  = [] ;
   Future getFavorite (context , {bool isRefresh = false }) async {
-    if((favoritesItemsForView.isEmpty && !isEmpty) || isRefresh) {
+    if(((favoritesItemsForView.isEmpty && !isEmpty ) || isRefresh) && token.isNotEmpty) {
     emit(GetFavoriteLoading());
-    String newToken = token ;
-    DioFactory(newToken).getData(ApiEndPoint.myFavorite, {}).then((value){
+    AppCubit.get(context).getProfileDetails(context).then((value){
+    DioFactory(token).getData(ApiEndPoint.myFavorite, {
+      "UserNameFilter" : AppCubit.get(context).profileEditSuccess.result!.userName
+    }).then((value){
       List  response = value.data["result"]["items"] ;
       favoritesItemsResponse = response.map((e) => FavoriteModel.fromJson(e)).toList();
       if(value.data["result"]["totalCount"] > 0 ){
@@ -50,6 +53,7 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
       emit(GetFavoriteError());
     }
     );
+    });
     }else {
       Future.value("") ;
     }
@@ -90,7 +94,9 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
          "productId" : productForViewModel.productModel.product!.id.toString()
        }).then((value){
          productForViewModel.isFavorite = true;
-         getFavorite(context);
+         favoritesItemsForView.add(productForViewModel);
+         isEmpty = false ;
+         getFavorite(context , isRefresh: true );
          emit(AddFavoriteForViewSuccess());
        }).catchError((error){
          emit(AddFavoriteForViewError());
@@ -101,6 +107,7 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
     productForViewModel.isFavorite = !productForViewModel.isFavorite ;
     if(productForViewModel.isFavorite){
       addTOFavorite(productForViewModel, context).then((value){
+        productForViewModel.isFavorite = true ;
         emit(AddFavoriteForViewSuccess());
       }).catchError((err){
         emit(AddFavoriteForViewError());

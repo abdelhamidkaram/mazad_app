@@ -1,8 +1,12 @@
+import 'dart:ffi';
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
+import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/product/product_screen.dart';
 import '../../../../../constants/api_constants.dart';
@@ -20,26 +24,12 @@ class ProductShowScreen extends StatefulWidget {
 class _ProductShowScreenState extends State<ProductShowScreen> {
   @override
   Widget build(BuildContext context) {
-    String newToken = token ;
 return FutureBuilder(
-  future: DioFactory(newToken).getData(ApiEndPoint.getProductById, {
-    "id":widget.productId
-  }),
-  builder: (context, snapshot) {
+  future: getData(),
+  builder: (context, snapshot)  {
     if(snapshot.hasData){
-      Response? response = snapshot.data as Response ;
-      String lastPrice = ProductModel.fromJson(response.data["result"]).product!.minPrice.toString();
-      for(var bid in HomeCubit.get(context).allLastBids){
-        if(bid.productId ==ProductModel.fromJson(response.data["result"]).product!.id ){
-          lastPrice = bid.price.toString();
-        }
-      }
-      return
-      ProductScreen(
-          productModel: ProductForViewModel(
-              "", ProductModel.fromJson(response.data["result"])), lastPrice: lastPrice
-          ,
-      );
+      ProductForViewModel productForViewModel = snapshot.data as ProductForViewModel;
+      return ProductScreen(productModel: productForViewModel, lastPrice: productForViewModel.lasPrice! , );
     }else{
    return Scaffold(
     appBar: AppBars.appBarGeneral(context, HomeCubit(), widget.title , cartView: false ),
@@ -52,5 +42,27 @@ return FutureBuilder(
     ) ,);
     }
   });
+  }
+
+  Future<ProductForViewModel> getData() async {
+    Response response = await  DioFactory(token).getData(ApiEndPoint.getProductById, {
+  "id":widget.productId
+});
+    print(response.data);
+    String  lastPrice = "1" ;
+    ProductModel productModel = ProductModel.fromJson(response.data["result"]);
+    await DioFactory(token).getData(ApiEndPoint.getLastBid, {
+      "id":productModel.product!.id!
+    }).then((value){
+      lastPrice = double.parse(value.data["result"][0]["price"].toString()).toInt().toString();
+      if (kDebugMode) {
+        print(lastPrice);
+      }
+    });
+    return ProductForViewModel(
+        "",
+        productModel ,
+        lasPrice: lastPrice
+    );
   }
 }

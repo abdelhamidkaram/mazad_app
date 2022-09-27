@@ -27,9 +27,7 @@ class _FavoriteIconState extends State<FavoriteIcon> {
             onTap: () async {
               FavoriteCubit.get(context)
                   .changeFavoriteButton(widget.productModel!, context).then((value){
-
               });
-
             },
             child: Icon(
               widget.productModel!.isFavorite ? Icons.favorite : Icons.favorite_border,

@@ -10,7 +10,6 @@ import 'package:soom/presentation/screens/login/login.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/onboarding/on_boarding.dart';
 import 'package:soom/style/color_manger.dart';
-
 import '../../../data/cache/prefs.dart';
 import '../../../main.dart';
 
@@ -37,25 +36,38 @@ class _SplashScreenState extends State<SplashScreen> {
   PageRoute routeTo(){
     if(AppCubit.get(context).isNewInstall){
      return MaterialPageRoute(builder: (context) => const OnBoardingScreen(),);
-    }else {
+    }else{
+      AppCubit.get(context).getSystemConf(context);
       if(!AppCubit.get(context).goToLoginScreen){
         return MaterialPageRoute(builder: (context) {
           SharedPreferences.getInstance().then((prefs){
             token =  prefs.getString(PrefsKey.token) ?? "";
             id = "${ prefs.get(PrefsKey.userId) ?? "" }";
           });
-          HomeCubit.get(context).getCategories(context).then((value){
-            MyAuctionsCubit.get(context).getMyBids(context).then((value) => null);
-            if(HomeCubit.get(context).products.isEmpty ){
-              HomeCubit.get(context).getProducts(context).then((value){
-                HomeCubit.get(context).getCategoryBlocks();
-                return  const MainScreen();
-              });
-            }else{
-              return  const MainScreen();
-            }
-
-          });
+         if(token.isNotEmpty){
+           HomeCubit.get(context).getCategories(context).then((value){
+             MyAuctionsCubit.get(context).getMyBids(context).then((value) => null);
+             if(HomeCubit.get(context).products.isEmpty ){
+               HomeCubit.get(context).getProducts(context).then((value){
+                 HomeCubit.get(context).getCategoryBlocks();
+                 return  const MainScreen();
+               });
+             }else{
+               return  const MainScreen();
+             }
+           });
+         }else{
+           HomeCubit.get(context).getCategories(context).then((value){
+             if(HomeCubit.get(context).products.isEmpty ){
+               HomeCubit.get(context).getProducts(context).then((value){
+                 HomeCubit.get(context).getCategoryBlocks();
+                 return  const MainScreen();
+               });
+             }else{
+               return  const MainScreen();
+             }
+           });
+         }
 
           return  const MainScreen();
         },);
