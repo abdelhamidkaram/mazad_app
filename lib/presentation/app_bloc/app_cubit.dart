@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,7 +14,9 @@ import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/repository/repository.dart';
 
+import '../../app_enums.dart';
 import '../../models/system_conf_model.dart';
+import '../screens/profile/widgets/profile_home_header.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(InitState());
@@ -50,18 +53,18 @@ class AppCubit extends Cubit<AppStates> {
 
   final Repository _repository = Repository();
 
-  //get profile details
-  ProfileEditSuccess profileEditSuccess = ProfileEditSuccess();
+  //------------ get profile details
 
+  ProfileEditSuccess profileEditSuccess = ProfileEditSuccess();
   Future getProfileDetails(context) async {
     emit(GetProfileDetailsLoading());
   if(token.isNotEmpty){
     (await _repository.getProfileDetails()).fold((error) {
-      LoginCubit.get(context).logOut(context);
       emit(GetProfileDetailsError());
     }, (profileSuccess) async {
       profileEditSuccess = profileSuccess;
       getSystemConf(context).then((value) => null);
+      getUserImage().then((value) => null);
       emit(GetProfileDetailsSuccess());
     });
   }
@@ -77,7 +80,9 @@ class AppCubit extends Cubit<AppStates> {
   Future getSystemConf(context) async {
     emit(GetSystemConfLoading());
     await DioFactory(token)
-        .getData(ApiEndPoint.getSystemConf, {}).then((value) {
+        .getData(ApiEndPoint.getSystemConf, {
+
+    }).then((value) {
       List responseList = value.data["result"]["items"];
       allConfigurations =
           responseList.map((e) => SystemConfigrationModel.fromJson(e)).toList();
@@ -93,8 +98,23 @@ class AppCubit extends Cubit<AppStates> {
 
      emit(GetSystemConfSuccess());
     }).catchError((err) {
-      LoginCubit.get(context).logOut(context);
       emit(GetSystemConfError());
     });
+  }
+
+  ImgProfile imgProfile = ImgProfile(img: "assets/avatar.png" , imgProfileType: ImgProfileType.url);
+  Future  getUserImage()async{
+    emit(GetImgLoading());
+     await DioFactory(token).getData(ApiEndPoint.getUserImage, {}).then((value) {
+        if(value.data["result"]["profilePicture"] != ""){
+          imgProfile = ImgProfile(img: value.data["result"]["profilePicture"].toString());
+        }
+        emit(GetImgSuccess());
+     }).catchError((err){
+        if(kDebugMode){
+          print("error when get profile image ::: \n  "+err.toString());
+        }
+        emit(GetImgError());
+      });
   }
 }

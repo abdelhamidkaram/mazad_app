@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/models/bids_model.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
@@ -20,17 +19,13 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
   List myBidsDetails = [] ;
   bool isFirstBuild = false ;
   bool isFinish = false ;
-
-
-
   bool isLoading = true ;
   bool isEmpty = false ;
   List<ProductForViewModel> myProductsForView = [];
   Future getMyProducts (context , {bool isRefresh = false }) async {
     if((myProductsForView.isEmpty && !isEmpty) || isRefresh){
       emit(GetMyProductForViewLoading());
-      String newToken = token;
-      DioFactory(newToken).getData(ApiEndPoint.getAllProducts, {
+      DioFactory(token).getData(ApiEndPoint.getAllProducts, {
         "MaxResultCount" : 10000,
         "CreatedBy" : id
       }).then((value){
@@ -66,7 +61,6 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
         isLoading = false ;
         if (kDebugMode) {
           print(err);
-          AppToasts.toastError("$err", context);
         }
         emit(GetMyProductForViewError());
       }) ;
@@ -80,14 +74,13 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
 
   bool isEmptyLast = false ;
   List<BidsModel> myBidsForView = [];
-
   Future<Response?> getMyBids (context , {bool isRefresh = false }) async {
     if(((myBidsForView.isEmpty && !isEmptyLast) || isRefresh) && token.isNotEmpty){
       emit(GetMyBidForViewLoading());
      await DioFactory(token).getData(ApiEndPoint.myBid, {
-        "UserId" : id
+        "UserId" : id ,
+       "MaxResultCount" : 1000,
       }).then((value){
-
         if (kDebugMode) {
           print(value.data["result"]);
         }

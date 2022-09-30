@@ -31,7 +31,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () => widget.homeCubit.getProducts(context),
+      onRefresh: () =>HomeCubit.get(context).getProducts(context , true).then((value){
+        setState(() {
+
+        });
+      }),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: Padding(
@@ -104,7 +108,7 @@ class _HomeProductsViewState extends State<HomeProductsView> {
             widget.homeCubit.categories.isNotEmpty ?
             List.generate(widget.homeCubit.categories.length, (index) {
               return  widget.homeCubit.categoriesBlocks.isNotEmpty ? CategoryBlock(
-                categoryBlockModel: widget.homeCubit.categoriesBlocks[index],
+                categoryBlockModel: HomeCubit.get(context).categoriesBlocks[index],
                 homeCubit: widget.homeCubit,
               ) :const SizedBox();
             }) : [const SizedBox()],
@@ -139,8 +143,8 @@ class _HomeProductsViewState extends State<HomeProductsView> {
           children:
           widget.homeCubit.categories.isNotEmpty ?
           List.generate(widget.homeCubit.categories.length, (index) {
-            return  widget.homeCubit.categoriesBlocks.isNotEmpty ? CategoryBlock(
-              categoryBlockModel: widget.homeCubit.categoriesBlocks[index],
+            return  HomeCubit.get(context).categoriesBlocks.isNotEmpty ? CategoryBlock(
+              categoryBlockModel: HomeCubit.get(context).categoriesBlocks[index],
               homeCubit: widget.homeCubit,
             ) :const SizedBox();
           }) : [const SizedBox()],
@@ -173,7 +177,9 @@ class _CategoryBlockState extends State<CategoryBlock> {
             title: widget.categoryBlockModel.categoryName,
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) =>  CategoryScreen(category: widget.categoryBlockModel.categoryModel)
+                builder: (context) =>  CategoryScreen(
+                    category: widget.categoryBlockModel.categoryModel,
+                )
               ));
             }),
         const SizedBox(height: 10),

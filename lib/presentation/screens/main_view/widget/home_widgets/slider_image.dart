@@ -47,14 +47,7 @@ class _SlideImageState extends State<SlideImage> {
                       ?
                   ExtendedImage.network(
                       AppCubit.get(context).ads[index].systemConfigration!.link! ,
-                      // width: ScreenUtil.instance.setWidth(400),
-                      // height: ScreenUtil.instance.setWidth(400),
-                      // fit: BoxFit.fill,
                       cache: true,
-                      //border: Border.all(color: Colors.red, width: 1.0),
-                      // shape: boxShape,
-                      // borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-                      //cancelToken: cancellationToken,
                       loadStateChanged: (state) {
                         if (state.extendedImageLoadState == LoadState.loading) {
                           return const LinearProgressIndicator(
@@ -64,13 +57,13 @@ class _SlideImageState extends State<SlideImage> {
                           );
                         }
                         else if (state.extendedImageLoadState == LoadState.failed) {
-                          return Image.asset("assets/pro1.png");
+                          return Image.asset("assets/slid1.png");
                         }
 
                       }
                   )
 
-                      : Image.asset("assets/pro1.png" );
+                      : Image.asset("assets/slid1.png" );
                 },
               ),
               Row(

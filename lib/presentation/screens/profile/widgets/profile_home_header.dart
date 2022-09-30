@@ -1,15 +1,15 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soom/constants/api_constants.dart';
-import 'package:soom/data/api/dio_factory.dart';
+
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/screens/profile/screens/edit_profile/profile_edit_screen.dart';
 import 'package:soom/presentation/screens/profile/widgets/profile_img.dart';
 import 'package:soom/style/color_manger.dart';
-import '../../../../data/cache/prefs.dart';
+import '../../../../app_enums.dart';
+
 import '../../../../style/text_style.dart';
 
 
@@ -24,23 +24,8 @@ class _ProfileHomeHeaderState extends State<ProfileHomeHeader> {
 
   @override
   Widget build(BuildContext context) {
-    //TODO:
-    String _getImage(){
-      //TODO: get image from server
-      String response = "";
-      String newToken = "";
-      SharedPreferences.getInstance().then((value){
-        newToken =  value.getString(PrefsKey.token)!;
-      });
-      DioFactory(newToken).getData(ApiEndPoint.getUserImage, {}).then((value) {
-        if(value != null){
-          response = value.toString();
-        }else{
-          response = "";
-        }
-      });
-      return response;
-    }
+
+    ImgProfile imgProfile = AppCubit.get(context).imgProfile;
   return  BlocConsumer<AppCubit , AppStates>(
       listener:(context, state) =>  AppCubit(),
       builder: (context ,state ){
@@ -48,8 +33,7 @@ class _ProfileHomeHeaderState extends State<ProfileHomeHeader> {
           padding: const EdgeInsets.only(top: 0 , bottom: 5 , right: 10, left: 10),
           child: Row(
             children: [
-              //TODO: IMAGE PROFILE FORM SERVER
-              const ProfileImage(imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png"),
+               ProfileImage(imgProfile: imgProfile ),
               const SizedBox(width: 5,),
               Expanded(
                 child: Column(
@@ -69,4 +53,18 @@ class _ProfileHomeHeaderState extends State<ProfileHomeHeader> {
       },
     );
   }
+}
+
+class ImgProfile {
+  String img ;
+  ImgProfileType? imgProfileType ;
+  ImgProfile({required this.img , this.imgProfileType}){
+    if(img.contains("asset")){
+      imgProfileType = ImgProfileType.url;
+    }else{
+      imgProfileType = ImgProfileType.imgFile;
+    }
+  }
+  
+  
 }

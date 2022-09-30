@@ -11,7 +11,6 @@ import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/favorite_screen.dart';
 import 'package:soom/presentation/screens/main_view/home_screen/home_screen.dart';
-import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/my_auctions_screen.dart';
 import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/presentation/screens/profile/screens/profile_home.dart';
@@ -109,9 +108,11 @@ class _MainScreenState extends State<MainScreen> {
                                 physics: const NeverScrollableScrollPhysics(),
                                 controller: pageController,
                                 onPageChanged: (value) {
-                                  if (value == 4) {
-                                    AppCubit.get(context)
-                                        .getProfileDetails(context);
+                                  if (value == 4 ) {
+                                    if(AppCubit.get(context).profileEditSuccess.result!.emailAddress!.isEmpty && token.isNotEmpty){
+                                      AppCubit.get(context)
+                                          .getProfileDetails(context);
+                                    }
                                   }
                                   if (value < 5) {
                                     homeCubit.currentIndex = value;

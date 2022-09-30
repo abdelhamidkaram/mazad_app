@@ -1,13 +1,9 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:soom/constants/api_constants.dart';
-import 'package:soom/main.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/components/logo/logo.dart';
@@ -23,8 +19,6 @@ import 'package:soom/presentation/screens/offline_screen/offline_screen.dart';
 import 'package:soom/repository/request_models.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
-
-import '../../../data/cache/prefs.dart';
 import '../main_view/main_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -322,8 +316,8 @@ Future getHomeData(context) async {
   await AppCubit.get(context).getProfileDetails(context).then((value) async {
    await MyAuctionsCubit.get(context).getMyBids(context).then((value)async{
      await HomeCubit.get(context).getCategories(context).then((value) async {
-       await HomeCubit.get(context).getProducts(context).then((value) async {
-         await HomeCubit.get(context).getCategoryBlocks().then((value) async {
+       await HomeCubit.get(context).getProducts(context,  false).then((value) async {
+         await HomeCubit.get(context).getCategoryBlocks(false).then((value) async {
            AppCubit.get(context).getSystemConf(context);
          });
        });

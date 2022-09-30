@@ -14,20 +14,20 @@ class NotificationModel {
   userId = json['userId'];
   state = json['state'];
   notification = json['notification'] != null
-  ? new NotificationMSG.fromJson(json['notification'])
+  ?  NotificationMSG.fromJson(json['notification'])
       : null;
   id = json['id'];
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = new Map<String, dynamic>();
-  data['tenantId'] = this.tenantId;
-  data['userId'] = this.userId;
-  data['state'] = this.state;
-  if (this.notification != null) {
-  data['notification'] = this.notification!.toJson();
+  final Map<String, dynamic> data = <String, dynamic>{};
+  data['tenantId'] = tenantId;
+  data['userId'] = userId;
+  data['state'] = state;
+  if (notification != null) {
+  data['notification'] = notification!.toJson();
   }
-  data['id'] = this.id;
+  data['id'] = id;
   return data;
   }
   }
@@ -57,7 +57,7 @@ class NotificationModel {
   NotificationMSG.fromJson(Map<String, dynamic> json) {
   tenantId = json['tenantId'];
   notificationName = json['notificationName'];
-  data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+  data = json['data'] != null ?  Data.fromJson(json['data']) : null;
   entityType = json['entityType'];
   entityTypeName = json['entityTypeName'];
   entityId = json['entityId'];
@@ -67,18 +67,18 @@ class NotificationModel {
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = new Map<String, dynamic>();
-  data['tenantId'] = this.tenantId;
-  data['notificationName'] = this.notificationName;
+  final Map<String, dynamic> data =  <String, dynamic>{};
+  data['tenantId'] = tenantId;
+  data['notificationName'] = notificationName;
   if (this.data != null) {
   data['data'] = this.data!.toJson();
   }
-  data['entityType'] = this.entityType;
-  data['entityTypeName'] = this.entityTypeName;
-  data['entityId'] = this.entityId;
-  data['severity'] = this.severity;
-  data['creationTime'] = this.creationTime;
-  data['id'] = this.id;
+  data['entityType'] = entityType;
+  data['entityTypeName'] = entityTypeName;
+  data['entityId'] = entityId;
+  data['severity'] = severity;
+  data['creationTime'] = creationTime;
+  data['id'] = id;
   return data;
   }
   }
@@ -94,16 +94,16 @@ class NotificationModel {
   message = json['message'];
   type = json['type'];
   properties = json['properties'] != null
-  ? new Properties.fromJson(json['properties'])
+  ?  Properties.fromJson(json['properties'])
       : null;
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = new Map<String, dynamic>();
-  data['message'] = this.message;
-  data['type'] = this.type;
-  if (this.properties != null) {
-  data['properties'] = this.properties!.toJson();
+  final Map<String, dynamic> data =  <String, dynamic>{};
+  data['message'] = message;
+  data['type'] = type;
+  if (properties != null) {
+  data['properties'] = properties!.toJson();
   }
   return data;
   }
@@ -119,8 +119,8 @@ class NotificationModel {
   }
 
   Map<String, dynamic> toJson() {
-  final Map<String, dynamic> data = new Map<String, dynamic>();
-  data['Message'] = this.message;
+  final Map<String, dynamic> data =  <String, dynamic>{};
+  data['Message'] =message;
   return data;
   }
   }

@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -12,7 +15,11 @@ import 'package:soom/main.dart';
 import 'package:soom/presentation/screens/profile/screens/edit_profile/bloc/states.dart';
 import 'package:soom/style/color_manger.dart';
 
+import '../../../../../../app_enums.dart';
 import '../../../../../app_bloc/app_cubit.dart';
+import '../../../../../app_bloc/app_states.dart';
+import '../../../../../components/toast.dart';
+import '../../../widgets/profile_home_header.dart';
 
 class EditCubit extends Cubit<EditStates> {
   EditCubit() : super(InitEditState());
@@ -20,11 +27,10 @@ class EditCubit extends Cubit<EditStates> {
   static EditCubit get(context) => BlocProvider.of(context);
 
   // ------------ image edit ---------------|
-  String img64User = "";
+  String img64User = AppCubit().imgProfile.img;
   XFile? photo;
 
   final ImagePicker _picker = ImagePicker();
-
   cropImage() async {
     CroppedFile? cropFile = await ImageCropper().cropImage(
       sourcePath: photo!.path,
@@ -57,16 +63,25 @@ class EditCubit extends Cubit<EditStates> {
     }
   }
 
-  pickerCamera() async {
+  pickerCamera(context) async {
     photo = await _picker.pickImage(source: ImageSource.gallery);
     if (photo != null) {
-      cropImage().then((value) {
-        final bytes = File(photo!.path).readAsBytesSync();
-        String img64 = base64Encode(bytes);
-        img64User = img64;
-        getIsUploadImage(valueBool: true);
-        //TODO: upload image to server
-        putImage();
+      cropImage().then((value) async {
+        await _uploadImageProfile(File(photo!.path) , context ).then((value){
+          putImage(fileToken ,context).then((value){
+            final bytes = File(photo!.path).readAsBytesSync();
+            String img64 = base64Encode(bytes);
+            img64User = img64;
+            getUserImage(context);
+          });
+          emit(SetImageState());
+
+        }).catchError((err){
+          if (kDebugMode) {
+            print(err.toString());
+          }
+        });
+
       });
       emit(SetImageState());
     } else {
@@ -76,41 +91,23 @@ class EditCubit extends Cubit<EditStates> {
 
   img64UserCache() async {
     await SharedPreferences.getInstance().then((value) {
-      img64User = value.getString(PrefsKey.img64) ?? "";
+      img64User = value.getString(PrefsKey.img64) ?? "assets/avatar.png";
     });
   }
-
-  bool isUploadImage = false;
-
-  bool getIsUploadImage({bool valueBool = false}) {
-    emit(SetImageState());
-    isUploadImage = valueBool;
-    if (!valueBool) {
-      SharedPreferences.getInstance().then((value) {
-        isUploadImage = value.getBool(PrefsKey.isUploadImage) ?? false;
-      });
-      emit(SetImageState());
-      return isUploadImage;
-    } else {
-      SharedPreferences.getInstance().then((value) {
-        isUploadImage = value.getBool(PrefsKey.isUploadImage) ?? true;
-      });
-      emit(SetImageState());
-      return isUploadImage;
-    }
-  }
-  
-  
   //put image 
-  putImage()async {
-    //   TODO:IMAGE PUT TO SERVER
-
-    // await DioFactory().updateData("services/app/Profile/UpdateProfilePicture", {
-   //    "fileToken": img64User,
-   //  }).then((value){
-   //
-   //    print(value.data);
-   // });
+  Future putImage(String fileToken , context )async {
+    await DioFactory(token).updateData("api/services/app/Profile/UpdateProfilePicture", {
+      "fileToken": fileToken,
+    }).then((value){
+      if (kDebugMode) {
+        print("success when put img :: "+value.data.toString());
+      }
+      getUserImage(context).then((value) => null);
+   }).catchError((err){
+      if (kDebugMode) {
+        print("err when put img :: "+err.toString());
+      }
+    });
 
   }
   
@@ -137,4 +134,70 @@ class EditCubit extends Cubit<EditStates> {
       }
     });
   }
+
+
+
+
+
+// ------------ get image profile  ---------------|
+
+
+  ImgProfile imgProfile = ImgProfile(img: "assets/avatar.png");
+  Future  getUserImage(context)async{
+      await DioFactory(token).getData(ApiEndPoint.getUserImage, {}).then((value) {
+        if(value.data["result"]["profilePicture"] !=""){
+          SharedPreferences.getInstance().then((prefs){
+            prefs.setString(PrefsKey.img64, value.data["result"]["profilePicture"]);
+          });
+          imgProfile = ImgProfile(img: value.data["result"]["profilePicture"].toString());
+          AppCubit.get(context).getUserImage().then((value) => null);
+        }
+        emit(GetImageState());
+      }).catchError((err){
+        if(kDebugMode){
+          print("error when get profile image ::: \n  " + err.toString() , );
+        }
+        emit(GetImageError());
+      });
+  }
+
+
+// ------------ upload image profile  ---------------|
+
+   String fileToken = "";
+  Future  _uploadImageProfile(File file , BuildContext context ) async {
+    String fileName = file.path.split('/').last;
+    FormData data = FormData.fromMap({
+      "file": await MultipartFile.fromFile(
+        file.path,
+        filename: fileName,
+      ),
+    });
+    AppToasts.toastLoading(context);
+    await DioFactory(token).dio().post(ApiEndPoint.uploadImage, data: data)
+        .then((response){
+      if (kDebugMode) {
+        print(response.data.toString());
+      }
+      fileToken = response.data["result"]["fileToken"];
+
+      Navigator.pop(context);
+      AppToasts.toastSuccess("تم رفع الصورة", context);
+
+      Timer(const Duration(seconds: 2), (){
+        Navigator.pop(context);
+      });
+      emit(UploadSuccess());
+    }).catchError((error){
+      Navigator.pop(context);
+      AppToasts.toastError(kDebugMode ? error :  "حدث خطأ ما حاول لاحقا !", context);
+      Timer(const Duration(seconds: 2), (){
+        Navigator.pop(context);
+      } ,
+      );
+      emit(UploadSuccess());
+    });
+  }
+
+
 }

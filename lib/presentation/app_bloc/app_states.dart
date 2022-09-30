@@ -38,3 +38,9 @@ class GetSystemConfSuccess extends AppStates{}
 class GetSystemConfError extends AppStates{}
 
 
+// img
+class GetImgLoading extends AppStates{}
+class GetImgSuccess extends AppStates{}
+class GetImgError extends AppStates{}
+
+

@@ -14,7 +14,7 @@ class CategoriesCubit extends Cubit<CategoriesStates> {
     Future<List<ProductForViewModel>> getProductWithCategoryName(String categoryName , context )  async {
       emit(GetCategoryProductsLoading());
       (
-      await _repository.getProductsBaseOnCategoryName(categoryName: categoryName)
+      await _repository.getProductsBaseOnCategoryName(categoryName: categoryName , maxResult: 1000)
       ).fold((error){
         emit(GetCategoryProductsError());
       }, (productsList) {

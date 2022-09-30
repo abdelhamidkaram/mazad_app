@@ -48,8 +48,8 @@ class _SplashScreenState extends State<SplashScreen> {
            HomeCubit.get(context).getCategories(context).then((value){
              MyAuctionsCubit.get(context).getMyBids(context).then((value) => null);
              if(HomeCubit.get(context).products.isEmpty ){
-               HomeCubit.get(context).getProducts(context).then((value){
-                 HomeCubit.get(context).getCategoryBlocks();
+               HomeCubit.get(context).getProducts(context ,  false).then((value){
+                 HomeCubit.get(context).getCategoryBlocks(false);
                  return  const MainScreen();
                });
              }else{
@@ -59,8 +59,8 @@ class _SplashScreenState extends State<SplashScreen> {
          }else{
            HomeCubit.get(context).getCategories(context).then((value){
              if(HomeCubit.get(context).products.isEmpty ){
-               HomeCubit.get(context).getProducts(context).then((value){
-                 HomeCubit.get(context).getCategoryBlocks();
+               HomeCubit.get(context).getProducts(context,  false).then((value){
+                 HomeCubit.get(context).getCategoryBlocks( false);
                  return  const MainScreen();
                });
              }else{

@@ -9,7 +9,6 @@ import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/category/category_model.dart';
-import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_states.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/home_screen/categoreis_block_model.dart';
@@ -74,7 +73,7 @@ class HomeCubit extends Cubit<HomeStates> {
   List<ProductForViewModel> products = [];
   List<BidsModel> allLastBids = [];
 
-  Future getProducts(context) async {
+  Future getProducts(context , bool isRefresh) async {
     await _getAllLastBids(context).then((value) async {
       await FavoriteCubit.get(context).getFavorite(context);
       emit(GetProductsLoading());
@@ -85,7 +84,7 @@ class HomeCubit extends Cubit<HomeStates> {
           print(errorModel.message);
         }
         return;
-      }, (productsResponse) {
+      }, (productsResponse)async{
         List<ProductForViewModel> productsList =
             productsResponse.reversed.toList();
         for (var i = 0; i < productsList.length; i++) {
@@ -111,8 +110,9 @@ class HomeCubit extends Cubit<HomeStates> {
           e.lasPrice = e.productModel.product!.minPrice!.toInt().toString();
           return e;
         }).toList();
+        await getCategoryBlocks(isRefresh).then((value) => null);
         emit(GetProductsSuccess());
-        getCategoryBlocks();
+       
       });
       emit(GetProductsSuccess());
     });
@@ -129,7 +129,6 @@ class HomeCubit extends Cubit<HomeStates> {
         print(err.toString());
       }
       emit(GetAllLastBidsError());
-      LoginCubit.get(context).logOut(context);
     });
     return allLastBids;
   }
@@ -174,8 +173,12 @@ class HomeCubit extends Cubit<HomeStates> {
 
   List<CategoryBlockModel> categoriesBlocks = [];
 
-  Future getCategoryBlocks() async {
+  Future getCategoryBlocks(bool isRefresh) async {
+
     emit(GetCategoriesBlockLoading());
+    if(isRefresh){
+      categoriesBlocks = [];
+    }
     for (var cat in categories) {
       List<ProductForViewModel> productsList = [];
       for (var product in products) {

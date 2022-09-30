@@ -1,7 +1,4 @@
-
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,8 +73,8 @@ class MyApp extends StatelessWidget {
               await SharedPreferences.getInstance().then((value) async {
                 if( value.getBool(PrefsKey.isLogin) ?? true  )  {
                   HomeCubit.get(context).getCategories(context).then((value) async{
-                    await HomeCubit.get(context).getProducts(context).then((value){
-                      HomeCubit.get(context).getCategoryBlocks() ;
+                    await HomeCubit.get(context).getProducts(context,  false).then((value){
+                      HomeCubit.get(context).getCategoryBlocks(false) ;
                     });
                   });
                 }

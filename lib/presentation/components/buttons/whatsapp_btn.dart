@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../../main.dart';
 import '../../../style/color_manger.dart';
 import '../../../style/text_style.dart';

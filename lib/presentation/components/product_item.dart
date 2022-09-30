@@ -59,8 +59,14 @@ class _ProductItemState extends State<ProductItem> {
           var day = int.parse(
               widget.productForViewModel.productModel.product!.endDate!
                   .substring(8, 10));
+          var hour = int.parse(
+              widget.productForViewModel.productModel.product!.endDate!
+                  .substring(11, 13));
+          var minute = int.parse(
+              widget.productForViewModel.productModel.product!.endDate!
+                  .substring(14, 16));
           Duration difference = DateTime.now().difference(
-              DateTime.utc(year, month, day));
+              DateTime.utc(year, month, day , hour ,minute ));
 
           return OpenContainer(
               transitionDuration: const Duration(milliseconds: 800),

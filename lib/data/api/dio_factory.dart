@@ -1,16 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
-import 'package:soom/repository/repository.dart';
-
 import '../../main.dart';
 import '../cache/prefs.dart';
 
 class DioFactory {
   String newToken;
-
   bool noToken;
 
   DioFactory(this.newToken, {this.noToken = false});
@@ -18,15 +14,18 @@ class DioFactory {
   Dio dio() => Dio(BaseOptions(
       baseUrl: ApiBase.baseUrl,
       headers: !noToken
-          ? {
+          ?
+            {
               "Content-Type": "application/json",
               "Accept": "text/plain",
               "Authorization": "Bearer $newToken",
             }
-          : {
+          :
+            {
               "Content-Type": "application/json",
               "Accept": "text/plain",
-            }));
+            } ,
+  ));
 
   Future<Response> getData(String endpoint, Map<String, dynamic> query) async {
    Response _response = await dio().get(
@@ -34,11 +33,11 @@ class DioFactory {
       queryParameters: query,
     );
    if (_response.statusCode! == 401 && refreshToken.isNotEmpty) {
-     await getRefreshToken(_response).then((value){
+     await getRefreshToken().then((value){
        getData(endpoint, query);
      }).catchError((err){
        if (kDebugMode) {
-         print(err.toString());
+         print("error when refresh token :: \n "+err.toString());
        }
      });
    }
@@ -61,8 +60,8 @@ class DioFactory {
       String endpoint, Map<String, dynamic> query) async {
     return await dio().delete(endpoint, queryParameters: query);
   }
-  Future<void> getRefreshToken(Response<dynamic> _response) async {
-    DioFactory(token , noToken: true).getData(ApiEndPoint.getRefreshToken,
+  Future<void> getRefreshToken() async {
+   await DioFactory(token , noToken: true).getData(ApiEndPoint.getRefreshToken,
         {"refreshToken": refreshToken}).then((value) async {
       if (kDebugMode) {
         print("\n \n \n refresh token success \n \n \n ");

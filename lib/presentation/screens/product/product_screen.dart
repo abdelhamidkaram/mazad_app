@@ -53,7 +53,6 @@ class _ProductScreenState extends State<ProductScreen> {
         child: Padding(
           padding: const EdgeInsets.only(bottom: 16.0),
           child: Scaffold(
-            persistentFooterButtons: [],
             backgroundColor: ColorManger.white,
             appBar: AppBars.appBarGeneral(
               context,

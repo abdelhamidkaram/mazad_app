@@ -12,6 +12,7 @@ class ApiEndPoint {
   static const String getProductById = "api/services/app/Products/GetProductForView" ;
   static const String getAllCategories = "api/services/app/Categories/GetAll" ;
   static const String uploadProducts = "api/services/app/Products/CreateOrEdit" ;
+  static const String uploadImage = "app/productphotos/uploadphotofile" ;
   static const String addBid = "api/services/app/ProductAuactions/CreateOrEdit" ;
   static const String myBid = "api/services/app/ProductAuactions/GetAll" ;
   static const String myFavorite = "api/services/app/ProductFavorites/GetAll";

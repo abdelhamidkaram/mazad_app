@@ -82,8 +82,8 @@ class BidCubit extends Cubit<BidStates> {
      "productId": productId ,
    }).then((value){
      MyAuctionsCubit.get(context).getMyBids(context , isRefresh: true);
-     HomeCubit.get(context).getProducts(context).whenComplete((){
-       HomeCubit.get(context).getCategoryBlocks();
+     HomeCubit.get(context).getProducts(context,  false).whenComplete((){
+       HomeCubit.get(context).getCategoryBlocks( false);
      });
      Navigator.pop(context);
        AppToasts.toastSuccess(" تمت عملية المزايدة بنجاح", context);

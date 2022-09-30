@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
+import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
@@ -28,8 +29,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
     return BlocProvider(
       create: (context) => EditCubit(),
       child: BlocConsumer<EditCubit, EditStates>(
-          listener: (context, state) =>
-              [EditCubit(), AppCubit()..getProfileDetails(context)],
+          listener: (context, state) => EditCubit(),
           builder: (context, state) {
             var profile = AppCubit.get(context).profileEditSuccess;
             var formKey = GlobalKey<FormState>();
@@ -68,10 +68,11 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              editCubit.pickerCamera().then((_) {});
+                              editCubit.pickerCamera(context).then((_) {
+                              });
                             },
                             // ignore: prefer_const_constructors
-                            child: ProfileEditHeader(),
+                            child: const ProfileEditHeader() ,
                           ),
                           const SizedBox(
                             height: 24,

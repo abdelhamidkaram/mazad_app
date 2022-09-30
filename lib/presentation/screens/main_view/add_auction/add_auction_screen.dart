@@ -1,10 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:dotted_decoration/dotted_decoration.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/models/product_model.dart';
@@ -19,8 +19,6 @@ import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions
 import 'package:soom/presentation/screens/product/product_screen.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
-
-import '../../../../data/cache/prefs.dart';
 import '../../../../main.dart';
 import '../../../components/login_required_widget.dart';
 
@@ -340,27 +338,29 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                 cubit.targetPriceController.text.toString())
                                 .toDouble(),
                             "categoryId": cubit.categorySelected.index,
-                          }).then((value) {
+                          }).then((value) async {
                             int _productId = value.data["result"];
                             for (var photo in cubit.imagesObj) {
-                              DioFactory(token).postData(
+                              await DioFactory(token).postData(
                                   ApiEndPoint.createProductPhoto, {
                                 "photoToken": photo.token,
                                 "productId": _productId
-                              }).then((value) {});
-                            }
+                              }).then((value) {
 
-                            DioFactory(newToken).getData(
+                              });
+                            }
+                             DioFactory(newToken).getData(
                                 "api/services/app/Products/GetProductForView",
-                                {"id": _productId}).then((value) {
+                                {"id": _productId}).then((value) async {
                               HomeCubit.get(context).changeBottomNavBar(index: 0);
-                              MyAuctionsCubit.get(context).myProductsForView.add(ProductForViewModel(
-                                "",
-                                ProductModel.fromJson(
-                                    value.data["result"]),
-                              ));
-                              MyAuctionsCubit.get(context).isEmpty = false ;
-                              MyAuctionsCubit.get(context).getMyProducts(context , isRefresh: true);
+                              MyAuctionsCubit.get(context).getMyProducts(
+                                  context ,
+                                  isRefresh: true ,
+                              ).then((value) => null);
+                              MyAuctionsCubit.get(context).isEmpty
+                                  ?
+                              MyAuctionsCubit.get(context).isEmpty = false
+                                  : null ;
                               Navigator.pop(context);
                               Navigator.push(
                                 context,
@@ -380,7 +380,16 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               if (kDebugMode) {
                                 print(err.toString());
                               }
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const MainScreen(),));
+                              Navigator.pop(context);
+                              AppToasts.toastSuccess("تمت الإضافة بنجاح ", context);
+                              Timer(const Duration(seconds: 2) , (){
+                                Navigator.pop(context);
+                              });
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const MainScreen(),
+                                  ),
+                              );
                             });
                             Navigator.pop(context);
                             AppToasts.toastSuccess(
@@ -407,7 +416,6 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
         :
     const LoginRequiredWidget(message: "يرجي تسجيل الدخول لتتمكن من اضافة مزاد جديد ");
 
-    ;
   }
 }
 

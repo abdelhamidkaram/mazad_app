@@ -42,7 +42,7 @@ class _ProfileHomeState extends State<ProfileHome> {
               // ignore: prefer_const_constructors
               "الأسئلة الشائعة",
               "assets/qa.svg",
-              QAScreen()),
+               QAScreen()),
           ProfileItemModel(
               "الدعم الفني", "assets/support.svg", const SupportScreen()),
         ];
@@ -88,7 +88,6 @@ class _ProfileHomeState extends State<ProfileHome> {
           ),
         ):
         const LoginRequiredWidget(message: "يرجي تسجيل الدخول لعرض معلومات حسابك ");
-
       },
     );
   }

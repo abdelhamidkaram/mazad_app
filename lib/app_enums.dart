@@ -1,0 +1,4 @@
+enum ImgProfileType {
+  url,
+  imgFile,
+}

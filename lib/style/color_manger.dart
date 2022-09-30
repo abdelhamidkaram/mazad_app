@@ -22,7 +22,4 @@ class ColorManger {
   static const Color green_10 = Color(0x1A43B055);
   static const Color productTitle = Color(0xFF003ADE);
 
-
-
-
 }
