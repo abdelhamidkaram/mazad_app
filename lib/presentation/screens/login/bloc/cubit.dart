@@ -116,7 +116,7 @@ class LoginCubit extends Cubit<LoginStates> {
       id = value.data["result"]["userId"].toString();
       SharedPreferences.getInstance().then((pref) async {
         pref.setString(PrefsKey.token, token).then((value) {});
-        pref.setString(PrefsKey.refreshToken, token).then((value) {});
+        pref.setString(PrefsKey.refreshToken, refreshToken).then((value) {});
         await pref.setString(PrefsKey.userId, id);
         await pref.setBool(PrefsKey.isLogin, true);
       });

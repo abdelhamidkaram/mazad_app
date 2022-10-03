@@ -154,19 +154,21 @@ class HomeCubit extends Cubit<HomeStates> {
   bool isGetCatsFinish = false;
 
   Future getCategories(context) async {
-    emit(GetCategoriesLoading());
-    (await _repository.getCategories()).fold((errorModel) {
-      isGetCatsFinish = true;
-      if (kDebugMode) {
-        print(errorModel.message);
-      }
-     // LoginCubit.get(context).logOut(context);
-      emit(GetCategoriesError());
-    }, (categoriesList) async {
-      isGetCatsFinish = true;
-      categories = categoriesList;
-      emit(GetCategoriesSuccess());
-    });
+   if(categories.isEmpty){
+     emit(GetCategoriesLoading());
+     (await _repository.getCategories()).fold((errorModel) {
+       isGetCatsFinish = true;
+       if (kDebugMode) {
+         print(errorModel.message);
+       }
+       // LoginCubit.get(context).logOut(context);
+       emit(GetCategoriesError());
+     }, (categoriesList) async {
+       isGetCatsFinish = true;
+       categories = categoriesList;
+       emit(GetCategoriesSuccess());
+     });
+   }
   }
 
   // ------------------ get categoryBlock  --------------//

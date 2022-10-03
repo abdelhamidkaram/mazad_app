@@ -2,8 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
+import 'package:soom/data/cache/prefs.dart';
 import '../../main.dart';
-import '../cache/prefs.dart';
+int refresh = 0;
 
 class DioFactory {
   String newToken;
@@ -11,36 +12,74 @@ class DioFactory {
 
   DioFactory(this.newToken, {this.noToken = false});
 
-  Dio dio() => Dio(BaseOptions(
+  Dio dio(){
+    Dio _dio = Dio(BaseOptions(
       baseUrl: ApiBase.baseUrl,
       headers: !noToken
           ?
-            {
-              "Content-Type": "application/json",
-              "Accept": "text/plain",
-              "Authorization": "Bearer $newToken",
-            }
+      {
+        "Content-Type": "application/json",
+        "Accept": "text/plain",
+        "Authorization": "Bearer $newToken",
+      }
           :
-            {
-              "Content-Type": "application/json",
-              "Accept": "text/plain",
-            } ,
-  ));
+      {
+        "Content-Type": "application/json",
+        "Accept": "text/plain",
+      } ,
+    ));
+    _dio.interceptors.clear();
+    _dio.interceptors.add(InterceptorsWrapper(
+        onError: (DioError error, handler) async {
+        if ((error.response?.statusCode == 401)) {
+          if (refreshToken.isNotEmpty) {
+            if (await _refreshToken()) {
+              return handler.resolve(await _retry(error.requestOptions));
+            }
+          }
+        }
+        return handler.next(error);
+      }
+    ));
+    return _dio ;
+  }
+  Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
+    final options = Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+    return dio().request<dynamic>(requestOptions.path,
+        data: requestOptions.data,
+        queryParameters: requestOptions.queryParameters,
+        options: options);
+  }
 
+  Future<bool> _refreshToken() async {
+    if(refresh == 1){
+      return false ;
+    }
+    final response = await dio()
+        .post("api/TokenAuth/RefreshToken?refreshToken=$refreshToken",);
+    if (response.statusCode == 200) {
+      token = response.data["result"]["accessToken"];
+      newToken = response.data["result"]["accessToken"];
+      await SharedPreferences.getInstance().then((value) async {
+        await value.setString(PrefsKey.token,response.data["result"]["accessToken"] );
+      });
+      refresh = 1 ;
+      return true;
+    } else {
+      refresh = 1 ;
+      token = "";
+      return false;
+    }
+  }
   Future<Response> getData(String endpoint, Map<String, dynamic> query) async {
    Response _response = await dio().get(
       endpoint,
       queryParameters: query,
     );
-   if (_response.statusCode! == 401 && refreshToken.isNotEmpty) {
-     await getRefreshToken().then((value){
-       getData(endpoint, query);
-     }).catchError((err){
-       if (kDebugMode) {
-         print("error when refresh token :: \n "+err.toString());
-       }
-     });
-   }
+
    return _response;
   }
 
@@ -60,19 +99,6 @@ class DioFactory {
       String endpoint, Map<String, dynamic> query) async {
     return await dio().delete(endpoint, queryParameters: query);
   }
-  Future<void> getRefreshToken() async {
-   await DioFactory(token , noToken: true).getData(ApiEndPoint.getRefreshToken,
-        {"refreshToken": refreshToken}).then((value) async {
-      if (kDebugMode) {
-        print("\n \n \n refresh token success \n \n \n ");
-      }
-      token = value.data["result"]["accessToken"];
-      await SharedPreferences.getInstance().then((pref) async {
-        await pref.setString(
-            PrefsKey.token, value.data["result"]["accessToken"]);
-      });
-    });
 
-  }
 
 }

@@ -25,7 +25,7 @@ void main() async {
   await SharedPreferences.getInstance().then((value) async {
     if( value.getBool(PrefsKey.isLogin) ?? true){
       token = value.getString(PrefsKey.token)??"";
-      refreshToken =" ${value.get(PrefsKey.refreshToken) ?? "" } " ;
+      refreshToken ="${value.get(PrefsKey.refreshToken)??""}" ;
       id = value.get(PrefsKey.userId).toString();
     }
     });

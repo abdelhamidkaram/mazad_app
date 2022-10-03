@@ -23,36 +23,38 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
   bool isEmpty = false ;
   List<ProductForViewModel> favoritesItemsForView  = [] ;
   Future getFavorite (context , {bool isRefresh = false }) async {
-    if(((favoritesItemsForView.isEmpty && !isEmpty ) || isRefresh) && token.isNotEmpty) {
+    if(((favoritesItemsForView.isEmpty && !isEmpty  ) || isRefresh) && token.isNotEmpty  ) {
     emit(GetFavoriteLoading());
     AppCubit.get(context).getProfileDetails(context).then((value){
-    DioFactory(token).getData(ApiEndPoint.myFavorite, {
-      "UserNameFilter" : AppCubit.get(context).profileEditSuccess.result!.userName
-    }).then((value){
-      List  response = value.data["result"]["items"] ;
-      favoritesItemsResponse = response.map((e) => FavoriteModel.fromJson(e)).toList();
-      if(value.data["result"]["totalCount"] > 0 ){
-        List responseList = value.data["result"]["items"] ;
-       favoritesItemsForView = responseList.map(
-               (e) => FavoriteModel.fromJson(e).toProductViewModel(context)).toList() ;
-       isEmpty = false ;
-       isLoading = false ;
-        emit(GetFavoriteSuccess());
-      }else{
+      DioFactory(token).getData(ApiEndPoint.myFavorite, {
+        "UserNameFilter" : AppCubit.get(context).profileEditSuccess.result!.userName
+      }).then((value){
+        List  response = value.data["result"]["items"] ;
+        favoritesItemsResponse = response.map((e) => FavoriteModel.fromJson(e)).toList();
+        if(value.data["result"]["totalCount"] > 0 ){
+          List responseList = value.data["result"]["items"] ;
+          favoritesItemsForView = responseList.map(
+                  (e) => FavoriteModel.fromJson(e).toProductViewModel(context)).toList() ;
+          isEmpty = false ;
+          isLoading = false ;
+          emit(GetFavoriteSuccess());
+        }else{
           isEmpty = true ;
           isLoading = false ;
-
           emit(GetFavoriteSuccess());
+        }
+      }).catchError((err){
+        if (kDebugMode) {
+          print(err);
+          AppToasts.toastError(err.toString(), context);
+        }
+        isLoading = false ;
+        emit(GetFavoriteError());
       }
+      );
     }).catchError((err){
-      if (kDebugMode) {
-        print(err);
-      AppToasts.toastError(err.toString(), context);
-      }
-      isLoading = false ;
       emit(GetFavoriteError());
-    }
-    );
+      return ;
     });
     }else {
       Future.value("") ;

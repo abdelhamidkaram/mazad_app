@@ -16,15 +16,15 @@ class BidCubit extends Cubit<BidStates> {
   static BidCubit get(context) => BlocProvider.of(context);
   var controller = TextEditingController();
   bool isAddBid = false;
-  int bidCounter = 100;
+  int bidCounter = 1;
 
   TextEditingController getController(  context ,   ProductForViewModel productModel) {
     //TODO:
     DioFactory(token).getData(ApiEndPoint.getLastBid, {
       "id":productModel.productModel.product!.id ,
     }).then((value){
-      if(value.data["result"][0]["price"] != 0){
-        controller.text = value.data["result"][0]["price"];
+      if(value.data["result"][0]["price"] != 0 && value.data["result"][0]["price"] != null ){
+        controller.text = value.data["result"][0]["price"].toString();
         print("++++++++++++++++++++++++++++++++ ${value.data["result"][0]["price"]} ");
         emit(GetBidController());
         return controller;

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -56,16 +58,26 @@ class AppCubit extends Cubit<AppStates> {
   //------------ get profile details
 
   ProfileEditSuccess profileEditSuccess = ProfileEditSuccess();
+  int firstRefreshToken = 0 ;
   Future getProfileDetails(context) async {
     emit(GetProfileDetailsLoading());
+    if( profileEditSuccess.result == null && token.isNotEmpty){
+      await DioFactory(token).getData(ApiEndPoint.getProfileDetails , {}).then((value){
+        profileEditSuccess = ProfileEditSuccess.fromJson(value.data);
+        getSystemConf(context).then((value) => null);
+        getUserImage().then((value) => null);
+        emit(GetProfileDetailsSuccess());
+return value ;
+      }).catchError((err) async {
+
+        print(err.toString());
+      });
+    }
   if(token.isNotEmpty){
     (await _repository.getProfileDetails()).fold((error) {
-      emit(GetProfileDetailsError());
+
     }, (profileSuccess) async {
-      profileEditSuccess = profileSuccess;
-      getSystemConf(context).then((value) => null);
-      getUserImage().then((value) => null);
-      emit(GetProfileDetailsSuccess());
+
     });
   }
   }

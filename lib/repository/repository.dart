@@ -91,34 +91,75 @@ class Repository {
 
   Future<Either<ErrorModel, ProfileEditSuccess>> getProfileDetails() async {
     Response _response;
-    try {
       _response =
-          await DioFactory(token).getData(ApiEndPoint.getProfileDetails, {});
-    } catch (error) {
-      if (kDebugMode) {
-        print("profile  error : :::::::::::::::::::::::: ");
-        print(error.toString());
-      }
-      return Left(ErrorModel(
-          message: error.toString() +
-              "\n" +
-              "فشل جلب معلومات حسابك في الوقت الحالي يرجي المحاولة لاحقا ",
-          statusCode: error.hashCode));
-    }
-    if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
-      return Right(ProfileEditSuccess.fromJson(_response.data));
-    } else {
-      if (_response.statusCode! >= 401 && refreshToken.isNotEmpty){
+          await DioFactory(token).getData(ApiEndPoint.getProfileDetails , {});
 
+      if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
+        return Right(ProfileEditSuccess.fromJson(_response.data));
+      } else {
+        if(_response.statusCode! == 401 && refreshToken.isNotEmpty ){
+         (await getProfileWithRefreshToken()).fold((error){
+           if (kDebugMode) {
+             print("ERROR  when refresh token ::  ${error.toString()} ");
+           }
+           return Left(error);
+         }, (r) {
+           if (kDebugMode) {
+             print("Success when refresh token ::  ${r.result!.userName.toString()} ");
+           }
+           return Right(r);
+             });
+
+        }
+        return Left(ErrorModel(
+          statusCode: _response.hashCode,
+          message: "فشل جلب معلومات حسابك في الوقت الحالي يرجي المحاولة لاحقا",
+        ));
       }
-      return Left(ErrorModel(
-        statusCode: _response.hashCode,
-        message: "فشل جلب معلومات حسابك في الوقت الحالي يرجي المحاولة لاحقا",
-      ));
-    }
+
+
 
   }
-
+  Future<Either<ErrorModel, ProfileEditSuccess>> getProfileWithRefreshToken() async {
+    Response _response;
+    await DioFactory(token , noToken: true).getData(ApiEndPoint.refreshToken,
+        {"refreshToken": refreshToken}).then((value) async {
+      if (kDebugMode) {
+        print("\n \n \n refresh token success \n \n \n ");
+      }
+      token = value.data["result"]["accessToken"];
+      await SharedPreferences.getInstance().then((pref) async {
+        await pref.setString(
+            PrefsKey.token, value.data["result"]["accessToken"]);
+      });
+      try {
+        _response =
+        await DioFactory(value.data["result"]["accessToken"]).getData(ApiEndPoint.getProfileDetails, {});
+      } catch (error) {
+        if (kDebugMode) {
+          print("profile  error in refresh token  : :::::::::::::::::::::::: ");
+          print(error.toString());
+        }
+        return Left(ErrorModel(
+            message: error.toString() +
+                "\n" +
+                "فشل جلب معلومات حسابك في الوقت الحالي يرجي المحاولة لاحقا ",
+            statusCode: error.hashCode));
+      }
+      if (_response.statusCode! >= 200 && _response.statusCode! <= 299) {
+        return Right(ProfileEditSuccess.fromJson(_response.data));
+      } else {
+        return Left(ErrorModel(
+          statusCode: _response.statusCode ?? 450 ,
+          message: "فشل جلب معلومات حسابك في الوقت الحالي يرجي المحاولة لاحقا",
+        ));
+      }
+    });
+    return Left(ErrorModel(
+      statusCode: -1,
+      message: "فشل جلب معلومات حسابك في الوقت الحالي يرجي المحاولة لاحقا",
+    ));
+  }
 // ------------ get all products details   --------------//
 
   Future<Either<ErrorModel, List<ProductForViewModel>>> getProducts(

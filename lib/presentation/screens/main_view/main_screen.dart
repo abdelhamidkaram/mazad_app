@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/main.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
@@ -17,6 +19,8 @@ import 'package:soom/presentation/screens/profile/screens/profile_home.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+
+import '../../../data/cache/prefs.dart';
 
 
 class MainScreen extends StatefulWidget {
@@ -109,7 +113,7 @@ class _MainScreenState extends State<MainScreen> {
                                 controller: pageController,
                                 onPageChanged: (value) {
                                   if (value == 4 ) {
-                                    if(AppCubit.get(context).profileEditSuccess.result!.emailAddress!.isEmpty && token.isNotEmpty){
+                                    if((AppCubit.get(context).profileEditSuccess.result!.emailAddress!.isEmpty ||AppCubit.get(context).profileEditSuccess.result == null ) && token.isNotEmpty){
                                       AppCubit.get(context)
                                           .getProfileDetails(context);
                                     }

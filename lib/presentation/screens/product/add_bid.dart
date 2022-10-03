@@ -7,6 +7,7 @@ import 'package:soom/main.dart';
 import 'package:soom/models/auction_model.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/models/profile_detalis_success.dart';
+import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/components/login_required_widget.dart';
@@ -43,8 +44,8 @@ class _AddBidState extends State<AddBid> {
         var bidCubit = BidCubit.get(context);
         var controller = bidCubit.controller;
         var bidPriceKey = GlobalKey<FormFieldState>();
-        List<int> bidCounter = [1, 2, 3, 4, 5, 6, 7, 8, 10, 20, 30, 40, 50];
-        _replaceController() {
+        List<int> bidCounter = [1, 2, 3, 4, 5, 6, 7, 8,9, 10, 20, 30, 40, 50];
+         _replaceController() {
           setState(() {
             if (controller.text.contains(",") ||
                 controller.text.contains(".") ||
@@ -119,49 +120,65 @@ class _AddBidState extends State<AddBid> {
                             const SizedBox(
                               height: 25,
                             ),
-                            Text(
-                              widget.productModel.title!,
-                              style: AppTextStyles.titleBlue_24,
-                              maxLines: 3,
-                              overflow: TextOverflow.ellipsis,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("اسم المنتج : ", style: AppTextStyles.titleBlack,),
+                                Text(
+                                 widget.productModel.title!,
+                                  style: AppTextStyles.titleBlue_24,
+                                  maxLines: 3,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
                             const SizedBox(
                               height: 10,
                             ),
-                            Center(
-                              child: SizedBox(
-                                width: 150,
-                                child: TextFormField(
-                                  key: bidPriceKey,
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return " ادخل قيمة المزايدة ";
-                                    } else {
-                                      _replaceController();
-                                      _checkRangeBidOrCheckAndSendDataToServer(
-                                          value);
-                                    }
-                                    return null;
-                                  },
-                                  onEditingComplete: () {
-                                    _replaceController();
-                                  },
-                                  onFieldSubmitted: (value) {
-                                    _replaceController();
-                                    _checkRangeBidOrCheckAndSendDataToServer(
-                                        value);
-                                  },
-                                  controller: controller,
-                                  textAlign: TextAlign.center,
-                                  style: AppTextStyles.titleGreen_30,
-                                  keyboardType:
-                                  const TextInputType.numberWithOptions(),
-                                  decoration: const InputDecoration(
-                                    hintStyle: AppTextStyles.titleGreen_30,
-                                    border: InputBorder.none,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text("اضافة مزايدة : ", style: AppTextStyles.titleBlack,),
+                                Center(
+                                  child: SizedBox(
+                                    width: 160,
+                                    height: 60,
+                                    child: TextFormField(
+                                      key: bidPriceKey,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return " ادخل قيمة المزايدة ";
+                                        } else {
+                                          _replaceController();
+                                          _checkRangeBidOrCheckAndSendDataToServer(
+                                              value);
+                                        }
+                                        return null;
+                                      },
+                                      onEditingComplete: () {
+                                        _replaceController();
+                                      },
+                                      onFieldSubmitted: (value) {
+                                        _replaceController();
+                                        _checkRangeBidOrCheckAndSendDataToServer(
+                                            value);
+                                      },
+                                      controller: controller,
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyles.titleGreen_30,
+                                      keyboardType:
+                                      const TextInputType.numberWithOptions(),
+                                      decoration:  InputDecoration(
+                                        prefix: const Text("kw" , style: AppTextStyles.currencyGreen,),
+                                        hintStyle: AppTextStyles.titleGreen_30,
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
                             const SizedBox(
                               height: 15,
@@ -181,6 +198,7 @@ class _AddBidState extends State<AddBid> {
                                         setState(() {
                                           bidCubit.bidCounter =
                                           bidCounter[index];
+                                          controller.text = (int.parse(lastPrice) + bidCounter[index]).toString();
                                         });
                                       },
                                       child: Center(
@@ -209,17 +227,42 @@ class _AddBidState extends State<AddBid> {
                                   backgroundColor: ColorManger.lightGrey,
                                   foregroundColor: ColorManger.black,
                                   onPressed: () {
-                                    bidCubit.addBid(
-                                        widget.productModel, context);
+                                    int index = 0 ;
+                                    for(int count in bidCounter){
+                                      index++;
+                                      if(bidCubit.bidCounter == count && index != bidCounter.length ){
+                                        setState(() {
+                                          bidCubit.bidCounter = bidCounter[index];
+                                          controller.text = (int.parse(lastPrice) + bidCubit.bidCounter).toString();
+                                        });
+                                        break;
+                                      }
+
+
+                                    }
                                   },
-                                  child: const Icon(Icons.add),
+                                  child: const Icon(Icons.arrow_back_ios),
                                 ),
                                 const SizedBox(
                                   width: 10,
                                 ),
-                                Text(
-                                  bidCubit.bidCounter.toString(),
-                                  style: AppTextStyles.titleSmallBlack,
+                                SizedBox(
+                                  width: 60,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    children: [
+                                      const Text(
+                                        "KW",
+                                        style: TextStyle(
+                                        ),
+                                      ),
+                                      Text(
+                                        bidCubit.bidCounter.toString(),
+                                        style: AppTextStyles.titleSmallBlack,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(
                                   width: 10,
@@ -229,10 +272,22 @@ class _AddBidState extends State<AddBid> {
                                   backgroundColor: ColorManger.lightGrey,
                                   foregroundColor: ColorManger.black,
                                   onPressed: () {
-                                    bidCubit.removeBid(
-                                        widget.productModel, context);
+                                    //TODO: DELETE removeBid FUN FORM BID CUBIT
+                                   //   bidCubit.removeBid(
+                                  //       widget.productModel, context);
+                                    for(int i =0 ;i < bidCounter.length ; i++){
+                                        if(bidCounter[i] == bidCubit.bidCounter){
+                                          setState((){
+                                          if(i != 0){
+                                            bidCubit.bidCounter = bidCounter[i-1];
+                                          }
+                                          controller.text = (int.parse(lastPrice) + bidCubit.bidCounter).toString();
+                                          });
+                                        }
+
+                                    }
                                   },
-                                  child: const Icon(Icons.remove),
+                                  child: const Icon(Icons.arrow_forward_ios),
                                 ),
                                 const Spacer(),
                               ],
@@ -250,7 +305,7 @@ class _AddBidState extends State<AddBid> {
                                   widget.productModel.productModel,
                                   userModel: UserModel(
                                       userId:
-                                      int.parse(id)), //TODO : USER MODEL
+                                      int.parse(id)),
                                 );
                                 _checkRangeBidOrCheckAndSendDataToServer(
                                     controller.text,

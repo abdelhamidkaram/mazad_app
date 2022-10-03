@@ -29,5 +29,5 @@ class ApiEndPoint {
   static const String getSystemConf = "api/services/app/SystemConfigrations/GetAll";
   static const String getAllLastBids = "api/services/app/ProductAuactions/GetLastBidForProduct";
   static const String createProductPhoto = "api/services/app/ProductPhotos/CreateOrEdit";
-  static const String getRefreshToken = "api/TokenAuth/RefreshToken";
+  static const String refreshToken = "api/TokenAuth/RefreshToken";
 }

@@ -36,7 +36,7 @@ ProductForViewModel(
   details = productModel.product?.descrption ?? "لا يوجد وصف " ;
   categoryId = productModel.product?.categoryId ?? 0 ;
   if(photos!.isNotEmpty && thumbnail != photos![0]){
-    thumbnail = "${AppString.getImageBaseUrl}${photos![0]} ";
+    thumbnail = "${AppString.getImageBaseUrl}${photos![0]}";
   }
   if(productModel.product!.count != null ){
     auctionCounter = productModel.product!.count.toString() ;

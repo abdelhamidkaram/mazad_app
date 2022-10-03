@@ -5,9 +5,13 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
 class ProductPriceBox extends StatefulWidget {
-  final ProductForViewModel productModel ;
-  final String lastPrice ;
-  const ProductPriceBox({Key? key, required this.productModel, required this.lastPrice}) : super(key: key);
+  final ProductForViewModel productModel;
+
+  final String lastPrice;
+
+  const ProductPriceBox(
+      {Key? key, required this.productModel, required this.lastPrice})
+      : super(key: key);
 
   @override
   State<ProductPriceBox> createState() => _ProductPriceBoxState();
@@ -31,52 +35,61 @@ class _ProductPriceBoxState extends State<ProductPriceBox> {
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text("الوقت" , style: AppTextStyles.mediumBlack,),
+                  child: Text(
+                    "الوقت",
+                    style: AppTextStyles.mediumBlack,
+                  ),
                 ),
                 Container(
-                  padding:const EdgeInsets.symmetric(horizontal: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   height: 30,
                   color: ColorManger.primaryLight_10,
-                  child: TimerDownDate(time: widget.productModel.time!,),
+                  child: TimerDownDate(
+                    time: widget.productModel.time!,
+                  ),
                 ),
               ],
             ),
             Padding(
-                padding: const  EdgeInsets.symmetric(vertical: 8.0 ,horizontal: 5.0),
-                child:  Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+                child: Container(
                   width: 1,
                   color: ColorManger.lightGrey,
-                )
-
-            )  ,
+                )),
             Column(
               children: [
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text("سعر الشراء" , style: AppTextStyles.mediumBlack,),
+                  child: Text(
+                    "نهاية المزاد",
+                    style: AppTextStyles.mediumBlack,
+                  ),
                 ),
-               PriceAndCurrencyRed(productModel: widget.productModel),
-
+                PriceAndCurrencyRed(productModel: widget.productModel),
               ],
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0 ,horizontal: 5.0),
-              child:   Container(
+              padding:
+                  const EdgeInsets.symmetric(vertical: 8.0, horizontal: 5.0),
+              child: Container(
                 width: 1,
                 color: ColorManger.lightGrey,
-              ) ,
-            )  ,
+              ),
+            ),
             Column(
               children: [
-                const     Padding(
+                const Padding(
                   padding: EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text("آخر مزايدة" , style: AppTextStyles.mediumBlack,),
+                  child: Text(
+                    "آخر مزايدة",
+                    style: AppTextStyles.mediumBlack,
+                  ),
                 ),
                 PriceAndCurrencyGreen(
                   productModel: widget.productModel,
                   lastPrice: widget.lastPrice,
                 ),
-
               ],
             ),
           ],
@@ -86,13 +99,14 @@ class _ProductPriceBoxState extends State<ProductPriceBox> {
   }
 }
 
-
-
 class PriceAndCurrencyGreen extends StatefulWidget {
-  final ProductForViewModel  productModel ;
-  final String  lastPrice ;
+  final ProductForViewModel productModel;
 
-  const PriceAndCurrencyGreen({Key? key, required this.productModel, required this.lastPrice}) : super(key: key);
+  final String lastPrice;
+
+  const PriceAndCurrencyGreen(
+      {Key? key, required this.productModel, required this.lastPrice})
+      : super(key: key);
 
   @override
   State<PriceAndCurrencyGreen> createState() => _PriceAndCurrencyGreenState();
@@ -104,17 +118,26 @@ class _PriceAndCurrencyGreenState extends State<PriceAndCurrencyGreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        const Text("KW", style: AppTextStyles.currencyGreen,),
-        Text(widget.lastPrice.length > 6 ? widget.lastPrice.substring(0,6)  : widget.lastPrice , style: AppTextStyles.titleGreen,),
+        const Text(
+          "KW",
+          style: AppTextStyles.currencyGreen,
+        ),
+        Text(
+          widget.lastPrice.length > 6
+              ? widget.lastPrice.substring(0, 6)
+              : widget.lastPrice,
+          style: AppTextStyles.titleGreen,
+        ),
       ],
     );
   }
 }
 
-
 class PriceAndCurrencyRed extends StatefulWidget {
-  final ProductForViewModel  productModel ;
-  const PriceAndCurrencyRed({Key? key, required this.productModel}) : super(key: key);
+  final ProductForViewModel productModel;
+
+  const PriceAndCurrencyRed({Key? key, required this.productModel})
+      : super(key: key);
 
   @override
   State<PriceAndCurrencyRed> createState() => _PriceAndCurrencyRedState();
@@ -123,12 +146,27 @@ class PriceAndCurrencyRed extends StatefulWidget {
 class _PriceAndCurrencyRedState extends State<PriceAndCurrencyRed> {
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return (widget.productModel.targetPrice != null && widget.productModel.targetPrice != 0.0)
+        ?
+    Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        const Text("KW", style: AppTextStyles.currencyRed,),
-        Text(widget.productModel.targetPrice.toString().substring(0 , widget.productModel.initialPrice.toString().length >=6 ?  6 : widget.productModel.initialPrice.toString().length), style: AppTextStyles.titleRed,),
+        const Text(
+          "KW",
+          style: AppTextStyles.currencyRed,
+        ),
+        Text(
+          widget.productModel.targetPrice.toString().substring(
+              0,
+              widget.productModel.targetPrice.toString().length >= 6
+                  ? 6
+                  : widget.productModel.targetPrice.toString().length),
+          style: AppTextStyles.titleRed,
+        ),
       ],
-    );
+    )
+       :
+    const Text("غير محدد" , style: AppTextStyles.smallBlack,);
+
   }
 }

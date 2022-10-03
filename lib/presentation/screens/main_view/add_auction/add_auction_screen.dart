@@ -188,7 +188,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               )),
                         ),
                       ),
-                      const CustomFieldTitle(title: "السعر"),
+                      const CustomFieldTitle(title: "بداية سعر المزاد : "),
                       TextFormField(
                         controller: cubit.initialPriceController,
                         keyboardType: const TextInputType.numberWithOptions(
@@ -205,23 +205,23 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                           return null;
                         },
                       ),
-                      const CustomFieldTitle(title: "أقل سعر"),
-                      TextFormField(
-                          controller: cubit.minPriceController,
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: false, signed: false),
-                          decoration: const InputDecoration(
-                            hintText: " 5000 kw ",
-                            border: OutlineInputBorder(),
-                            hintStyle: AppTextStyles.smallGrey,
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "يرجي ادخال السعر";
-                            }
-                            return null;
-                          }),
-                      const CustomFieldTitle(title: "السعر المستهدف"),
+                      // const CustomFieldTitle(title: "أقل سعر"),
+                      // TextFormField(
+                      //     controller: cubit.minPriceController,
+                      //     keyboardType: const TextInputType.numberWithOptions(
+                      //         decimal: false, signed: false),
+                      //     decoration: const InputDecoration(
+                      //       hintText: " 5000 kw ",
+                      //       border: OutlineInputBorder(),
+                      //       hintStyle: AppTextStyles.smallGrey,
+                      //     ),
+                      //     validator: (value) {
+                      //       if (value!.isEmpty) {
+                      //         return "يرجي ادخال السعر";
+                      //       }
+                      //       return null;
+                      //     }),
+                      const CustomFieldTitle(title: "نهاية سعر المزاد (اختياري):"),
                       TextFormField(
                           controller: cubit.targetPriceController,
                           keyboardType: const TextInputType.numberWithOptions(
@@ -231,12 +231,13 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                             border: OutlineInputBorder(),
                             hintStyle: AppTextStyles.smallGrey,
                           ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "يرجي ادخال السعر";
-                            }
-                            return null;
-                          }),
+                          // validator: (value) {
+                          //   if (value!.isEmpty) {
+                          //     return "يرجي ادخال السعر";
+                          //   }
+                          //   return null;
+                          // },
+                          ),
                       const CustomFieldTitle(title: "وقت المزاد"),
                       GestureDetector(
                         onTap: () {
@@ -326,17 +327,21 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                 .initialPriceController.text
                                 .toString())
                                 .toDouble(),
+                            // TODO: change or delete => min price
                             "minPrice": int.parse(
-                                cubit.minPriceController.text.toString())
+                                cubit.initialPriceController.text.toString())
                                 .toDouble(),
                             //2022-09-12T14:54:18.065297Z
                             "endDate": endDate.substring(0, 10) +
                                 "T" +
                                 endDate.substring(11, 19),
                             "status": 0,
-                            "targetPrice": int.parse(
+                            "targetPrice": cubit.targetPriceController.text != "" ?
+                            int.parse(
                                 cubit.targetPriceController.text.toString())
-                                .toDouble(),
+                                .toDouble() :
+                            0.0
+                            ,
                             "categoryId": cubit.categorySelected.index,
                           }).then((value) async {
                             int _productId = value.data["result"];
@@ -370,7 +375,10 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                     productModel: ProductForViewModel(
                                       "",
                                       ProductModel.fromJson(
-                                          value.data["result"]),
+                                          value.data["result"]
+                                      ,
+                                      ),
+                                      lasPrice: double.parse(cubit.initialPriceController.text.toString()).toInt().toString(),
                                     ),
                                     lastPrice: cubit.minPriceController.text.toString(),
                                   ),
