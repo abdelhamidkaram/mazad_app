@@ -47,7 +47,7 @@ class UserModel {
         this.isGoogleAuthenticatorEnabled,
      this.userId
       }){
-    userId =  int.parse(id) ;
+    userId =  int.parse(idUser) ;
   }
 
 
@@ -61,7 +61,7 @@ class UserModel {
     timezone = json['timezone'];
     qrCodeSetupImageUrl = json['qrCodeSetupImageUrl'];
     isGoogleAuthenticatorEnabled = json['isGoogleAuthenticatorEnabled'];
-    userId =  int.parse(id) ;
+    userId =  int.parse(idUser) ;
   }
 
   Map<String, dynamic> toJson() {

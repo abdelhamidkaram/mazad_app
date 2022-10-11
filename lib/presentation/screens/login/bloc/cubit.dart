@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/foundation.dart';
@@ -11,18 +11,16 @@ import 'package:soom/data/cache/prefs.dart';
 import 'package:soom/main.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/login/login.dart';
-import 'package:soom/presentation/screens/login/register.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/main_screen.dart';
 import 'package:soom/presentation/screens/login/bloc/states.dart';
-import 'package:soom/presentation/screens/login/confirm.dart';
 import 'package:soom/repository/repository.dart';
 import 'package:soom/repository/request_models.dart';
-import 'package:soom/test1.dart';
-
 import '../../../../constants/api_constants.dart';
+import '../../../app_bloc/app_cubit.dart';
 import '../../main_view/bloc/home_cubit.dart';
 import '../../main_view/my_auctions/bloc/my_auctions_cubit.dart';
+import 'package:soom/main.dart';
 
 class LoginCubit extends Cubit<LoginStates> {
   LoginCubit() : super(InitState());
@@ -70,26 +68,27 @@ class LoginCubit extends Cubit<LoginStates> {
 
   // ---------- Password Validation ----------------|
 
-  passwordValidation(value, bool isLogin) {
+  String? passwordValidation(value, bool isLogin) {
     if (value!.length > 5) {
       RegExp regex = RegExp(
           r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{5,}$');
+        // if (!regex.hasMatch(value) && isLogin == false) {
+        //   return ''' يجب ان تحتوي كلمة المرور علي :
+        //                         حروف كبيره وصغيرة [A-Z] وارقام ورموز  ''';
+        // }
+        return null ;
+
+    } else {
       if (value!.isEmpty) {
         return 'ادخل كلمة المرور ';
-      } else {
-        if (!regex.hasMatch(value) && isLogin == false) {
-          return ''' يجب ان تحتوي كلمة المرور علي : 
-                                حروف كبيره وصغيرة [A-Z] وارقام ورموز  ''';
-        }
       }
-    } else {
       return "كلمة المرور قصيرة جدا ";
     }
   }
 
   // ---------- Email Validation ----------------|
 
-  emailValidation(value) {
+  String ? emailValidation (value) {
     if (value!.isNotEmpty) {
       final bool isValid = EmailValidator.validate(value!);
       if (!isValid) {
@@ -98,45 +97,44 @@ class LoginCubit extends Cubit<LoginStates> {
     } else {
       return "لايمكن ترك الحقل فارغا";
     }
+    return null;
   }
 
   // ---------- Login ----------------|
-  Future<void> loginUser(
+  Future<bool> loginUser(
       LoginRequest loginRequest, BuildContext context) async {
     Dio _dio = Dio(BaseOptions(baseUrl: ApiBase.baseUrl, headers: {
       "Content-Type": "application/json",
       "Accept": "text/plain",
-    }));
-    _dio.post(ApiBase.baseUrl + ApiEndPoint.authentication, data:{
-      "userNameOrEmailAddress": loginRequest.email,
-      "password": loginRequest.password,
-    }).then((value) async {
-      token = value.data["result"]["accessToken"];
-      refreshToken = value.data["result"]["refreshToken"];
-      id = value.data["result"]["userId"].toString();
-      SharedPreferences.getInstance().then((pref) async {
-        pref.setString(PrefsKey.token, token).then((value) {});
-        pref.setString(PrefsKey.refreshToken, refreshToken).then((value) {});
-        await pref.setString(PrefsKey.userId, id);
-        await pref.setBool(PrefsKey.isLogin, true);
+    } ,),
+    );
+    try{
+      Response value = await _dio.post(ApiBase.baseUrl + ApiEndPoint.authentication, data:{
+        "userNameOrEmailAddress": loginRequest.email,
+        "password": loginRequest.password,
       });
-      await getHomeData(context);
-      Navigator.pop(context);
-      AppToasts.toastSuccess("تم تسجيل الدخول بنجاح ! ", context);
-      Timer(const Duration(seconds: 1), () {
-        Navigator.pop(context);
-        HomeCubit.get(context).currentIndex = 0;
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => const MainScreen(),
-        ));
-      });
-    }).catchError((err) {
-      if (kDebugMode) {
-        print(err);
+      if(value.statusCode == 200){
+        token = value.data["result"]["accessToken"];
+        refreshToken = value.data["result"]["refreshToken"];
+        idUser = value.data["result"]["userId"].toString();
+        SharedPreferences.getInstance().then((pref) async {
+          pref.setString(PrefsKey.token, token).then((value) {});
+          pref.setString(PrefsKey.refreshToken, refreshToken).then((value) {});
+          await pref.setString(PrefsKey.userId, idUser);
+          await pref.setBool(PrefsKey.isLogin, true);
+        });
+        await getHomeData(context);
+        return true ;
+      }else{
+        return false;
       }
-      Navigator.pop(context);
-      AppToasts.toastError("حدث خطأ ما حاول لاحقا ! ", context);
-    });
+    }catch(err){
+      if (kDebugMode) {
+        print(err.toString());
+      }
+      return false ;
+    }
+
   }
 
 // ---------- register ----------------|
@@ -156,26 +154,18 @@ class LoginCubit extends Cubit<LoginStates> {
     });
   }
 
-  register(RegisterRequest registerRequest, context) async {
+  register(RegisterRequest registerRequest, BuildContext context) async {
     emit(RegisterLoading());
-    AppToasts.toastLoading(context);
+    AppToasts.toastLoading("جاري تسجيل حسابك");
     (await _repository.register(
       registerRequest,
       context,
     )).fold((error) {
       emit(RegisterError(error));
       emailController.text = "";
-      phone.text =  "";
-      passwordController.text = "" ;
-      Navigator.pop(context);
-      AppToasts.toastError(error.message, context);
-      Timer(const Duration(seconds: 2), (){
-        Navigator.pop(context);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const RegisterScreen()),
-        );
-      });
+      phone.text = "";
+      passwordController.text = "";
+      AppToasts.toastError(error.message);
       emit(DialogShow());
     }, (registerSuccess) {
       var login = LoginRequest(
@@ -186,16 +176,12 @@ class LoginCubit extends Cubit<LoginStates> {
         HomeCubit.get(context).currentIndex = 0 ;
         MyAuctionsCubit.get(context).isEmpty = true ;
         MyAuctionsCubit.get(context).isEmptyLast = true ;
-        Navigator.pop(context);
-        AppToasts.toastSuccess("تم التسجيل بنجاح", context);
-        Timer(const Duration(seconds: 2), (){
-          Navigator.pop(context);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MainScreen(),
-              ));
-        });
+          AppToasts.toastSuccess("تم التسجيل بنجاح");
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MainScreen(),
+            ));
       }).catchError((err) {
         if (kDebugMode) {
           print(err.toString());
@@ -227,7 +213,7 @@ class LoginCubit extends Cubit<LoginStates> {
   String serverCode = "1234";
 
   nextConformField(
-      String value, int theFocus, TextEditingController controller, context) {
+      String value, int theFocus, TextEditingController controller, BuildContext context) {
     focus = theFocus;
     if (kDebugMode) {
       print(code);
@@ -258,7 +244,7 @@ class LoginCubit extends Cubit<LoginStates> {
     } else {
       emit(NextConfirm());
       code = "";
-      AppToasts.toastError("لقد أدخلت رمزا خاطئا ", context);
+      AppToasts.toastError("لقد أدخلت رمزا خاطئا ");
       emit(NextConfirm());
     }
 
@@ -271,19 +257,21 @@ class LoginCubit extends Cubit<LoginStates> {
 
 //---------- log out  ----------------|
 
-  logOut(context) {
+  logOut(BuildContext context) {
     emit(LogOutLoading());
     SharedPreferences.getInstance().then((prefs) {
       prefs.setBool(PrefsKey.isLogin, false);
       prefs.remove(PrefsKey.token);
+      prefs.remove(PrefsKey.refreshToken);
+      prefs.remove(PrefsKey.userId);
       emailController.text = "";
       passwordController.text = "";
       token = "";
-      MyAuctionsCubit.get(context).myBidsForView = [] ;
-      MyAuctionsCubit.get(context).myProductsForView = [] ;
-      FavoriteCubit.get(context).favoritesItemsForView = [] ;
-      FavoriteCubit.get(context).favoritesItemsResponse = [] ;
-      HomeCubit.get(context).currentIndex = 0 ;
+      refreshToken = "";
+      idUser = "";
+      AppCubit.get(context).clearData();
+      MyAuctionsCubit.get(context).clearData();
+      FavoriteCubit.get(context).clearData();
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(

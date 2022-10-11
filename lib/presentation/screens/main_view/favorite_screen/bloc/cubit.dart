@@ -15,7 +15,6 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
   FavoriteCubit() : super(InitialFavoriteState());
 
   static FavoriteCubit get(context)=>BlocProvider.of(context);
-  bool isFinish = false ;
   bool isFirstBuild = true ;
   bool isLoading = true ;
   List<FavoriteModel> favoritesItemsResponse = [];
@@ -46,7 +45,6 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
       }).catchError((err){
         if (kDebugMode) {
           print(err);
-          AppToasts.toastError(err.toString(), context);
         }
         isLoading = false ;
         emit(GetFavoriteError());
@@ -79,7 +77,6 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
           emit(DeleteFavoriteForViewSuccess());
         }).catchError((error){
           if (kDebugMode) {
-          AppToasts.toastError("message", context);
             print(error.toString());
           }
           emit(DeleteFavoriteForViewError());
@@ -92,7 +89,7 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
  Future  addTOFavorite(ProductForViewModel productForViewModel , context ) async {
    String newToken = token;
        DioFactory(newToken).postData(ApiEndPoint.addToFavorite, {
-         "userId" :  id,
+         "userId" :  idUser,
          "productId" : productForViewModel.productModel.product!.id.toString()
        }).then((value){
          productForViewModel.isFavorite = true;
@@ -131,6 +128,13 @@ class FavoriteCubit extends Cubit<FavoriteStates>{
       });
     }
     emit(ChangeFavoriteButtonSuccess());
+  }
+
+  Future clearData()async {
+   favoritesItemsForView = [] ;
+   favoritesItemsResponse = [] ;
+   isFirstBuild = true ;
+   emit(ClearFavoriteCubitSuccess());
   }
 
 }

@@ -43,4 +43,6 @@ class GetImgLoading extends AppStates{}
 class GetImgSuccess extends AppStates{}
 class GetImgError extends AppStates{}
 
+class ClearAppCubitData extends AppStates{}
+
 

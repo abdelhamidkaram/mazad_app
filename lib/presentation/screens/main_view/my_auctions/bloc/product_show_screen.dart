@@ -1,12 +1,9 @@
-import 'dart:ffi';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
-import 'package:soom/presentation/components/product_item.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/product/product_screen.dart';
 import '../../../../../constants/api_constants.dart';
@@ -29,7 +26,27 @@ return FutureBuilder(
   builder: (context, snapshot)  {
     if(snapshot.hasData){
       ProductForViewModel productForViewModel = snapshot.data as ProductForViewModel;
-      return ProductScreen(productModel: productForViewModel, lastPrice: productForViewModel.lasPrice! , );
+      var year = int.parse(
+          productForViewModel.productModel.product!.endDate!
+              .substring(0, 4));
+      var month = int.parse(
+          productForViewModel.productModel.product!.endDate!
+              .substring(5, 7));
+      var day = int.parse(
+          productForViewModel.productModel.product!.endDate!
+              .substring(8, 10));
+      var hour = int.parse(
+          productForViewModel.productModel.product!.endDate!
+              .substring(11, 13));
+      var minute = int.parse(
+          productForViewModel.productModel.product!.endDate!
+              .substring(14, 16));
+      int difference = DateTime.now().toUtc().difference(DateTime.utc(year, month, day , hour ,minute )).inSeconds;
+      return ProductScreen(
+        productModel: productForViewModel,
+        lastPrice: productForViewModel.lasPrice!,
+        isFinished: difference >= 0 ,
+      );
     }else{
    return Scaffold(
     appBar: AppBars.appBarGeneral(context, HomeCubit(), widget.title , cartView: false ),
@@ -48,7 +65,9 @@ return FutureBuilder(
     Response response = await  DioFactory(token).getData(ApiEndPoint.getProductById, {
   "id":widget.productId
 });
-    print(response.data);
+    if (kDebugMode) {
+      print(response.data);
+    }
     String  lastPrice = "1" ;
     ProductModel productModel = ProductModel.fromJson(response.data["result"]);
     await DioFactory(token).getData(ApiEndPoint.getLastBid, {
@@ -62,7 +81,7 @@ return FutureBuilder(
     return ProductForViewModel(
         "",
         productModel ,
-        lasPrice: lastPrice
+        lasPrice: lastPrice ,
     );
   }
 }

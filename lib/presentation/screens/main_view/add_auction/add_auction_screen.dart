@@ -299,8 +299,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                         if (addProductKey.currentState!.validate()) {
                         if(cubit.imagesObj.isNotEmpty){
                           _replaceController();
-                          AppToasts.toastLoading(context);
-                          String newToken = token;
+                          AppToasts.toastLoading("جاري رفع تفاصيل المزاد");
                           String endDate = cubit.dateController.text == "ساعة"
                               ?
                           //2022-09-10 18:58:51.572
@@ -319,7 +318,7 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                     .substring(0, 2))),
                           )
                               .toString();
-                          DioFactory(newToken)
+                          DioFactory(token)
                               .postData(ApiEndPoint.uploadProducts, {
                             "name": cubit.nameController.text,
                             "descrption": cubit.detailsController.text,
@@ -350,11 +349,20 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                                   ApiEndPoint.createProductPhoto, {
                                 "photoToken": photo.token,
                                 "productId": _productId
-                              }).then((value) {
+                              }).then((value){
+                                if (kDebugMode) {
+                                  print("photo response : \n "+value.data.toString());
+                                }
+                              }).catchError(
+                                  (err){
+                                    if (kDebugMode) {
+                                      print(err.toString());
 
-                              });
+                                    }
+                                  }
+                              );
                             }
-                             DioFactory(newToken).getData(
+                             DioFactory(token).getData(
                                 "api/services/app/Products/GetProductForView",
                                 {"id": _productId}).then((value) async {
                               HomeCubit.get(context).changeBottomNavBar(index: 0);
@@ -367,20 +375,25 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               MyAuctionsCubit.get(context).isEmpty = false
                                   : null ;
                               Navigator.pop(context);
+                              var product = ProductForViewModel(
+                                "",
+                                ProductModel.fromJson(
+                                  value.data["result"]
+                                  ,
+                                )
+                                ,
+                              );
+                              if (kDebugMode) {
+                                print("product model : \n  $product");
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ProductScreen(
+                                    isFinished: false,
                                     fromAddScreen: true,
-                                    productModel: ProductForViewModel(
-                                      "",
-                                      ProductModel.fromJson(
-                                          value.data["result"]
-                                      ,
-                                      ),
-                                      lasPrice: double.parse(cubit.initialPriceController.text.toString()).toInt().toString(),
-                                    ),
-                                    lastPrice: cubit.minPriceController.text.toString(),
+                                    productModel: product ,
+                                    lastPrice: product.initialPrice.toString(),
                                   ),
                                 ),
                               );
@@ -388,27 +401,25 @@ class _AddAuctionScreenState extends State<AddAuctionScreen> {
                               if (kDebugMode) {
                                 print(err.toString());
                               }
-                              Navigator.pop(context);
-                              AppToasts.toastSuccess("تمت الإضافة بنجاح ", context);
-                              Timer(const Duration(seconds: 2) , (){
-                                Navigator.pop(context);
-                              });
+                              AppToasts.toastSuccess("تمت الإضافة بنجاح , ولكن لم يتم رفع الصور");
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(builder: (context) => const MainScreen(),
                                   ),
                               );
+                              return null ;
                             });
-                            Navigator.pop(context);
                             AppToasts.toastSuccess(
-                                "تمت الإضافة بنجاح ", context);
+                                "تمت الإضافة بنجاح");
                           }).catchError((err) {
-                            Navigator.pop(context);
+                            if (kDebugMode) {
+                              print(err.toString());
+                            }
                             AppToasts.toastError(
-                                "حدث خطأ ما .. حاول لاحقا", context);
+                                "حدث خطأ ما .. حاول لاحقا");
                           });
                         }else{
-                          AppToasts.toastError("يجب إضافة صورة واحدة علي الأقل ", context);
+                          AppToasts.toastError("يجب إضافة صورة واحدة علي الأقل ");
                         }
                         }
                       }, "إضافة المنتج ", true),
@@ -548,101 +559,6 @@ class _SwitchBetweenTowCheckBoxWidgetState
   }
 }
 
-//-------------------------------------------------2
-
-class TimeTextFiledWidget extends StatefulWidget {
-  final TextEditingController dateController;
-
-  final TextEditingController timeController;
-
-  final bool isCheckTime;
-
-  final GlobalKey keyForm;
-
-  const TimeTextFiledWidget({
-    Key? key,
-    required this.dateController,
-    required this.timeController,
-    required this.isCheckTime,
-    required this.keyForm,
-  }) : super(key: key);
-
-  @override
-  State<TimeTextFiledWidget> createState() => _TimeTextFiledWidgetState();
-}
-
-class _TimeTextFiledWidgetState extends State<TimeTextFiledWidget> {
-  @override
-  void initState() {
-    if (widget.dateController.text.isEmpty) {
-      widget.dateController.text = DateTime.now()
-          .add(const Duration(days: 10))
-          .toString()
-          .substring(0, 10);
-    }
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: const [
-            Text(
-              "تاريخ الانتهاء",
-              style: AppTextStyles.titleSmallBlack,
-            ),
-            Spacer()
-          ],
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        GestureDetector(
-          onTap: () {
-            showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime.utc(
-                  DateTime.now().year, DateTime.now().month + 10, 30),
-            ).then((value) {
-              if (value == null && widget.dateController.text.isEmpty) {
-                widget.dateController.text = DateTime.now()
-                    .add(const Duration(days: 5))
-                    .toString()
-                    .substring(0, 10);
-              }
-              widget.dateController.text = value.toString().substring(0, 10);
-            });
-          },
-          child: SizedBox(
-            width: double.infinity,
-            child: TextFormField(
-              decoration: const InputDecoration(
-                hintText: "اختر التاريخ ",
-                disabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey)),
-                border: OutlineInputBorder(
-                    borderSide: BorderSide(color: ColorManger.lightGrey)),
-                prefixIcon: Icon(
-                  Icons.calendar_month_sharp,
-                  color: ColorManger.primary,
-                ),
-              ),
-              autofocus: false,
-              enabled: false,
-              controller: widget.dateController,
-              keyboardType: TextInputType.datetime,
-            ),
-          ),
-        ),
-        const SizedBox(width: 10),
-      ],
-    );
-  }
-}
 
 //-------------------------------------------------3
 

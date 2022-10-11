@@ -19,3 +19,5 @@ class AddFavoriteForViewSuccess extends FavoriteStates {}
 class ISFavorite  extends FavoriteStates {}
 
 class ChangeFavoriteButtonSuccess  extends FavoriteStates {}
+
+class ClearFavoriteCubitSuccess  extends FavoriteStates {}

@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +10,6 @@ import 'package:soom/data/cache/prefs.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_states.dart';
-import 'package:soom/presentation/screens/login/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/repository/repository.dart';
 
@@ -70,7 +67,9 @@ class AppCubit extends Cubit<AppStates> {
 return value ;
       }).catchError((err) async {
 
-        print(err.toString());
+        if (kDebugMode) {
+          print(err.toString());
+        }
       });
     }
   if(token.isNotEmpty){
@@ -110,6 +109,9 @@ return value ;
 
      emit(GetSystemConfSuccess());
     }).catchError((err) {
+      if (kDebugMode) {
+        print(err.toString());
+      }
       emit(GetSystemConfError());
     });
   }
@@ -129,4 +131,13 @@ return value ;
         emit(GetImgError());
       });
   }
+
+
+  Future clearData()async {
+   profileEditSuccess = ProfileEditSuccess();
+   imgProfile = ImgProfile(img: "assets/avatar.png" , imgProfileType: ImgProfileType.url);
+   emit(ClearAppCubitData());
+  }
+
+
 }

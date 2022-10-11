@@ -66,20 +66,21 @@ class _ProductItemState extends State<ProductItem> {
               widget.productForViewModel.productModel.product!.endDate!
                   .substring(14, 16));
           Duration difference = DateTime.now().difference(
-              DateTime.utc(year, month, day , hour ,minute ));
+              DateTime(year, month, day , hour ,minute ));
 
           return OpenContainer(
               transitionDuration: const Duration(milliseconds: 800),
               openBuilder: (context, action) =>
                   ProductScreen(
-                    lastPrice: widget.productForViewModel.lasPrice!, //TODO: LAST PRICE
+                    lastPrice: widget.productForViewModel.lasPrice!,
                     productModel: widget.productForViewModel,
                     isMyAuction: widget.isMyAuction ?? false,
+                    isFinished: difference.inSeconds >= 0,
                   ),
               closedBuilder: (context, action) =>
                   Directionality(
                     textDirection: TextDirection.rtl,
-                    child: (difference.inSeconds > 0) ? Banner(
+                    child: (difference.inSeconds >= 0) ? Banner(
                       color: ColorManger.red,
                       message: "منتهي",
                       textStyle: AppTextStyles.smallWhite,
@@ -116,14 +117,7 @@ class _ProductItemState extends State<ProductItem> {
                   child: Center(
                     child:ExtendedImage.network(
                       widget.productForViewModel.thumbnail,
-                      // width: ScreenUtil.instance.setWidth(400),
-                      // height: ScreenUtil.instance.setWidth(400),
-                      // fit: BoxFit.fill,
                       cache: true,
-                      //border: Border.all(color: Colors.red, width: 1.0),
-                      // shape: boxShape,
-                      // borderRadius: const BorderRadius.all(Radius.circular(30.0)),
-                      //cancelToken: cancellationToken,
                         loadStateChanged: (state) {
                           if (state.extendedImageLoadState == LoadState.loading) {
                             return const LinearProgressIndicator(

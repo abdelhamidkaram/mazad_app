@@ -7,16 +7,18 @@ import 'package:soom/style/text_style.dart';
 import '../../screens/main_view/bloc/home_cubit.dart';
 
 class AppBars {
-  static AppBar appBarGeneral(context , HomeCubit homeCubit , String title , {bool cartView = true ,bool backButton = false , bool isProfile = false , }) {
+  static AppBar appBarGeneral(context , HomeCubit homeCubit , String title , {VoidCallback? backButtonFun, bool cartView = true ,bool backButton = false , bool isProfile = false , }) {
     return  AppBar(
       automaticallyImplyLeading: backButton,
       leadingWidth: 100,
       leading: !backButton ? GestureDetector(
-          onTap: (){
+          onTap: backButtonFun ?? (){
             Navigator.of(context).pop();
             FocusScope.of(context).unfocus();
-          },
-      child:const Icon(Icons.arrow_back)) : const SizedBox(),
+          }
+          ,
+      child:const Icon(Icons.arrow_back))
+          : const SizedBox(),
       iconTheme:const IconThemeData(color: ColorManger.black),
       backgroundColor: ColorManger.white,
       title:  Text(title),

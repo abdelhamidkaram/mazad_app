@@ -1,9 +1,9 @@
+import 'dart:io';
 import 'package:soom/models/favorite_model.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 
 extension ConvertFavoriteModelToProductViewModel on FavoriteModel {
-
         ProductForViewModel toProductViewModel(context){
           for(var bid in HomeCubit.get(context).allLastBids){
             if(bid.productId == product!.id){
@@ -16,5 +16,12 @@ extension ConvertFavoriteModelToProductViewModel on FavoriteModel {
           }
           return ProductForViewModel("0", ProductModel(product: product), isFavorite: true  );
         }
+}
 
+extension FileSize on File {
+  get size {
+    int sizeInBytes = lengthSync();
+    double sizeInMb = sizeInBytes / (1024 * 1024);
+    return sizeInMb;
+  }
 }

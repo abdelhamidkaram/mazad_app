@@ -11,5 +11,4 @@ class SendBidToServerLoading extends BidStates {}
 class SendBidToServerSuccess extends BidStates {}
 class SendBidToServerError extends BidStates {}
 
-class RemoveBid extends BidStates {}
-class RemoveBidError extends BidStates {}
+class DeleteNewPrice extends BidStates {}

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soom/models/product_model.dart';
-import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/cubit.dart';
 import 'package:soom/presentation/screens/main_view/favorite_screen/bloc/states.dart';
 import 'package:soom/style/color_manger.dart';

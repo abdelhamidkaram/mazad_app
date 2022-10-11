@@ -4,9 +4,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:soom/constants/api_constants.dart';
+import 'package:soom/extension.dart';
 import 'package:soom/main.dart';
 import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_states.dart';
@@ -15,28 +19,28 @@ import '../../../../../data/api/dio_factory.dart';
 import '../../../../../style/color_manger.dart';
 import '../../../category/category_model.dart';
 
-class AddAuctionCubit extends Cubit<AddAuctionStates>{
+class AddAuctionCubit extends Cubit<AddAuctionStates> {
   AddAuctionCubit() : super(InitAddAuctionState());
-  static AddAuctionCubit get(context)=> BlocProvider.of(context);
+
+  static AddAuctionCubit get(context) => BlocProvider.of(context);
   final Repository _repository = Repository();
 
   // ------------ image edit ---------------|
-List<String> img = [
-   "",
-   "",
-   "",
-   "",
-   "",
-];
+  List<String> img = [
+    "",
+    "",
+    "",
+    "",
+    "",
+  ];
 
-
-List<ImageObj> imagesObj = [];
+  List<ImageObj> imagesObj = [];
 
   XFile? photo;
 
   final ImagePicker _picker = ImagePicker();
 
-  cropImage(context , int index ) async {
+  cropImage(context, int index) async {
     CroppedFile? cropFile = await ImageCropper().cropImage(
       sourcePath: photo!.path,
       aspectRatioPresets: [
@@ -63,17 +67,16 @@ List<ImageObj> imagesObj = [];
     );
     if (cropFile != null) {
       photo = XFile(cropFile.path);
-      _uploadImage(File(cropFile.path), context , index);
+      _uploadImage(File(cropFile.path), context, index);
       emit(AddAuctionImgState());
     }
   }
-  pickerCamera(int index , context) async {
-     photo = await _picker.pickImage(source: ImageSource.gallery);
+
+  pickerCamera(int index, context) async {
+    photo = await _picker.pickImage(source: ImageSource.gallery);
     if (photo != null) {
-      cropImage(context , index ).then((value) {
-        final bytes = File(photo!.path).readAsBytesSync();
-        String img64 = base64Encode(bytes);
-        img[index] = img64;
+      cropImage(context, index).then((value) {
+
       });
       emit(AddAuctionImgState());
     } else {
@@ -91,77 +94,57 @@ List<ImageObj> imagesObj = [];
   var nameController = TextEditingController();
   var catController = TextEditingController();
 
-  CategoryModel categorySelected = CategoryModel(2, "img", "2ساعات") ;
+  CategoryModel categorySelected = CategoryModel(2, "img", "2ساعات");
+
   String timeSelected = "24ساعات";
- bool customValidate(context){
-   if(  dateController.text.isEmpty ){
-     AppToasts.toastError("يرجي ادخال تاريخ الانتهاء ", context);
-     emit(CheckPriceFieldFormState());
-     return false ;
-   }else if (
-    timeController.text.isEmpty ||
-    detailsController.text.isEmpty ||
-    initialPriceController.text.isEmpty ||
-    nameController.text.isEmpty ||
-    nameController.text.isEmpty
-    )
-    {
-      AppToasts.toastError("يرجي ملئ جميع الحقول ", context);
+
+  bool customValidate(context) {
+    if (dateController.text.isEmpty) {
+      AppToasts.toastError("يرجي ادخال تاريخ الانتهاء ");
       emit(CheckPriceFieldFormState());
-      return false ;
-    }else {
+      return false;
+    } else if (
+        timeController.text.isEmpty ||
+        detailsController.text.isEmpty ||
+        initialPriceController.text.isEmpty ||
+        nameController.text.isEmpty ||
+        nameController.text.isEmpty) {
+      AppToasts.toastError("يرجي ملئ جميع الحقول ");
+      emit(CheckPriceFieldFormState());
+      return false;
+    } else {
       emit(CheckPriceFieldFormState());
       return true;
     }
   }
+
 //---------------- Check Box -------------|
-bool isCheckTime = true ;
-bool isCheckPrice = false ;
-getCheckTime(){
-  isCheckTime = !isCheckTime;
-  isCheckPrice =!isCheckTime;
-  emit(AddAuctionCheckBoxState());
-}
+  bool isCheckTime = true;
+
+  bool isCheckPrice = false;
+
+  getCheckTime() {
+    isCheckTime = !isCheckTime;
+    isCheckPrice = !isCheckTime;
+    emit(AddAuctionCheckBoxState());
+  }
 
 //---------------- Check Box -------------|
 
-bool isUploadDetails = false ;
-bool isUploadImages = false ;
+  bool isUploadDetails = false;
+
+  bool isUploadImages = false;
 
 //---------------- upload product -------------|
-//  Future uploadProductDetails (AddAuctionStates state , context)async{
-//    emit(UploadDetailsLoading());
-//    if(state is UploadDetailsLoading ){
-//      AppToasts.toastLoading(context);
-//    }
-//
-//    (
-//    await _repository.uploadProductDetails(data:  {
-//      "name": nameController.text,
-//      "descrption": detailsController.text,
-//      "intitalPrice": int.parse(initialPriceController.text).toDouble(),
-//      "minPrice": int.parse(minPriceController.text).toDouble(),
-//      "endDate": endDate.substring(0,10)+"T"+endDate.substring(11)+"Z",
-//      "status": 0,
-//      "targetPrice": int.parse(minPriceController.text).toDouble(),
-//      "categoryId": categorySelected.index ?? 2 ,
-//    })
-//    ).fold((error){
-//      isUploadDetails = false ;
-//      emit(UploadDetailsError());
-//      AppToasts.toastError(error.message, context);
-//    }, (map){
-//      if(kDebugMode){
-//        print(map.toString());
-//      }
-//      isUploadDetails = false ;
-//      emit(UploadDetailsSuccess());
-//      AppToasts.toastSuccess("تم رفع تفاصيل المنتج بنجاح ", context);
-//
-//    });
-// }
+
+
 //---------------- upload image  -------------|
-   void _uploadImage(File file , BuildContext context, int index  ) async {
+  void _uploadImage(File file, BuildContext context, int index) async {
+    if (file.size > 25.0) {
+      AppToasts.toastError(
+          "يجب ان لا يزيد حجم الصورة عن 25 ميجا بايت !");
+      return null;
+    }
     String fileName = file.path.split('/').last;
     FormData data = FormData.fromMap({
       "file": await MultipartFile.fromFile(
@@ -169,54 +152,59 @@ bool isUploadImages = false ;
         filename: fileName,
       ),
     });
-    AppToasts.toastLoading(context);
-    String newToken = token;
-    await DioFactory(newToken).dio().post("app/productphotos/uploadphotofile", data: data)
-        .then((response){
+
+    await DioFactory( token)
+        .dio()
+        .post(ApiEndPoint.uploadImage, data: data ,
+
+        onSendProgress: (int sent, int total) {
           if (kDebugMode) {
-            print(response.data.toString());
+            print('progress: ${(sent / total * 100).toStringAsFixed(0)}% ($sent/$total)');
           }
-          if (kDebugMode) {
-            print(fileName);
-          }
-          ImageObj imageObj = ImageObj(fileName , response.data["result"]["fileToken"]);
+          String pres = "${(sent / total * 100).toStringAsFixed(0)}%";
+          EasyLoading.showProgress(
+              sent / total,
+            status: ((sent / total * 100 ) != 100) ? ("جاري رفع الصورة \n" + pres) : "تم الرفع وجاري المعالجة"
+          );
+        }
+    )
+        .then((response) async {
+      if (kDebugMode) {
+        print(response.data.toString() + "\n");
+        print(fileName + "\n");
+      }
+      ImageObj imageObj = ImageObj(
+        name: fileName,
+        token: response.data["result"]["fileToken"],);
       _addImageToImagesObject(imageObj, index);
-     Navigator.pop(context);
-     AppToasts.toastSuccess("تم رفع الصورة", context);
-     Timer(const Duration(seconds: 2), (){
-       Navigator.pop(context);
-     });
-   }).catchError((error){
-      Navigator.pop(context);
-          AppToasts.toastError(kDebugMode ? error :  "حدث خطأ ما حاول مرة أخري !", context);
-      Timer(const Duration(seconds: 2), (){
-        Navigator.pop(context);
-      });
+      _addImageToImg64(file, index);
+      AppToasts.toastSuccess("تم رفع الصورة");
+    }).catchError((error) async {
+      AppToasts.toastError(kDebugMode ? error : "حدث خطأ ما حاول مرة أخري ! ");
     });
   }
-_addImageToImagesObject (ImageObj imageObj , int index ){
-  if(imagesObj.isEmpty){
-    imagesObj.add(imageObj);
-  }else{
-    if(imagesObj.length >= index+1 ){
-      imagesObj[index] = imageObj ;
 
-    }else{
-      imagesObj.add(imageObj);
-    }
+  void _addImageToImg64(File file, int index) {
+    final bytes = File(file.path).readAsBytesSync();
+    String img64 = base64Encode(bytes);
+    img[index] = img64;
+    emit(AddImages64Success());
   }
 
+  _addImageToImagesObject(ImageObj imageObj, int index) {
+    if (imagesObj.isEmpty) {
+      imagesObj.add(imageObj);
+    } else {
+      if (imagesObj.length >= index + 1) {
+        imagesObj[index] = imageObj;
+      } else {
+        imagesObj.add(imageObj);
+      }
+    }
+  }
 }
-
-}
-
 class ImageObj {
-  final String name ;
-  final String  token ;
-
-  ImageObj(
-      this.name,
-      this.token,
-      );
-
+  final String name;
+  final String token;
+  ImageObj({required this.name, required this.token});
 }

@@ -72,7 +72,8 @@ class MyBidItemBuilder extends StatelessWidget {
           onTap: (){
             Navigator.push(
                 context, MaterialPageRoute(builder: (context) {
-                  return ProductShowScreen(title: "  " , productId: myAuctionModel.productId,) ;
+                   return ProductShowScreen(title: "  " , productId: myAuctionModel.productId,) ;
+
             },));
           },
           trailing: const Padding(

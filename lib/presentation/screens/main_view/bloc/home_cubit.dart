@@ -19,7 +19,7 @@ import '../../../../models/bids_model.dart';
 class HomeCubit extends Cubit<HomeStates> {
   HomeCubit() : super(InitHomeState());
 
-  static HomeCubit get(context) => BlocProvider.of(context);
+  static HomeCubit get(context) => BlocProvider.of<HomeCubit>(context);
   bool isFirstBuild = false;
 
   final Repository _repository = Repository();
@@ -268,10 +268,9 @@ class HomeCubit extends Cubit<HomeStates> {
           maxController.text.isNotEmpty ? maxController.text : "10000.0"),
     ))
         .fold((error) {
-      AppToasts.toastError(error.message, context);
+      AppToasts.toastError(error.message);
       filterResult = [];
     }, (productsList) {
-      //TODO :  LAST Auction Counter
       if(isNew){
         filterResult = productsList.map((e) {
           return convertResponseMapToProductModel(e);
@@ -338,8 +337,7 @@ class HomeCubit extends Cubit<HomeStates> {
             searchKeywords: searchKeyword, maxResult: 100))
         .fold((error) {
       emit(GetSearchError());
-
-      AppToasts.toastError(error.message, context);
+      AppToasts.toastError(error.message);
     }, (productsList) {
       searchResult = productsList.map((productDetailsModel) {
         if (FavoriteCubit.get(context).favoritesItemsResponse.isNotEmpty) {

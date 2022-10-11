@@ -24,14 +24,33 @@ class AppButtons {
           ),
         ));
   }
-  static Widget toastButtonBlue (VoidCallback onPressed , String text , bool fullWidth , {Widget? icon  }){
+  static Widget appButtonDisable (VoidCallback onPressed,String text,bool fullWidth){
    return  TextButton(
-        onPressed:onPressed ,
+        onPressed:onPressed,
         child: Container(
           width:fullWidth ? double.infinity :  120 ,
           height: 50,
           decoration: BoxDecoration(
-              color: ColorManger.primary,
+            color: ColorManger.lightGrey ,
+            borderRadius: BorderRadius.circular(10)
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:  [
+              Text(text , style: AppTextStyles.titleBlack,),
+              const SizedBox(width: 8,),
+            ],
+          ),
+        ));
+  }
+  static Widget toastButtonBlue (VoidCallback onPressed , String text , bool fullWidth , {Widget? icon  }){
+   return  TextButton(
+        onPressed:onPressed,
+        child: Container(
+          width:fullWidth ? double.infinity :  120 ,
+          height: 50,
+          decoration: BoxDecoration(
+            color: ColorManger.primary,
             borderRadius: BorderRadius.circular(10)
           ),
           child:Center(child: Row(
@@ -39,10 +58,10 @@ class AppButtons {
             children: [
               icon ?? const SizedBox(),
               const SizedBox(width: 10,),
-              Text(text , style: AppTextStyles.buttonTextStyle(false),),
+              Text(text , style: AppTextStyles.buttonTextStyle(false),
+              ),
             ],
           )),
         ));
   }
-
 }

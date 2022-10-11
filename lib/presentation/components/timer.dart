@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:soom/constants/app_string.dart';
 import 'package:soom/style/color_manger.dart';
+import 'package:soom/style/text_style.dart';
 
 class TimerDownDate extends StatefulWidget {
   final String time;

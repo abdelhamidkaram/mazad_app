@@ -12,7 +12,7 @@ class AuctionForViewModel{
   String ? productName ;
   AuctionModel? auctionModel ;
   AuctionForViewModel({required this.price, required this.productModel, required this.userModel}){
-    auctionModel = AuctionModel(price: price  , productId: productModel.product!.id!.toInt() , userId: int.parse(id));
+    auctionModel = AuctionModel(price: price  , productId: productModel.product!.id!.toInt() , userId: int.parse(idUser));
     productName = productModel.product!.name ;
     userName = userModel.userName ;
   }

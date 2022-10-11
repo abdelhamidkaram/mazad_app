@@ -14,10 +14,7 @@ import 'package:soom/data/cache/prefs.dart';
 import 'package:soom/main.dart';
 import 'package:soom/presentation/screens/profile/screens/edit_profile/bloc/states.dart';
 import 'package:soom/style/color_manger.dart';
-
-import '../../../../../../app_enums.dart';
 import '../../../../../app_bloc/app_cubit.dart';
-import '../../../../../app_bloc/app_states.dart';
 import '../../../../../components/toast.dart';
 import '../../../widgets/profile_home_header.dart';
 
@@ -130,7 +127,6 @@ class EditCubit extends Cubit<EditStates> {
     }).then((value) {
       if (value.statusCode == 200) {
         AppCubit.get(context).getProfileDetails(context );
-        Navigator.pop(context);
       }
     });
   }
@@ -173,28 +169,17 @@ class EditCubit extends Cubit<EditStates> {
         filename: fileName,
       ),
     });
-    AppToasts.toastLoading(context);
+    AppToasts.toastLoading("جاري رفع الصورة");
     await DioFactory(token).dio().post(ApiEndPoint.uploadImage, data: data)
         .then((response){
       if (kDebugMode) {
         print(response.data.toString());
       }
       fileToken = response.data["result"]["fileToken"];
-
-      Navigator.pop(context);
-      AppToasts.toastSuccess("تم رفع الصورة", context);
-
-      Timer(const Duration(seconds: 2), (){
-        Navigator.pop(context);
-      });
+      AppToasts.toastSuccess("تم رفع الصورة");
       emit(UploadSuccess());
     }).catchError((error){
-      Navigator.pop(context);
-      AppToasts.toastError(kDebugMode ? error :  "حدث خطأ ما حاول لاحقا !", context);
-      Timer(const Duration(seconds: 2), (){
-        Navigator.pop(context);
-      } ,
-      );
+      AppToasts.toastError(kDebugMode ? error.toString() :  "حدث خطأ ما حاول لاحقا !");
       emit(UploadSuccess());
     });
   }

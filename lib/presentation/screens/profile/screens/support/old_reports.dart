@@ -47,7 +47,7 @@ class _OldReportsState extends State<OldReports> {
         setState(() {
           cont = -3 ;
         });
-        AppToasts.toastError("$err", context);
+        AppToasts.toastError("$err");
         if (kDebugMode) {
           print(err.toString());
         }

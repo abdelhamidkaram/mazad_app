@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
 import 'package:soom/presentation/app_bloc/app_states.dart';
@@ -9,7 +7,6 @@ import 'package:soom/presentation/screens/profile/screens/edit_profile/profile_e
 import 'package:soom/presentation/screens/profile/widgets/profile_img.dart';
 import 'package:soom/style/color_manger.dart';
 import '../../../../app_enums.dart';
-
 import '../../../../style/text_style.dart';
 
 
@@ -64,6 +61,7 @@ class ImgProfile {
     }else{
       imgProfileType = ImgProfileType.imgFile;
     }
+
   }
   
   

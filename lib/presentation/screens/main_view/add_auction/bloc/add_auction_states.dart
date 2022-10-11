@@ -16,3 +16,5 @@ class UploadDetailsSuccess extends AddAuctionStates{}
 class UploadImagesLoading extends AddAuctionStates{}
 class UploadImagesError extends AddAuctionStates{}
 class UploadImagesSuccess extends AddAuctionStates{}
+
+class AddImages64Success extends AddAuctionStates{}

@@ -84,20 +84,19 @@ class _NewReportState extends State<NewReport> {
               const SizedBox(height: 16,),
               AppButtons.appButtonBlue(() {
                 if(formKey.currentState!.validate()){
-                  AppToasts.toastLoading(context);
+                  AppToasts.toastLoading("يرجى الانتظار قليلاً");
                   String newToken = token;
                   DioFactory(newToken).postData(ApiEndPoint.createSupportCass,
                       {
                         "title": titleController.text,
                         "body": detailsController.text,
-                        "createdByUserId": id,
+                        "createdByUserId": idUser,
                       }).then((value){
-                        Navigator.pop(context);
-                        AppToasts.toastSuccess("تم الارسال بنجاح ", context);
+                        AppToasts.toastSuccess("تم الارسال بنجاح ");
                         titleController.clear();
                         detailsController.clear();
 
-                  }).catchError((err){ Navigator.pop(context); AppToasts.toastError("حدث خطأ ما .. حاول لاحقا  !", context); });
+                  }).catchError((err){AppToasts.toastError("حدث خطأ ما .. حاول لاحقا  !"); });
                 }
 
               }, "ارسال ", true ) ,

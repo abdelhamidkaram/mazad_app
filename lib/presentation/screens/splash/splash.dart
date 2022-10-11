@@ -42,7 +42,7 @@ class _SplashScreenState extends State<SplashScreen> {
         return MaterialPageRoute(builder: (context) {
           SharedPreferences.getInstance().then((prefs){
             token =  prefs.getString(PrefsKey.token) ?? "";
-            id = "${ prefs.get(PrefsKey.userId) ?? "" }";
+            idUser = "${ prefs.get(PrefsKey.userId) ?? "" }";
           });
          if(token.isNotEmpty){
            HomeCubit.get(context).getCategories(context).then((value){

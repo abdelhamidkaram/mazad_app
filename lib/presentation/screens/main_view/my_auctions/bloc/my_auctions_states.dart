@@ -22,3 +22,5 @@ class GetProductShowSuccess extends MyAuctionsStates {
 
 }
 class GetProductShowError extends MyAuctionsStates {}
+
+class ClearDataSuccess extends MyAuctionsStates {}

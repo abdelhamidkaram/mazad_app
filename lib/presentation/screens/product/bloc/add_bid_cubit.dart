@@ -7,6 +7,7 @@ import 'package:soom/data/api/dio_factory.dart';
 import 'package:soom/main.dart';
 import 'package:soom/models/product_model.dart';
 import 'package:soom/presentation/components/toast.dart';
+import 'package:soom/presentation/screens/main_view/add_auction/bloc/add_auction_cubit.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/main_view/my_auctions/bloc/my_auctions_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_states.dart';
@@ -17,95 +18,62 @@ class BidCubit extends Cubit<BidStates> {
   var controller = TextEditingController();
   bool isAddBid = false;
   int bidCounter = 1;
+  String newLastPrice = "" ;
 
   TextEditingController getController(  context ,   ProductForViewModel productModel) {
-    //TODO:
     DioFactory(token).getData(ApiEndPoint.getLastBid, {
       "id":productModel.productModel.product!.id ,
     }).then((value){
+      if (kDebugMode) {
+        print(value.data);
+      }
       if(value.data["result"][0]["price"] != 0 && value.data["result"][0]["price"] != null ){
-        controller.text = value.data["result"][0]["price"].toString();
-        print("++++++++++++++++++++++++++++++++ ${value.data["result"][0]["price"]} ");
+        controller.text = "${double.parse(value.data["result"][0]["price"].toString()).toInt() + bidCounter }";
         emit(GetBidController());
         return controller;
       }
     });
-    controller.text = (!isAddBid ? productModel.lasPrice : controller.text) ?? 200.toString();
+    if(productModel.lasPrice != null ){
+      controller.text = (!isAddBid ? "${double.parse(productModel.lasPrice!).toInt() + bidCounter }"
+          : controller.text );
+    }
+
     emit(GetBidController());
     return controller;
   }
 
-  addBid(ProductForViewModel productForViewModel ,  context) {
-    int price = int.parse(controller.text);
-    if (price.isNaN ||
-        price.isNegative ||
-        price < int.parse(productForViewModel.lasPrice!) //TODO: CONVERT TO LAST PRICE
-    ) {
-      controller.text = productForViewModel.minPrice!.toInt().toString();
-      emit(AddBidError());
-    } else {
-      price = int.parse(controller.text) + bidCounter;
-      if (kDebugMode) {
-        print("add");
-      }
-      isAddBid = true;
-      controller.text = price.toString();
-      emit(AddBidSuccess());
-    }
-    emit(AddBidSuccess());
-  }
-
-  removeBid(ProductForViewModel productModel , context ) {
-    //TODO LAST PRICE
-    int price = int.parse(controller.text);
-    if (price.isNaN ||
-        price.isNegative ||
-        price <= int.parse(productModel.lasPrice!)) {
-      price = productModel.minPrice!.toInt();
-      AppToasts.toastError(
-          "لقد ادخلت سعرا اقل من اخر مزايدة يجب ان تزايد بمبلغ اكبر من : ${int.parse(productModel.lasPrice!)}",//TODO : LAST PRICE
-          context);
-      emit(RemoveBid());
-    } else {
-     controller.text = (int.parse(controller.text) - bidCounter ).toString();
-    }
-    emit(RemoveBid());
-  }
-
- Future sendBidToServer({required double price, required int productId, required context}) async {
+ Future sendBidToServer({required double price, required int productId, required BuildContext context}) async {
     emit(SendBidToServerLoading());
-    AppToasts.toastLoading(context);
+    AppToasts.toastLoading("...");
     String newToken = token;
    await DioFactory(newToken).postData(ApiEndPoint.addBid, {
      "price": price,
-     "userId": int.parse(id) ,
+     "userId": int.parse(idUser) ,
      "productId": productId ,
    }).then((value){
      MyAuctionsCubit.get(context).getMyBids(context , isRefresh: true);
      HomeCubit.get(context).getProducts(context,  false).whenComplete((){
        HomeCubit.get(context).getCategoryBlocks( false);
      });
-     Navigator.pop(context);
-       AppToasts.toastSuccess(" تمت عملية المزايدة بنجاح", context);
-       Timer(const Duration(seconds: 2), (){
-         Navigator.of(context).pop();
-       }
-       );
-
+     newLastPrice = price.toInt().toString();
+       AppToasts.toastSuccess(" تمت عملية المزايدة بنجاح");
      emit(SendBidToServerSuccess());
    }).catchError((error){
-     Navigator.pop(context);
      if(kDebugMode){
        print(error.toString());
        showDialog(context: context, builder: (context )=> Dialog(
          child: Text(error.toString()),
-       ));
+       ),);
      }
-     AppToasts.toastError("حدث خطأ ما يرجي اعادة المحاولة لاحقا ! ", context);
-     Timer(const Duration(seconds: 2 ), (){
-       Navigator.of(context).pop();
-     });
+     AppToasts.toastError("حدث خطأ ما يرجي اعادة المحاولة لاحقا ! ");
      emit(SendBidToServerError());
    });
  }
+
+ void deleteNewPrice(){
+    newLastPrice = "";
+    emit(DeleteNewPrice());
+ }
+
+
 }

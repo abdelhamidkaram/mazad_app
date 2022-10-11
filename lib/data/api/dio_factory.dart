@@ -1,11 +1,9 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/constants/api_constants.dart';
 import 'package:soom/data/cache/prefs.dart';
 import '../../main.dart';
-int refresh = 0;
-
+int refresh = 0 ;
 class DioFactory {
   String newToken;
   bool noToken;
@@ -74,6 +72,7 @@ class DioFactory {
       return false;
     }
   }
+
   Future<Response> getData(String endpoint, Map<String, dynamic> query) async {
    Response _response = await dio().get(
       endpoint,

@@ -15,6 +15,7 @@ import 'package:soom/presentation/components/toast.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_cubit.dart';
 import 'package:soom/presentation/screens/product/bloc/add_bid_states.dart';
+import 'package:soom/presentation/screens/product/product_screen.dart';
 import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/text_style.dart';
 
@@ -31,7 +32,9 @@ class _AddBidState extends State<AddBid> {
   @override
   void initState() {
     super.initState();
+    BidCubit.get(context).bidCounter = 1 ;
     BidCubit.get(context).getController(context, widget.productModel);
+
   }
 
   @override
@@ -45,6 +48,7 @@ class _AddBidState extends State<AddBid> {
         var controller = bidCubit.controller;
         var bidPriceKey = GlobalKey<FormFieldState>();
         List<int> bidCounter = [1, 2, 3, 4, 5, 6, 7, 8,9, 10, 20, 30, 40, 50];
+        controller.text = "${double.parse(lastPrice).toInt() + bidCubit.bidCounter}";
          _replaceController() {
           setState(() {
             if (controller.text.contains(",") ||
@@ -64,8 +68,7 @@ class _AddBidState extends State<AddBid> {
             if ((int.parse(value) <= int.parse(lastPrice))) {
               controller.text = lastPrice;
               AppToasts.toastError(
-                  "لقد ادخلت سعرا أقل من أو يساوي آخر مزايدة يجب ان تزايد بمبلغ أكبر من  : $lastPrice",
-                  context);
+                  "لقد ادخلت سعرا أقل من أو يساوي آخر مزايدة يجب ان تزايد بمبلغ أكبر من  : $lastPrice",);
             } else {
               if (auctionForViewModel != null) {
                 bidCubit
@@ -272,9 +275,6 @@ class _AddBidState extends State<AddBid> {
                                   backgroundColor: ColorManger.lightGrey,
                                   foregroundColor: ColorManger.black,
                                   onPressed: () {
-                                    //TODO: DELETE removeBid FUN FORM BID CUBIT
-                                   //   bidCubit.removeBid(
-                                  //       widget.productModel, context);
                                     for(int i =0 ;i < bidCounter.length ; i++){
                                         if(bidCounter[i] == bidCubit.bidCounter){
                                           setState((){
@@ -305,14 +305,13 @@ class _AddBidState extends State<AddBid> {
                                   widget.productModel.productModel,
                                   userModel: UserModel(
                                       userId:
-                                      int.parse(id)),
+                                      int.parse(idUser)),
                                 );
                                 _checkRangeBidOrCheckAndSendDataToServer(
                                     controller.text,
                                     auctionForViewModel: auctionForViewModel);
                               } else {
-                                AppToasts.toastError(
-                                    "ادخل قيمة المزايدة ", context);
+                                AppToasts.toastError("ادخل قيمة المزايدة ");
                                 controller.text = lastPrice;
                               }
                             }, "اضافة مزايدة ", true,

@@ -79,140 +79,132 @@ class _LoginScreenState extends State<LoginScreen> {
               ? Directionality(
                   textDirection: TextDirection.rtl,
                   child: Scaffold(
-                    resizeToAvoidBottomInset: false,
+                    //resizeToAvoidBottomInset: false,
                     backgroundColor: Colors.white,
                     body: SafeArea(
                       child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Form(
-                            key: formKey,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const DarkLogo(),
-                                const SizedBox(
-                                  height: 25,
-                                ),
-                                Row(
-                                  children: const [
-                                    Text("تسجيل الدخول ",
-                                        style: AppTextStyles.titleBlue),
-                                    Spacer()
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: const [
-                                    Text(
-                                      "بريدك الالكتروني ",
-                                      style: AppTextStyles.mediumGrey,
-                                    ),
-                                    Spacer()
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                TextFormField(
-                                  validator: (value) {
-                                    return loginCubit.emailValidation(value);
-                                  },
-                                  textInputAction: TextInputAction.next,
-                                  controller: emailController,
-                                  keyboardType: TextInputType.emailAddress,
-                                  decoration: const InputDecoration(
-                                      focusedBorder: OutlineInputBorder(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(24.0),
+                            child: Form(
+                              key: formKey,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const DarkLogo(),
+                                  const SizedBox(
+                                    height: 25,
+                                  ),
+                                  Row(
+                                    children: const [
+                                      Text("تسجيل الدخول ",
+                                          style: AppTextStyles.titleBlue),
+                                      Spacer()
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        "بريدك الالكتروني ",
+                                        style: AppTextStyles.mediumGrey,
+                                      ),
+                                      Spacer()
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      return loginCubit.emailValidation(value);
+                                    },
+                                    textInputAction: TextInputAction.next,
+                                    controller: emailController,
+                                    keyboardType: TextInputType.emailAddress,
+                                    decoration: const InputDecoration(
+                                        focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                                color: ColorManger.primaryLight)),
+                                        prefixIcon: Icon(Icons.email),
+                                        border: OutlineInputBorder()),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        "كلمة المرور",
+                                        style: AppTextStyles.mediumGrey,
+                                      ),
+                                      Spacer()
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      return loginCubit.passwordValidation(
+                                          value, true);
+                                    },
+                                    textInputAction: TextInputAction.done,
+                                    keyboardType: TextInputType.visiblePassword,
+                                    obscureText: isObscureText,
+                                    controller: passwordController,
+                                    decoration: InputDecoration(
+                                      focusedBorder: const OutlineInputBorder(
                                           borderSide: BorderSide(
                                               color: ColorManger.primaryLight)),
-                                      prefixIcon: Icon(Icons.email),
-                                      border: OutlineInputBorder()),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: const [
-                                    Text(
-                                      "كلمة المرور",
-                                      style: AppTextStyles.mediumGrey,
+                                      prefixIcon: const Icon(Icons.lock),
+                                      suffixIcon: isObscureText
+                                          ? IconButton(
+                                              onPressed: () {
+                                                loginCubit.showPassword();
+                                              },
+                                              icon: const Icon(
+                                                  Icons.visibility_off))
+                                          : IconButton(
+                                              onPressed: () {
+                                                loginCubit.showPassword();
+                                              },
+                                              icon: const Icon(Icons.visibility)),
+                                      border: const OutlineInputBorder(),
                                     ),
-                                    Spacer()
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                TextFormField(
-                                  validator: (value) {
-                                    return loginCubit.passwordValidation(
-                                        value, true);
-                                  },
-                                  textInputAction: TextInputAction.done,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  obscureText: isObscureText,
-                                  controller: passwordController,
-                                  decoration: InputDecoration(
-                                    focusedBorder: const OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: ColorManger.primaryLight)),
-                                    prefixIcon: const Icon(Icons.lock),
-                                    suffixIcon: isObscureText
-                                        ? IconButton(
-                                            onPressed: () {
-                                              loginCubit.showPassword();
-                                            },
-                                            icon: const Icon(
-                                                Icons.visibility_off))
-                                        : IconButton(
-                                            onPressed: () {
-                                              loginCubit.showPassword();
-                                            },
-                                            icon: const Icon(Icons.visibility)),
-                                    border: const OutlineInputBorder(),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Row(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          onPressed: () {
-                                            loginCubit.changeIconRemember();
-                                          },
-                                          icon: isRemember
-                                              ? const Icon(
-                                                  Icons.check_box_outline_blank)
-                                              : const Icon(
-                                                  Icons.check_box,
-                                                  color: ColorManger.primary,
-                                                ),
-                                        ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
-                                        const Text(
-                                          "تذكرني ",
-                                          style: AppTextStyles.smallGrey,
-                                        ),
-                                      ],
-                                    ),
-                                    const Spacer(),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const ForgetPassword(),
-                                            ));
-                                      },
-                                      child: TextButton(
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {
+                                              loginCubit.changeIconRemember();
+                                            },
+                                            icon: isRemember
+                                                ? const Icon(
+                                                    Icons.check_box_outline_blank)
+                                                : const Icon(
+                                                    Icons.check_box,
+                                                    color: ColorManger.primary,
+                                                  ),
+                                          ),
+                                          const SizedBox(
+                                            width: 5,
+                                          ),
+                                          const Text(
+                                            "تذكرني ",
+                                            style: AppTextStyles.smallGrey,
+                                          ),
+                                        ],
+                                      ),
+                                      const Spacer(),
+                                      TextButton(
                                         onPressed: () {
                                           Navigator.push(
                                               context,
@@ -221,77 +213,94 @@ class _LoginScreenState extends State<LoginScreen> {
                                                     const ForgetPassword(),
                                               ));
                                         },
-                                        child: const Text(
-                                          "نسيت كلمة المرور ؟ ",
-                                          style: AppTextStyles.smallBlue,
+                                        child: TextButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      const ForgetPassword(),
+                                                ));
+                                          },
+                                          child: const Text(
+                                            "نسيت كلمة المرور ؟ ",
+                                            style: AppTextStyles.smallBlue,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: BlocConsumer<HomeCubit, HomeStates>(
-                                    listener: (context, state) => HomeCubit(),
-                                    builder: (context, state) {
-                                      return AppButtons.appButtonBlue(() {
-                                        if (formKey.currentState!.validate()) {
-                                          AppToasts.toastLoading(context);
-                                          LoginRequest loginRequest =
-                                              LoginRequest(
-                                            email: emailController.text,
-                                            password: passwordController.text,
-                                          );
-                                          LoginCubit.get(context)
-                                              .loginUser(loginRequest, context)
-                                              .then((value) => null);
-                                        }
-                                      }, "تسجيل الدخول ", true);
-                                    },
+                                    ],
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 1,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      "ليس لديك حساب ؟ ",
-                                      style: AppTextStyles.mediumGrey,
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        emailController.text = "";
-                                        passwordController.text = "";
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const RegisterScreen(),
-                                            ));
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: BlocConsumer<HomeCubit, HomeStates>(
+                                      listener: (context, state) => HomeCubit(),
+                                      builder: (context, state) {
+                                        return AppButtons.appButtonBlue(() async {
+                                          if (formKey.currentState!.validate()) {
+                                            LoginRequest loginRequest =
+                                                LoginRequest(
+                                              email: emailController.text,
+                                              password: passwordController.text,
+                                            );
+                                            AppToasts.toastLoading("جاري تسجيل دخولك");
+                                            if(await LoginCubit.get(context).loginUser(loginRequest, context))
+                                            {
+                                              AppToasts.toastSuccess("تم تسجيل الدخول بنجاح ! ");
+                                              HomeCubit.get(context).currentIndex = 0;
+                                              Navigator.of(context).pushReplacement(MaterialPageRoute(
+                                                builder: (context) => const MainScreen(),
+                                              ));
+                                            }else{
+                                              AppToasts.toastError("تأكد من البيانات واعد المحاولة");
+                                            }
+                                          }
+                                        }, "تسجيل الدخول ", true);
                                       },
-                                      child: const Text(
-                                        "انشاء حساب ",
-                                        style: AppTextStyles.mediumBlue,
-                                      ),
                                     ),
-                                  ],
-                                ),
-                                AppButtons.appButtonBlue(
-                                    () {
-                                      HomeCubit.get(context).currentIndex = 0 ;
+                                  ),
+                                  const SizedBox(
+                                    height: 1,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        "ليس لديك حساب ؟ ",
+                                        style: AppTextStyles.mediumGrey,
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          emailController.text = "";
+                                          passwordController.text = "";
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const RegisterScreen(),
+                                              ));
+                                        },
+                                        child: const Text(
+                                          "انشاء حساب ",
+                                          style: AppTextStyles.mediumBlue,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  AppButtons.appButtonBlue(
+                                      () {
+                                        HomeCubit.get(context).currentIndex = 0 ;
 
-                                      Navigator.pushReplacement(
-                                          context,MaterialPageRoute(
-                                        builder: (context) => const MainScreen(),),
-                                      );
-                                    }, "الدخول كزائر", true,
-                                    isVisitor: true),
-                              ],
+                                        Navigator.pushReplacement(
+                                            context,MaterialPageRoute(
+                                          builder: (context) => const MainScreen(),),
+                                        );
+                                      }, "الدخول كزائر", true,
+                                      isVisitor: true),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -313,19 +322,21 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 Future getHomeData(context) async {
+
   await AppCubit.get(context).getProfileDetails(context).then((value) async {
-   await MyAuctionsCubit.get(context).getMyBids(context).then((value)async{
+   await MyAuctionsCubit.get(context).getMyBids(context , isRefresh: true).then((value)async{
      await HomeCubit.get(context).getCategories(context).then((value) async {
        await HomeCubit.get(context).getProducts(context,  false).then((value) async {
          await HomeCubit.get(context).getCategoryBlocks(false).then((value) async {
            AppCubit.get(context).getSystemConf(context);
+           MyAuctionsCubit.get(context).getMyProducts(context);
          });
        });
      });
    });
   }).catchError((err) {
     if (kDebugMode) {
-      AppToasts.toastError("error when : get home data method ", context);
+      AppToasts.toastError("error when : get home data method ");
       print(err.toString());
     }
   });

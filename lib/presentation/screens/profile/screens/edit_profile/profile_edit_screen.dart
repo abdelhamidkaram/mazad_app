@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:soom/models/profile_detalis_success.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
-import 'package:soom/presentation/app_bloc/app_states.dart';
 import 'package:soom/presentation/components/appbar/app_bar.dart';
 import 'package:soom/presentation/components/buttons/buttons.dart';
 import 'package:soom/presentation/screens/main_view/bloc/home_cubit.dart';
@@ -55,7 +54,7 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                 appBar: AppBars.appBarGeneral(
                   context,
                   HomeCubit.get(context),
-                  "تعديل الملف الشخصي ",
+                  "تعديل الملف الشخصي",
                   cartView: false,
                 ),
                 body: SingleChildScrollView(
@@ -208,38 +207,6 @@ class _ProfileEditScreenState extends State<ProfileEditScreen> {
                           ),
                           const SizedBox(
                             height: 20,
-                          ),
-                          Row(
-                            children: const [
-                              Text(
-                                "المدينة ",
-                                style: AppTextStyles.mediumGrey,
-                              ),
-                              Spacer()
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 8,
-                          ),
-                          TextFormField(
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'الرجاء إدخال المدينة';
-                              }
-                              return null;
-                            },
-                            textInputAction: TextInputAction.next,
-                            controller: cityController,
-                            keyboardType: TextInputType.name,
-                            decoration: InputDecoration(
-                              focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: ColorManger.primaryLight)),
-                              prefixIcon: const Icon(Icons.person),
-                              border: const OutlineInputBorder(),
-                              //TODO: add city
-                              hintText: profile.result?.name ?? "غير معروف ",
-                            ),
                           ),
                           const SizedBox(
                             height: 25,

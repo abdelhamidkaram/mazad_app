@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soom/data/cache/prefs.dart';
 import 'package:soom/presentation/app_bloc/app_cubit.dart';
@@ -17,7 +18,7 @@ import 'package:soom/style/color_manger.dart';
 import 'package:soom/style/theme_style.dart';
 var  token = "";
 var  refreshToken = "";
-var  id = "";
+var  idUser = "";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   ErrorWidget.builder = (error)=> const CustomErrorWidget();
@@ -26,9 +27,23 @@ void main() async {
     if( value.getBool(PrefsKey.isLogin) ?? true){
       token = value.getString(PrefsKey.token)??"";
       refreshToken ="${value.get(PrefsKey.refreshToken)??""}" ;
-      id = value.get(PrefsKey.userId).toString();
+      idUser = value.get(PrefsKey.userId).toString();
     }
     });
+  EasyLoading.instance.loadingStyle = EasyLoadingStyle.light;
+  EasyLoading.instance.maskType = EasyLoadingMaskType.black;
+  EasyLoading.instance.animationStyle = EasyLoadingAnimationStyle.offset;
+  // EasyLoading.instance.backgroundColor = ColorManger.primaryLight_10;
+  // EasyLoading.instance.indicatorColor = ColorManger.white;
+  // EasyLoading.instance.textColor = ColorManger.white;
+  // EasyLoading.instance.progressColor = ColorManger.white;
+  // EasyLoading.instance.maskColor = ColorManger.white;
+  // EasyLoading.instance.successWidget = const Icon(Icons.check , color: ColorManger.white,);
+  // EasyLoading.instance.errorWidget = const Icon(Icons.close , color: ColorManger.red,);
+  // EasyLoading.instance.indicatorType = EasyLoadingIndicatorType.cubeGrid;
+
+
+  EasyLoading.instance.boxShadow = [const BoxShadow( color: ColorManger.primary ,)];
   BlocOverrides.runZoned(
         () {
      runApp(const MyApp());
@@ -96,6 +111,7 @@ class MyApp extends StatelessWidget {
              future: _checkInternet() ,
              builder:(context , snap)=> const SplashScreen(),
            ),
+            builder: EasyLoading.init(),
           );
         },
       ),

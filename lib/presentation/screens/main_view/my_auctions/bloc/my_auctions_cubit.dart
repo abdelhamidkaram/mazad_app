@@ -27,7 +27,7 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
       emit(GetMyProductForViewLoading());
       DioFactory(token).getData(ApiEndPoint.getAllProducts, {
         "MaxResultCount" : 10000,
-        "CreatedBy" : id
+        "CreatedBy" : idUser
       }).then((value){
         if(value.data["result"]["totalCount"] > 0 ){
           List responseList = value.data["result"]["items"] ;
@@ -78,7 +78,7 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
     if(((myBidsForView.isEmpty && !isEmptyLast) || isRefresh) && token.isNotEmpty){
       emit(GetMyBidForViewLoading());
      await DioFactory(token).getData(ApiEndPoint.myBid, {
-        "UserId" : id ,
+        "UserId" : idUser ,
        "MaxResultCount" : 1000,
       }).then((value){
         if (kDebugMode) {
@@ -98,13 +98,22 @@ class MyAuctionsCubit extends Cubit<MyAuctionsStates>{
       }).catchError((err){
         if (kDebugMode) {
           print(err);
-          AppToasts.toastError("$err", context);
+          AppToasts.toastError("$err");
         }
         emit(GetMyBidForViewError());
       });
     }
   }
 
+  Future clearData() async {
+    isFirstBuild = true ;
+    isFinish = false ;
+    isLoading = true ;
+    isEmpty = false ;
+    myBidsForView = [] ;
+    myProductsForView = [] ;
+    emit(ClearDataSuccess());
+  }
 
 
 }
